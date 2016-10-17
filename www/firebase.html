@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Login Test</title>
+   <script src="https://www.gstatic.com/firebasejs/3.5.0/firebase.js"></script>
+
+
+
+
+<style media="screen" >
+  
+body{
+display: flex;
+min-height: 100vh;
+width: 100%;
+padding: 0;
+margin: 0;
+align-items: center;
+justify-content: center;
+flex-direction: column;
+}
+
+#uploader{
+  -webkit-appearance:none;
+  appearance: none;
+  width: 50%;
+  margin-bottom: 10px;
+
+}
+
+</style>
+  </head>
+  <body>
+<h1>Testing change</h1>
+<progress value=0" max="100" id="uploader">0%</progress>
+<input type="file" value="upload" id="fileButton"/>
+
+
+  <script>
+  // Initialize Firebase
+  var config = {
+    apiKey: "AIzaSyCXn7Mhd1ExcDDPgJE3FPS4eIAQT03j_NY",
+    authDomain: "mobile-app-62199.firebaseapp.com",
+    databaseURL: "https://mobile-app-62199.firebaseio.com",
+    storageBucket: "mobile-app-62199.appspot.com",
+    messagingSenderId: "457586923796"
+  };
+  firebase.initializeApp(config);
+
+//get elements
+
+var uploader = document.getElementById('uploader');
+var fileButton = document.getElementById('fileButton');
+
+// listen for file selection
+
+fileButton.addEventListener('change', function(e){
+
+//get the file
+
+var file = e.target.files[0];
+
+// create a storage ref
+var storageRef = firebase.storage().ref('Images_jpg/'+file.name);
+
+
+// upload file
+var task = storageRef.put(file);
+
+// update progress bar 
+task.on('state_changed',
+
+  function progress(snapshot){
+    var percentage = (snapshot.bytesTransferred / snapshot.totalBytes)* 100;
+    uploader.value = percentage ;
+
+
+  },
+  function error(err){
+
+  },
+  function complete(){
+
+  }
+
+  );
+
+});
+</script>
+
+  </body>
+</html>
