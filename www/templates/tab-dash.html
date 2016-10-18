@@ -1,4 +1,4 @@
-<ion-view view-title="Dashboard">
+<!--<ion-view view-title="Dashboard">
   <ion-content class="padding">
     <h2>Welcome to Ionic</h2>
     <p>
@@ -14,4 +14,28 @@
       For help sending push notifications, join the <a href="https://apps.ionic.io/signup" target="_blank">Ionic Platform</a> and check out <a href="http://docs.ionic.io/docs/push-overview" target="_blank">Ionic Push</a>. We also have other services available.
     </p>
   </ion-content>
+</ion-view>
+-->
+
+
+<ion-view title="Sign Up">
+    <ion-content padding="true" class="has-header">
+        <form>
+            <ion-list>
+                <label class="item item-input">
+                    <span class="input-label">Username</span>
+                    <input type="text" placeholder="enter username..." ng-model="data.username">
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">Email</span>
+                    <input type="email" placeholder="you@domain.com" ng-model="data.email">
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">Password</span>
+                    <input type="password" placeholder="At least 6 characters" ng-model="data.password">
+                </label>
+            </ion-list>
+            <button class="button button-stable button-block" ng-click="signupEmail()">Done</button>
+        </form>
+    </ion-content>
 </ion-view>

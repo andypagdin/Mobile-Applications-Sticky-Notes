@@ -5,7 +5,89 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
+//angular.module('starter', ['ionic', 'starter.controllers', 'starter.services']) old one
+
+angular.module('starter', ['ionic', 'firebase', 'ngCordova'])
+
+
+//sign up
+$scope.signupEmail = function(){  
+ 
+  var ref = new Firebase("https://mobile-app-uni.firebaseio.com");
+ 
+  ref.createUser({
+    email    : $scope.data.email,
+    password : $scope.data.password
+  }, function(error, userData) {
+    if (error) {
+      console.log("Error creating user:", error);
+    } else {
+      console.log("Successfully created user account with uid:", userData.uid);
+    }
+  });
+ 
+};
+
+
+//login
+
+$scope.loginEmail = function(){
+ 
+  var ref = new Firebase("https://mobile-app-uni.firebaseio.com");
+ 
+  ref.authWithPassword({
+    email    : $scope.data.email,
+    password : $scope.data.password
+  }, function(error, authData) {
+    if (error) {
+      console.log("Login Failed!", error);
+    } else {
+      console.log("Authenticated successfully with payload:", authData);
+    }
+  });
+ 
+};
+
+//facebook
+$scope.loginFacebook = function(){
+ 
+  var ref = new Firebase("https://mobile-app-uni.firebaseio.com");
+ 
+ 
+  if(ionic.Platform.isWebView()){
+ 
+    $cordovaFacebook.login(["public_profile", "email"]).then(function(success){
+ 
+      console.log(success);
+ 
+      ref.authWithOAuthToken("facebook", success.authResponse.accessToken, function(error, authData) {
+        if (error) {
+          console.log('Firebase login failed!', error);
+        } else {
+          console.log('Authenticated successfully with payload:', authData);
+        }
+      });
+ 
+    }, function(error){
+      console.log(error);
+    });        
+ 
+  }
+  else {
+ 
+    ref.authWithOAuthPopup("facebook", function(error, authData) {
+      if (error) {
+        console.log("Login Failed!", error);
+      } else {
+        console.log("Authenticated successfully with payload:", authData);
+      }
+    });
+ 
+  }
+ 
+};
+
+
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {

@@ -3,6 +3,13 @@
   <head>
     <meta charset="UTF-8">
     <title>Login Test</title>
+
+
+    <!-- Firebase -->
+<script src="https://cdn.firebase.com/js/client/2.2.4/firebase.js"></script>
+<!-- AngularFire -->
+<script src="https://cdn.firebase.com/libs/angularfire/1.1.2/angularfire.min.js"></script>
+
    <script src="https://www.gstatic.com/firebasejs/3.5.0/firebase.js"></script>
 
 
@@ -37,14 +44,41 @@ flex-direction: column;
 <input type="file" value="upload" id="fileButton"/>
 
 
+</br>
+
+
+<ion-view title="Sign Up">
+    <ion-content padding="true" class="has-header">
+        <form>
+            <ion-list>
+                <label class="item item-input">
+                    <span class="input-label">Username</span>
+                    <input type="text" placeholder="enter username..." ng-model="data.username">
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">Email</span>
+                    <input type="email" placeholder="you@domain.com" ng-model="data.email">
+                </label>
+                <label class="item item-input">
+                    <span class="input-label">Password</span>
+                    <input type="password" placeholder="At least 6 characters" ng-model="data.password">
+                </label>
+            </ion-list>
+            <button class="button button-stable button-block" ng-click="signupEmail()">Done</button>
+        </form>
+    </ion-content>
+</ion-view>
+
+
   <script>
   // Initialize Firebase
+ // Initialize Firebase
   var config = {
-    apiKey: "AIzaSyCXn7Mhd1ExcDDPgJE3FPS4eIAQT03j_NY",
-    authDomain: "mobile-app-62199.firebaseapp.com",
-    databaseURL: "https://mobile-app-62199.firebaseio.com",
-    storageBucket: "mobile-app-62199.appspot.com",
-    messagingSenderId: "457586923796"
+    apiKey: "AIzaSyDXuQU3J2jRIYFf2ZrUfAU3yId5O9EfMzQ",
+    authDomain: "mobile-app-uni.firebaseapp.com",
+    databaseURL: "https://mobile-app-uni.firebaseio.com",
+    storageBucket: "mobile-app-uni.appspot.com",
+    messagingSenderId: "968206557542"
   };
   firebase.initializeApp(config);
 
