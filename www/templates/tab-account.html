@@ -1,9 +1,20 @@
 <ion-view view-title="Account">
   <ion-content>
     <ion-list>
-    <ion-toggle  ng-model="settings.enableFriends">
+    <!--<ion-toggle  ng-model="settings.enableFriends">
         Enable Friends
-    </ion-toggle>
+    </ion-toggle> -->
+    <div class="list card">
+	  <span class="item">
+	    Email - {{ email }}
+	  </span>
+	  <span class="item">
+	    Unique ID - {{ uid }}
+	  </span>
+	  <span class="item">
+	    Verified? - {{ isVerified }}
+	  </span>
+	</div>
     </ion-list>
   </ion-content>
 </ion-view>

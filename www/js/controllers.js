@@ -1,6 +1,17 @@
 app = angular.module( 'starter.controllers', [ ] )
 
-app.controller( 'DashCtrl', function ( $scope, Firebase ) {} )
+app.controller( 'DashCtrl', function ( $scope ) {});
+	
+	// Initialize Firebase
+	var config = {
+		apiKey: "AIzaSyDXuQU3J2jRIYFf2ZrUfAU3yId5O9EfMzQ",
+		authDomain: "mobile-app-uni.firebaseapp.com",
+		databaseURL: "https://mobile-app-uni.firebaseio.com",
+		storageBucket: "mobile-app-uni.appspot.com",
+		messagingSenderId: "968206557542"
+	};
+
+	firebase.initializeApp( config );
 
 syntaxHighlight = function ( json )
 {
@@ -49,16 +60,8 @@ pretty = function ( json, heavy )
 	return JSON.stringify( json, null, 4 );
 };
 
-app.controller( 'LoginCtrl', function ( $scope )
+app.controller( 'LoginCtrl', function ( $scope, $state )
 {
-	// Initialize Firebase
-	var config = {
-		apiKey: "AIzaSyDXuQU3J2jRIYFf2ZrUfAU3yId5O9EfMzQ",
-		authDomain: "mobile-app-uni.firebaseapp.com",
-		databaseURL: "https://mobile-app-uni.firebaseio.com",
-		storageBucket: "mobile-app-uni.appspot.com",
-		messagingSenderId: "968206557542"
-	};
 	// JH !!!important!!!-  stupid angular scoping issues means that the ion-content 
 	// container makes a clone of the $scope meaning you need to decalre vars ahead of
 	// using them in the view otherwise the js wont know what you are refferencing
@@ -79,7 +82,7 @@ app.controller( 'LoginCtrl', function ( $scope )
 		uid: "",
 		providerData: ""
 	}
-	firebase.initializeApp( config );
+
 
 	/**
 	 * Handles the sign in button press.
@@ -263,6 +266,8 @@ app.controller( 'LoginCtrl', function ( $scope )
 				$scope.login_status = 'Signed in'
 				$scope.sign_status_text = 'Sign out'
 				$scope.quick_start_acc_details = pretty( user )
+				// Change state if signed in
+				$state.go('tab.dash');
 				console.log( "view should have changed with this data - ", $scope.user_data )
 
 				// document.getElementById( 'quickstart-sign-in-status' ).textContent = 'Signed in';
@@ -345,6 +350,23 @@ app.controller( 'ChatDetailCtrl', function ( $scope, $stateParams, Chats )
 
 app.controller( 'AccountCtrl', function ( $scope )
 {
+	firebase.auth().onAuthStateChanged(function(user) {
+	    if(user){
+		    $scope.email = user.email
+		    $scope.uid = user.uid
+		    var isVerified = user.emailVerified
+
+		    if(user.emailVerified){
+		    	$scope.isVerified = "You have verified your account";
+		    }else{
+		    	$scope.isVerified = "You have not verified your account";
+		    }
+		}
+	    else{
+
+	    }
+	});
+
 	$scope.settings = {
 		enableFriends: true
 	};

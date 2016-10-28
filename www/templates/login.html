@@ -23,13 +23,13 @@
         }
         </style>
         <div class="bar bar-header">
-            <h2 class="title">Firebase Email &amp; Password Authentication</h2>
+            <h2 class="title">Sticky Notes Application</h2>
         </div>
         <div class="content has-header col-80 col-offset-10">
             <div class="card">
                 <ion-list>
                     <label class="item item-input">
-                        <p>Enter an email and password below and either sign in to an existing account or sign up</p>
+                        <p>Sign in or Sign up</p>
                     </label>
                     <div class="item item-input">
                         <input ng-model="auth.email" type="text" id="email" name="email" placeholder="Email" />
@@ -37,15 +37,9 @@
                     <div class="item item-input">
                         <input ng-model="auth.password" type="password" id="password" name="password" placeholder="Password" />
                     </div>
-                    <label class="item item-input">
-                        <span>User level error output -&nbsp;</span>{{error_output.user}}
-                    </label>
-                    <label class="item item-input">
-                        <span>Admin level error output -&nbsp;</span>{{error_output.admin}}
-                    </label>
                 </ion-list>
             </div>
-            <div ng-if="signed_in" class="card">
+            <!-- <div ng-if="signed_in" class="card">
                 <ion-list>
                     <label class="item item-input">
                         <span>DisplayName -&nbsp;</span> {{user_data.displayName}}
@@ -74,7 +68,7 @@
                     	</code>
                     </pre>
                 </ion-list>
-            </div>
+            </div> -->
             <div class="button-bar">
                 <button class="auth_btn button button-calm" ng-disabled="signinable" ng-click="toggleSignIn()" id="quickstart-sign-in" name="signin">
                     {{sign_status_text}}
@@ -83,20 +77,26 @@
                     Sign Up
                 </button>
                 <button class="auth_btn button button-royal" ng-disabled="verifyable" ng-click="sendEmailVerification()" id="quickstart-verify-email" name="verify-email">
-                    Send Email Verification
+                    Email Verification
                 </button>
                 <button class="auth_btn button button-assertive" ng-click="sendPasswordReset()" id="quickstart-password-reset" name="verify-email">
-                    Send Password Reset Email
+                    Reset Password
                 </button>
             </div>
             <div class="card">
                 <div class="list">
                     <pre class="item item-input">
-						Firebase sign-in status: <span>{{login_status}}</span>
+						FB sign-in status: <span>{{login_status}}</span>
 					</pre>
                     <pre class="item item-input">
-						<div>Firebase auth <code>currentUser</code> object value:</div>
+						<div>FB auth: <code>currentUser</code> object value:</div>
 					</pre>
+                    <label class="item item-input">
+                        <span>User error output -&nbsp;</span>{{error_output.user}}
+                    </label>
+                    <label class="item item-input">
+                        <span>Admin error output -&nbsp;</span>{{error_output.admin}}
+                    </label>
                     <div class="item item-input">
                     </div>
                 </div>
@@ -104,11 +104,11 @@
             <!-- 
             html binding example
             -->
-            <pre class="card padding">
+            <!-- <pre class="card padding">
             	<code>
             	    <div ng-bind-html="quick_start_acc_details"></div>
             	</code>
-            </pre>
+            </pre> -->
         </div>
     </ion-content>
 </ion-view>
