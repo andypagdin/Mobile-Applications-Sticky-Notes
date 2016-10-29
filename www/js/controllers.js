@@ -1,6 +1,15 @@
 app = angular.module( 'starter.controllers', [ ] )
 
-app.controller( 'DashCtrl', function ( $scope ) {});
+app.controller( 'DashCtrl', function ( $scope ) {
+	firebase.auth().onAuthStateChanged(function(user) {
+		if(user){
+			$scope.displayName = user.displayName
+		}
+		else{
+
+		}
+	});
+});
 	
 	// Initialize Firebase
 	var config = {
@@ -81,6 +90,9 @@ app.controller( 'LoginCtrl', function ( $scope, $state )
 		isAnonymous: "",
 		uid: "",
 		providerData: ""
+	}
+	$scope.input = {
+		displayName: ""
 	}
 
 
@@ -262,12 +274,21 @@ app.controller( 'LoginCtrl', function ( $scope, $state )
 				$scope.user_data.isAnonymous = isAnonymous
 				$scope.user_data.uid = uid
 				$scope.user_data.providerData = providerData
-					// [START_EXCLUDE silent]
+				// [START_EXCLUDE silent]
 				$scope.login_status = 'Signed in'
 				$scope.sign_status_text = 'Sign out'
 				$scope.quick_start_acc_details = pretty( user )
-				// Change state if signed in
-				$state.go('tab.dash');
+
+				// If the user does not have a display name set (first time visiting)
+				// Point them to set one, else go home 
+				if(displayName){
+					$state.go('tab.dash');
+					console.log("display name set " + displayName)
+				}else{
+					$state.go('name');
+					console.log("display name not set")
+				}
+
 				console.log( "view should have changed with this data - ", $scope.user_data )
 
 				// document.getElementById( 'quickstart-sign-in-status' ).textContent = 'Signed in';
@@ -316,6 +337,22 @@ app.controller( 'LoginCtrl', function ( $scope, $state )
 		// document.getElementById( 'quickstart-password-reset' ).addEventListener( 'click', sendPasswordReset, false );
 	}
 
+	$scope.updateDisplayName = function(){
+
+		var user = firebase.auth().currentUser;
+
+		var displayName = $scope.input.displayName
+
+		user.updateProfile({
+			displayName: displayName
+		}).then(function() {
+			$state.go('tab.dash')
+			console.log("update success " + displayName)
+		}, function(error) {
+			console.log(error)
+		});
+	};
+
 	// window.onload = function ( )
 	// {
 	$scope.initApp( );
@@ -348,12 +385,15 @@ app.controller( 'ChatDetailCtrl', function ( $scope, $stateParams, Chats )
 	$scope.chat = Chats.get( $stateParams.chatId );
 } )
 
-app.controller( 'AccountCtrl', function ( $scope )
+app.controller( 'AccountCtrl', function ( $scope, $state )
 {
+
 	firebase.auth().onAuthStateChanged(function(user) {
 	    if(user){
 		    $scope.email = user.email
 		    $scope.uid = user.uid
+		    $scope.displayName = user.displayName
+
 		    var isVerified = user.emailVerified
 
 		    if(user.emailVerified){
@@ -366,6 +406,15 @@ app.controller( 'AccountCtrl', function ( $scope )
 
 	    }
 	});
+
+	$scope.signOut = function () {
+		firebase.auth().signOut().then(function() {
+			$state.go('login')
+  			console.log("signed out")
+		}, function(error) {
+  			console.log(error)
+		});
+	}
 
 	$scope.settings = {
 		enableFriends: true
