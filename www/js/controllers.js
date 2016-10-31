@@ -1,26 +1,19 @@
 app = angular.module( 'starter.controllers', [ ] )
 
-app.controller( 'DashCtrl', function ( $scope ) {
-	firebase.auth().onAuthStateChanged(function(user) {
-		if(user){
+app.controller( 'DashCtrl', function ( $scope )
+{
+	firebase.auth( ).onAuthStateChanged( function ( user )
+	{
+		if ( user )
+		{
 			$scope.displayName = user.displayName
 		}
-		else{
+		else
+		{
 
 		}
-	});
-});
-	
-	// Initialize Firebase
-	var config = {
-		apiKey: "AIzaSyDXuQU3J2jRIYFf2ZrUfAU3yId5O9EfMzQ",
-		authDomain: "mobile-app-uni.firebaseapp.com",
-		databaseURL: "https://mobile-app-uni.firebaseio.com",
-		storageBucket: "mobile-app-uni.appspot.com",
-		messagingSenderId: "968206557542"
-	};
-
-	firebase.initializeApp( config );
+	} );
+} );
 
 syntaxHighlight = function ( json )
 {
@@ -68,6 +61,25 @@ pretty = function ( json, heavy )
 	}
 	return JSON.stringify( json, null, 4 );
 };
+
+app.controller( 'FromCtrl', function ( $scope )
+{
+	// Initialize Firebase
+	$scope.fb_value = "testing"
+	read_ref = firebase.database( ).ref( )
+	set_ref = firebase.database( ).ref( 'level1/' )
+
+	set_ref.set(
+	{
+		"l1 subkey1": "timestamp = 1"
+	} );
+
+	read_ref.on( 'value', function ( snap )
+	{
+		$scope.fb_value = pretty( snap.val( ) )
+		console.log( "snap", snap.val( ) )
+	} )
+} )
 
 app.controller( 'LoginCtrl', function ( $scope, $state )
 {
@@ -274,19 +286,22 @@ app.controller( 'LoginCtrl', function ( $scope, $state )
 				$scope.user_data.isAnonymous = isAnonymous
 				$scope.user_data.uid = uid
 				$scope.user_data.providerData = providerData
-				// [START_EXCLUDE silent]
+					// [START_EXCLUDE silent]
 				$scope.login_status = 'Signed in'
 				$scope.sign_status_text = 'Sign out'
 				$scope.quick_start_acc_details = pretty( user )
 
 				// If the user does not have a display name set (first time visiting)
 				// Point them to set one, else go home 
-				if(displayName){
-					$state.go('tab.dash');
-					console.log("display name set " + displayName)
-				}else{
-					$state.go('name');
-					console.log("display name not set")
+				if ( displayName )
+				{
+					$state.go( 'tab.dash' );
+					console.log( "display name set " + displayName )
+				}
+				else
+				{
+					$state.go( 'name' );
+					console.log( "display name not set" )
 				}
 
 				console.log( "view should have changed with this data - ", $scope.user_data )
@@ -337,20 +352,24 @@ app.controller( 'LoginCtrl', function ( $scope, $state )
 		// document.getElementById( 'quickstart-password-reset' ).addEventListener( 'click', sendPasswordReset, false );
 	}
 
-	$scope.updateDisplayName = function(){
+	$scope.updateDisplayName = function ( )
+	{
 
-		var user = firebase.auth().currentUser;
+		var user = firebase.auth( ).currentUser;
 
 		var displayName = $scope.input.displayName
 
-		user.updateProfile({
+		user.updateProfile(
+		{
 			displayName: displayName
-		}).then(function() {
-			$state.go('tab.dash')
-			console.log("update success " + displayName)
-		}, function(error) {
-			console.log(error)
-		});
+		} ).then( function ( )
+		{
+			$state.go( 'tab.dash' )
+			console.log( "update success " + displayName )
+		}, function ( error )
+		{
+			console.log( error )
+		} );
 	};
 
 	// window.onload = function ( )
@@ -388,32 +407,41 @@ app.controller( 'ChatDetailCtrl', function ( $scope, $stateParams, Chats )
 app.controller( 'AccountCtrl', function ( $scope, $state )
 {
 
-	firebase.auth().onAuthStateChanged(function(user) {
-	    if(user){
-		    $scope.email = user.email
-		    $scope.uid = user.uid
-		    $scope.displayName = user.displayName
+	firebase.auth( ).onAuthStateChanged( function ( user )
+	{
+		if ( user )
+		{
+			$scope.email = user.email
+			$scope.uid = user.uid
+			$scope.displayName = user.displayName
 
-		    var isVerified = user.emailVerified
+			var isVerified = user.emailVerified
 
-		    if(user.emailVerified){
-		    	$scope.isVerified = "You have verified your account";
-		    }else{
-		    	$scope.isVerified = "You have not verified your account";
-		    }
+			if ( user.emailVerified )
+			{
+				$scope.isVerified = "You have verified your account";
+			}
+			else
+			{
+				$scope.isVerified = "You have not verified your account";
+			}
 		}
-	    else{
+		else
+		{
 
-	    }
-	});
+		}
+	} );
 
-	$scope.signOut = function () {
-		firebase.auth().signOut().then(function() {
-			$state.go('login')
-  			console.log("signed out")
-		}, function(error) {
-  			console.log(error)
-		});
+	$scope.signOut = function ( )
+	{
+		firebase.auth( ).signOut( ).then( function ( )
+		{
+			$state.go( 'login' )
+			console.log( "signed out" )
+		}, function ( error )
+		{
+			console.log( error )
+		} );
 	}
 
 	$scope.settings = {
