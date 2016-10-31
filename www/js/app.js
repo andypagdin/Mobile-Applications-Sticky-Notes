@@ -1,13 +1,28 @@
-// Ionic Starter App
+//////////////////////////////////
+// !!!WARNING!!! - JH
+// -------------------------------
+// If you are editing this in the app.js file don't! 
+// Becuase as soon as the gulp process runs you work will be over written!!!
+// Please edit the indavidual files in /www/js/app/..
+//////////////////////////////////
 
-// angular.module is a global place for creating, registering and retrieving Angular modules
-// 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
-// the 2nd parameter is an array of 'requires'
-// 'starter.services' is found in services.js
-// 'starter.controllers' is found in controllers.js
-angular.module( 'starter', [ 'ionic', 'starter.controllers', 'starter.services' ] )
 
-.run( function ( $ionicPlatform )
+//////////////////////////////////
+//base start
+//////////////////////////////////
+
+
+//////////////////////////////////
+// Information - JH
+// -------------------------------
+// I add app = to the angular.modules( 'bla', [ 'bla', 'bla', 'bla'])
+// Becuase if anything that doesnt start with .whatever will break the app
+// But! By assigning it to a var it always knows what its base module is!
+//////////////////////////////////
+app = angular.module( 'starter', [ 'ionic', 'starter.controllers', 'starter.services' ] )
+
+// everything in run is triggered when the app runs (who knew!)
+app.run( function ( $ionicPlatform )
 {
 	$ionicPlatform.ready( function ( )
 	{
@@ -19,10 +34,10 @@ angular.module( 'starter', [ 'ionic', 'starter.controllers', 'starter.services' 
 			storageBucket: "mobile-app-uni.appspot.com",
 			messagingSenderId: "968206557542"
 		};
-
 		firebase.initializeApp( config );
-		// Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
-		// for form inputs)
+
+		// Hide the accessory bar by default
+		// (remove this to show the accessory bar above the keyboard for form inputs)
 		if ( window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard )
 		{
 			cordova.plugins.Keyboard.hideKeyboardAccessoryBar( true );
@@ -37,7 +52,16 @@ angular.module( 'starter', [ 'ionic', 'starter.controllers', 'starter.services' 
 	} );
 } )
 
-.config( function ( $stateProvider, $urlRouterProvider )
+//////////////////////////////////
+//base end
+//////////////////////////////////
+
+
+//////////////////////////////////
+//router start
+//////////////////////////////////
+
+app.config( function ( $stateProvider, $urlRouterProvider )
 {
 
 	// Ionic uses AngularUI Router which uses the concept of states
@@ -131,4 +155,67 @@ angular.module( 'starter', [ 'ionic', 'starter.controllers', 'starter.services' 
 	$urlRouterProvider.otherwise( '/login' );
 
 } );
+
+//////////////////////////////////
+//router end
+//////////////////////////////////
+
+
+//////////////////////////////////
+//global functions start
+//////////////////////////////////
+
+syntaxHighlight = function ( json )
+{
+	// This is a fancy way of doing a stringify
+	// It attaches <spans> with classes so you can add colors for each data type
+	// heads up it takes a second, regex is HEAVY!
+	if ( typeof json != 'string' )
+	{
+		json = JSON.stringify( json, null, 4 );
+	}
+	json = json.replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' );
+	return json.replace( /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function ( match )
+	{
+		var cls = 'number';
+		if ( /^"/.test( match ) )
+		{
+			if ( /:$/.test( match ) )
+			{
+				cls = 'key';
+			}
+			else
+			{
+				cls = 'string';
+			}
+		}
+		else if ( /true|false/.test( match ) )
+		{
+			cls = 'boolean';
+		}
+		else if ( Number.isInteger( match ) )
+		{
+			console.log( "WE FOUND AN INT!" )
+			cls = 'int';
+		}
+		else if ( /null/.test( match ) )
+		{
+			cls = 'null';
+		}
+		return '<span class="' + cls + '">' + match + '</span>';
+	} );
+}
+
+pretty = function ( json, heavy )
+{
+	if ( heavy )
+	{
+		return syntaxHighlight( json )
+	}
+	return JSON.stringify( json, null, 4 );
+};
+
+//////////////////////////////////
+//global functions end
+//////////////////////////////////
 

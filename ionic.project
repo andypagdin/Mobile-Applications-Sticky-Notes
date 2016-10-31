@@ -1,4 +1,8 @@
 {
-  "name": "Sticky-Notes",
-  "app_id": ""
+	"name": "Sticky-Notes",
+	"app_id": "",
+	"gulpStartupTasks": [
+		"default",
+		"watch"
+	]
 }
