@@ -31,6 +31,13 @@ app.config( function ( $stateProvider, $urlRouterProvider )
 		controller: 'FromCtrl'
 	} )
 
+	.state( 'flip',
+	{
+		url: '/flip',
+		templateUrl: 'templates/flip.html',
+		controller: 'FlipCtrl'
+	} )
+
 	// setup an abstract state for the tabs directive
 	.state( 'tab',
 	{

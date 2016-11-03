@@ -1,0 +1,77 @@
+<!-- THIS IS GOING TO BE TURNED INTO A DIRECTIVE ELEMENT IN NEXT ITTERATION -->
+<ion-view view-title="{{chat.name}}">
+    <ion-content class="padding has-header">
+        <div class="card-container ">
+            <div class="flip-card" ng-repeat="(key, card) in cards" ng-class="{'flipped':card.flipped}">
+                <div class="front" tabindex="-1">
+                    <button class="flip_btn" ng-click="flip(key)">{{card.title}} front</button>
+                </div>
+                <div class="back" tabindex="-1">
+                    <button class="flip_btn" ng-click="flip(key)">{{card.title}} back</button>
+                </div>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>
+<style type="text/css">
+.card-container {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.flip-card {
+    float: left;
+    margin: 1vh;
+    position: relative;
+    width: 200px;
+    height: 300px;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(0.6, 0, 0.3, 1);
+}
+
+.flip-card.flipped {
+    transform: rotateY(180deg);
+}
+
+.flip-card .front,
+.flip-card .back {
+    border-radius: 1vh;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    backface-visibility: hidden;
+}
+
+.flip-card .front {
+    background: rebeccapurple;
+    color: white;
+}
+
+.flip-card .flip_btn {
+    width: 100%;
+    height: 100%;
+    outline: none;
+    font-size: 3vh;
+    background: none;
+    border: none;
+    color: inherit;
+}
+
+.flip-card .flip_btn:hover,
+.flip-card .flip_btn:focus {
+    box-shadow: inset 0 0 0 10px rgba(0, 0, 0, 0.4);
+}
+
+.flip-card .back {
+    background: pink;
+    color: black;
+    transform: rotateY(180deg);
+}
+</style>
