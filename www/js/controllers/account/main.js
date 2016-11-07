@@ -4,7 +4,6 @@
 
 app.controller( 'AccountCtrl', function ( $scope, $state )
 {
-
 	firebase.auth( ).onAuthStateChanged( function ( user )
 	{
 		if ( user )

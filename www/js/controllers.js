@@ -33,7 +33,6 @@ app = angular.module( 'starter.controllers', [ ] )
 
 app.controller( 'AccountCtrl', function ( $scope, $state )
 {
-
 	firebase.auth( ).onAuthStateChanged( function ( user )
 	{
 		if ( user )
@@ -149,31 +148,50 @@ app.controller( 'DashCtrl', function ( $scope )
 //FlipCtrl start
 //////////////////////////////////
 
-app.controller( 'FlipCtrl', function ( $scope )
+app.controller( 'FlipCtrl', function ( $scope, Firebase )
 {
-	$scope.cards = [
-	{
-		"title": "Card 1",
-		"flipped": false
-	},
-	{
-		"title": "Card 2",
-		"flipped": false
-	},
-	{
-		"title": "Card 3",
-		"flipped": false
-	},
-	{
-		"title": "Card 4",
-		"flipped": false
-	} ]
-	$scope.flipped = false
-	$scope.flip = function ( key )
-	{
-		$scope.cards[ key ].flipped = !$scope.cards[ key ].flipped
-		console.log( "flipp?", $scope.flipped )
-	}
+
+	$scope.groups = {}
+	uuid = 'Ucg7kUNTceQjOLqDIwByHLz5FPj2'
+	Firebase.get_user_groups( uuid ).then( function ( data )
+		{
+			group_ids = data.val( )
+			Firebase.get_groups( group_ids ).then( function ( groups )
+			{
+				for ( var i = 0; i < groups.length; i++ )
+				{
+					console.info( groups[ i ].val( ) )
+				}
+			} )
+		} )
+		// firebase.database( )
+		// 	.ref( `/johnny/users/${uuid}/groups` ).once( 'value', function ( data )
+		// 	{
+		// 		console.log( "[Users]", data.val( ) )
+		// 		counter = 0
+		// 		angular.forEach( data.val( ), function ( value, index )
+		// 		{
+		// 			// if ( value.read ) return;
+		// 			console.log( index )
+		// 			var ref = firebase.database( ).ref( `/johnny/groups/${index}` );
+		// 			// 	var ref = ref.orderByChild( "has_changed" ).equalTo( true );
+		// 			ref.once( "value", function ( data )
+		// 			{
+		// 				console.log( "[Groups]", data.val( ) )
+
+	// 				$scope.groups[ counter++ ] = data.val( )
+	// 				console.warn( $scope.groups )
+	// 			} );
+	// 		} );
+	// 	} );
+	// $scope.flip = function ( group_key, pad_key )
+	// {
+	// 	if ( typeof ( $scope.groups[ group_key ].pads[ pad_key ].flipped ) === "undefeined" )
+	// 	{
+	// 		$scope.groups[ group_key ].pads[ pad_key ].flipped = false;
+	// 	}
+	// 	$scope.groups[ group_key ].pads[ pad_key ].flipped = !$scope.groups[ group_key ].pads[ pad_key ].flipped
+	// }
 
 
 } );
@@ -181,6 +199,92 @@ app.controller( 'FlipCtrl', function ( $scope )
 //////////////////////////////////
 //FlipCtrl end
 //////////////////////////////////
+
+
+//////////////////////////////////
+//FromCtrl start
+//////////////////////////////////
+
+app.controller( 'FromCtrl', function ( $scope )
+{
+	// Initialize Firebase
+	$scope.fb_value = "testing"
+	read_ref = firebase.database( ).ref( )
+	set_ref = firebase.database( ).ref( 'level1/' )
+
+	// set_ref.set(
+	// {
+	// 	"l1 subkey1": "timestamp = 1"
+	// } );
+	uuid = 'Ucg7kUNTceQjOLqDIwByHLz5FPj2'
+	firebase.database( )
+		.ref( `/johnny/users/${uuid}/groups` ).once( 'value', function ( data )
+		{
+			console.log( "[Users]", data.val( ) )
+			angular.forEach( data.val( ), function ( value, index )
+			{
+				if ( value.read ) return;
+				console.log( index )
+				var ref = firebase.database( ).ref( `/johnny/groups/` )
+				ref = ref.equalTo( index );
+				console.log( ref )
+					// 	var ref = ref.orderByChild( "has_changed" ).equalTo( true );
+				ref.once( "value", function ( data )
+				{
+					console.log( "[Groups]", data.val( ) )
+				} );
+			} );
+		} );
+
+
+	// read_ref.once( 'value', function ( snap )
+	// {
+	// 	$scope.fb_value = pretty( snap.val( ) )
+	// 	console.log( "ooooooooooohhhhhh snap", snap.val( ) )
+	// } )
+	// var ref = firebase.database( ).ref( "/johnny/data/groups/" );
+	// var ref = ref.orderByChild( "has_changed" ).equalTo( true );
+	// var ref = ref.child( "uuid" );
+	// ref.once( "value", function ( data )
+	// {
+	// 	console.log( data.val( ) )
+	// } );
+
+	// firebase.database( )
+	// 	.ref( '/johnny/data/users/6X2Yka97bOOomPD1cN9VDj9VryK2/groups' ).once( 'value', function ( snap )
+	// 	{
+	// 		angular.forEach( snap.val( ), function ( value, index )
+	// 		{
+	// 			console.log( value.key )
+	// 			firebase.database( )
+	// 				.ref( '/johnny/data/groups/' )
+	// 				.child( value.key )
+	// 				.orderByChild( 'has_changed' )
+	// 				.startAt( 'true' ).endAt( 'true' )
+	// 				// .orderBy('lead')                  // !!! THIS LINE WILL RAISE AN ERROR !!!
+	// 				// .startAt('Jack Nicholson').endAt('Jack Nicholson')
+	// 				// .orderByChild( 'has changed' )
+	// 				// .child( 'has changed' )
+	// 				// .equalTo( 'true' )
+	// 				.once( 'value', function ( snap )
+	// 				{
+	// 					// console.log( key, value );
+	// 					console.log( 'Group == ', snap.val( ) );
+	// 				} );
+	// 		} );
+
+
+	// 	} );
+
+
+} )
+
+//////////////////////////////////
+//FromCtrl end
+//////////////////////////////////
+
+
+app.controller( 'testCtrl', function ( $scope ) {} )
 
 
 //////////////////////////////////
@@ -492,87 +596,5 @@ app.controller( 'LoginCtrl', function ( $scope, $state )
 
 //////////////////////////////////
 //LoginCtrl end
-//////////////////////////////////
-
-
-//////////////////////////////////
-//FromCtrl start
-//////////////////////////////////
-
-app.controller( 'FromCtrl', function ( $scope )
-{
-	// Initialize Firebase
-	$scope.fb_value = "testing"
-	read_ref = firebase.database( ).ref( )
-	set_ref = firebase.database( ).ref( 'level1/' )
-
-	// set_ref.set(
-	// {
-	// 	"l1 subkey1": "timestamp = 1"
-	// } );
-
-
-
-	// read_ref.once( 'value', function ( snap )
-	// {
-	// 	$scope.fb_value = pretty( snap.val( ) )
-	// 	console.log( "ooooooooooohhhhhh snap", snap.val( ) )
-	// } )
-	uuid = '6X2Yka97bOOomPD1cN9VDj9VryK2'
-		// var ref = firebase.database( ).ref( "/johnny/data/groups/" );
-		// var ref = ref.orderByChild( "has_changed" ).equalTo( true );
-		// var ref = ref.child( "uuid" );
-		// ref.once( "value", function ( data )
-		// {
-		// 	console.log( data.val( ) )
-		// } );
-
-	firebase.database( )
-		.ref( '/johnny/data/users/' + uuid + '/groups' ).once( 'value', function ( data )
-		{
-			angular.forEach( data.val( ), function ( value, index )
-			{
-
-				console.log( index, value )
-				var ref = firebase.database( ).ref( "/johnny/data/groups/" );
-				var ref = ref.orderByChild( "has_changed" ).equalTo( true );
-				ref.once( "value", function ( data )
-				{
-					console.log( data.val( ) )
-				} );
-			} );
-		} );
-
-	// firebase.database( )
-	// 	.ref( '/johnny/data/users/6X2Yka97bOOomPD1cN9VDj9VryK2/groups' ).once( 'value', function ( snap )
-	// 	{
-	// 		angular.forEach( snap.val( ), function ( value, index )
-	// 		{
-	// 			console.log( value.key )
-	// 			firebase.database( )
-	// 				.ref( '/johnny/data/groups/' )
-	// 				.child( value.key )
-	// 				.orderByChild( 'has_changed' )
-	// 				.startAt( 'true' ).endAt( 'true' )
-	// 				// .orderBy('lead')                  // !!! THIS LINE WILL RAISE AN ERROR !!!
-	// 				// .startAt('Jack Nicholson').endAt('Jack Nicholson')
-	// 				// .orderByChild( 'has changed' )
-	// 				// .child( 'has changed' )
-	// 				// .equalTo( 'true' )
-	// 				.once( 'value', function ( snap )
-	// 				{
-	// 					// console.log( key, value );
-	// 					console.log( 'Group == ', snap.val( ) );
-	// 				} );
-	// 		} );
-
-
-	// 	} );
-
-
-} )
-
-//////////////////////////////////
-//FromCtrl end
 //////////////////////////////////
 

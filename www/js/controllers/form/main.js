@@ -13,7 +13,25 @@ app.controller( 'FromCtrl', function ( $scope )
 	// {
 	// 	"l1 subkey1": "timestamp = 1"
 	// } );
-
+	uuid = 'Ucg7kUNTceQjOLqDIwByHLz5FPj2'
+	firebase.database( )
+		.ref( `/johnny/users/${uuid}/groups` ).once( 'value', function ( data )
+		{
+			console.log( "[Users]", data.val( ) )
+			angular.forEach( data.val( ), function ( value, index )
+			{
+				if ( value.read ) return;
+				console.log( index )
+				var ref = firebase.database( ).ref( `/johnny/groups/` )
+				ref = ref.equalTo( index );
+				console.log( ref )
+					// 	var ref = ref.orderByChild( "has_changed" ).equalTo( true );
+				ref.once( "value", function ( data )
+				{
+					console.log( "[Groups]", data.val( ) )
+				} );
+			} );
+		} );
 
 
 	// read_ref.once( 'value', function ( snap )
@@ -21,30 +39,13 @@ app.controller( 'FromCtrl', function ( $scope )
 	// 	$scope.fb_value = pretty( snap.val( ) )
 	// 	console.log( "ooooooooooohhhhhh snap", snap.val( ) )
 	// } )
-	uuid = '6X2Yka97bOOomPD1cN9VDj9VryK2'
-		// var ref = firebase.database( ).ref( "/johnny/data/groups/" );
-		// var ref = ref.orderByChild( "has_changed" ).equalTo( true );
-		// var ref = ref.child( "uuid" );
-		// ref.once( "value", function ( data )
-		// {
-		// 	console.log( data.val( ) )
-		// } );
-
-	firebase.database( )
-		.ref( '/johnny/data/users/' + uuid + '/groups' ).once( 'value', function ( data )
-		{
-			angular.forEach( data.val( ), function ( value, index )
-			{
-
-				console.log( index, value )
-				var ref = firebase.database( ).ref( "/johnny/data/groups/" );
-				var ref = ref.orderByChild( "has_changed" ).equalTo( true );
-				ref.once( "value", function ( data )
-				{
-					console.log( data.val( ) )
-				} );
-			} );
-		} );
+	// var ref = firebase.database( ).ref( "/johnny/data/groups/" );
+	// var ref = ref.orderByChild( "has_changed" ).equalTo( true );
+	// var ref = ref.child( "uuid" );
+	// ref.once( "value", function ( data )
+	// {
+	// 	console.log( data.val( ) )
+	// } );
 
 	// firebase.database( )
 	// 	.ref( '/johnny/data/users/6X2Yka97bOOomPD1cN9VDj9VryK2/groups' ).once( 'value', function ( snap )

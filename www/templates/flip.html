@@ -1,19 +1,23 @@
 <!-- THIS IS GOING TO BE TURNED INTO A DIRECTIVE ELEMENT IN NEXT ITTERATION -->
-<ion-view view-title="{{chat.name}}">
+<ion-view>
     <ion-content class="padding has-header">
         <div class="card-container ">
-            <div class="flip-card" ng-repeat="(key, card) in cards" ng-class="{'flipped':card.flipped}">
-                <div class="front" tabindex="-1">
-                    <button class="flip_btn" ng-click="flip(key)">{{card.title}} front</button>
-                </div>
-                <div class="back" tabindex="-1">
-                    <button class="flip_btn" ng-click="flip(key)">{{card.title}} back</button>
+            <div class="group" ng-repeat="(group_key, group) in groups track by $index" ng-init="$groupIndex = $index">
+                <div class=" flip-card " ng-repeat="(pad_key, pad) in group.pads track by $index" ng-init="$padIndex = $index" ng-class="{ 'flipped':pad.flipped} ">
+                    <div class="front " tabindex="-1 ">
+                        <button class="flip_btn " ng-click="flip(group_key, pad_key) ">{{group.title}} - {{pad.body}}</button>
+                    </div>
+                    <div class="back " tabindex="-1 ">
+                        <button class="flip_btn " ng-click="flip(group_key, pad_key) ">
+                            <span ng-repeat="(key, comment) in pad.comment track by $index">{{comment.content}}</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </ion-content>
 </ion-view>
-<style type="text/css">
+<style type="text/css ">
 .card-container {
     display: block;
     width: 100%;
@@ -24,8 +28,8 @@
     float: left;
     margin: 1vh;
     position: relative;
-    width: 200px;
-    height: 300px;
+    width: 40vh;
+    height: 60vh;
     transform-style: preserve-3d;
     transition: transform 0.7s cubic-bezier(0.6, 0, 0.3, 1);
 }
