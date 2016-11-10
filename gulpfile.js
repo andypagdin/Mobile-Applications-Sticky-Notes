@@ -23,7 +23,7 @@ var paths = {
 
 gulp.task( 'default', [ 'default_console', 'sass', 'merge_controllers', 'merge_core', 'merge_services' ] );
 
-var debug = false;
+var debug = true;
 //////////////////////////////////
 // Information - JH
 // -------------------------------
