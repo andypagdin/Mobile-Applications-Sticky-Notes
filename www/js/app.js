@@ -76,6 +76,30 @@ app.config( function ( $stateProvider, $urlRouterProvider )
 			controller: 'LoginCtrl'
 		} )
 
+//new login layout -faz
+		.state( 'login_faz',
+	{
+		url: '/login_faz',
+		templateUrl: 'templates/login_faz.html',
+		controller: 'Login_Faz_Ctrl'
+	} )
+
+		//account faz
+
+			.state( 'account-details',
+	{
+		url: '/account',
+		templateUrl: 'templates/account.html',
+		controller: 'AccountCtrl'
+	} )
+
+	.state ('home',
+	{
+		url:'/home',
+		templateUrl: 'templates/home.html',
+		controller:'HomeCtrl'
+	} )
+
 	.state( 'name',
 	{
 		url: '/name',
