@@ -26,16 +26,6 @@ app.run( function ( $ionicPlatform )
 {
 	$ionicPlatform.ready( function ( )
 	{
-		// Initialize Firebase
-		var config = {
-			apiKey: "AIzaSyDXuQU3J2jRIYFf2ZrUfAU3yId5O9EfMzQ",
-			authDomain: "mobile-app-uni.firebaseapp.com",
-			databaseURL: "https://mobile-app-uni.firebaseio.com",
-			storageBucket: "mobile-app-uni.appspot.com",
-			messagingSenderId: "968206557542"
-		};
-		firebase.initializeApp( config );
-
 		// Hide the accessory bar by default
 		// (remove this to show the accessory bar above the keyboard for form inputs)
 		if ( window.cordova && window.cordova.plugins && window.cordova.plugins.Keyboard )
@@ -75,29 +65,6 @@ app.config( function ( $stateProvider, $urlRouterProvider )
 			templateUrl: 'templates/login.html',
 			controller: 'LoginCtrl'
 		} )
-
-	//new login layout -faz
-	.state( 'login_faz',
-	{
-		url: '/login_faz',
-		templateUrl: 'templates/login_faz.html',
-		controller: 'Login_Faz_Ctrl'
-	} )
-
-	//account faz
-	.state( 'account-details',
-	{
-		url: '/account',
-		templateUrl: 'templates/account.html',
-		controller: 'AccountCtrl'
-	} )
-
-	.state ('home',
-	{
-		url:'/home',
-		templateUrl: 'templates/home.html',
-		controller:'HomeCtrl'
-	} )
 
 	.state( 'name',
 	{
@@ -201,6 +168,17 @@ app.config( function ( $stateProvider, $urlRouterProvider )
 //////////////////////////////////
 //global functions start
 //////////////////////////////////
+
+
+// Initialize Firebase
+var config = {
+	apiKey: "AIzaSyDXuQU3J2jRIYFf2ZrUfAU3yId5O9EfMzQ",
+	authDomain: "mobile-app-uni.firebaseapp.com",
+	databaseURL: "https://mobile-app-uni.firebaseio.com",
+	storageBucket: "mobile-app-uni.appspot.com",
+	messagingSenderId: "968206557542"
+};
+firebase.initializeApp( config );
 
 syntaxHighlight = function ( json )
 {

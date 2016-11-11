@@ -2,6 +2,17 @@
 //global functions start
 //////////////////////////////////
 
+
+// Initialize Firebase
+var config = {
+	apiKey: "AIzaSyDXuQU3J2jRIYFf2ZrUfAU3yId5O9EfMzQ",
+	authDomain: "mobile-app-uni.firebaseapp.com",
+	databaseURL: "https://mobile-app-uni.firebaseio.com",
+	storageBucket: "mobile-app-uni.appspot.com",
+	messagingSenderId: "968206557542"
+};
+firebase.initializeApp( config );
+
 syntaxHighlight = function ( json )
 {
 	// This is a fancy way of doing a stringify

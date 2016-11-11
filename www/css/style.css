@@ -1,14 +1,11 @@
 /* Empty. Add your own CSS if you like */
 
-
-
 .login-container {
     display: -webkit-flex;
     -webkit-flex-direction: column;
     height: 100%;
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#efad62), color-stop(100%,#f7d47c));
-    background: -webkit-linear-gradient(top, #387ef5 0%,#f7d47c 100%);
-
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #efad62), color-stop(100%, #f7d47c));
+    background: -webkit-linear-gradient(top, #387ef5 0%, #f7d47c 100%);
 }
 
 .login-container > .button-row img {
@@ -19,7 +16,143 @@
     -webkit-flex: 4;
     padding-top: 20px;
 }
-.item-divider{
-	background-color: transparent;
-	border: none;
+
+.item-divider {
+    background-color: transparent;
+    border: none;
 }
+
+
+/*/////////////////////////////////
+//flip start
+/////////////////////////////////*/
+
+.card-container {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.card-container .group {
+    width: 100%;
+    height: 100%;
+    margin-bottom: 5vh;
+    float: left;
+    clear: both;
+    background: lightgrey;
+}
+
+.card-container .flip-card {
+    color: white;
+    float: left;
+    margin: 1vh;
+    position: relative;
+    width: 40vh;
+    height: 60vh;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(0.6, 0, 0.3, 1);
+}
+
+.card-container .flip-card.flipped {
+    transform: rotateY(180deg);
+}
+
+.card-container .flip-card .flip-header,
+.card-container .flip-card .flip-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-container .flip-card .flip-header {
+    height: 10%;
+    width: 100%;
+}
+
+.white {
+    color: white;
+}
+
+.white:hover {
+    color: black;
+}
+
+h2.white:hover {
+    color: white;
+}
+
+.black {
+    color: black;
+}
+
+.black:hover {
+    color: white;
+}
+
+h2.black:hover {
+    color: black;
+}
+
+.card-container .flip-card .flip-header h2 {
+    margin: 0;
+    cursor: default;
+}
+
+.card-container .flip-card .flip-body {
+    padding: 2vh;
+    height: 80%;
+    width: 100%;
+}
+
+.card-container .flip-card .flip-footer {
+    height: 10%;
+    width: 100%;
+}
+
+.card-container .flip-card .front,
+.card-container .flip-card .back {
+    border-radius: 1vh;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    /*display: flex;*/
+    /*align-items: center;*/
+    /*justify-content: center;*/
+    overflow: hidden;
+    backface-visibility: hidden;
+}
+
+.card-container .flip-card .front {
+    background: rebeccapurple;
+}
+
+.card-container .flip-card .flip_btn {
+    width: 100%;
+    height: 100%;
+    outline: none;
+    font-size: 3vh;
+    background: none;
+    border: none;
+    color: inherit;
+}
+
+.card-container .flip-card .flip_btn:hover,
+.card-container .flip-card .flip_btn:focus {
+    background-color: white;
+    color: black;
+    /*box-shadow: inset 0 0 0 10px rgba(0, 0, 0, 0.4);*/
+}
+
+.card-container .flip-card .back {
+    background: pink;
+    color: black;
+    transform: rotateY(180deg);
+}
+
+
+/*/////////////////////////////////
+//flip end
+/////////////////////////////////*/
+

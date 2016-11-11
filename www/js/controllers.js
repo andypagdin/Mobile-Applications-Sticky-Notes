@@ -28,60 +28,6 @@ app = angular.module( 'starter.controllers', [ ] )
 
 
 //////////////////////////////////
-//AccountCtrl start
-//////////////////////////////////
-
-app.controller( 'AccountCtrl', function ( $scope, $state )
-{
-	firebase.auth( ).onAuthStateChanged( function ( user )
-	{
-		if ( user )
-		{
-			$scope.email = user.email
-			$scope.uid = user.uid
-			$scope.displayName = user.displayName
-			$scope.photoURL = user.photoURL
-
-			var isVerified = user.emailVerified
-
-			if ( user.emailVerified )
-			{
-				$scope.isVerified = "You have verified your account";
-			}
-			else
-			{
-				$scope.isVerified = "You have not verified your account";
-			}
-		}
-		else
-		{
-
-		}
-	} );
-
-	$scope.signOut = function ( )
-	{
-		firebase.auth( ).signOut( ).then( function ( )
-		{
-			$state.go( 'login' )
-			console.log( "signed out" )
-		}, function ( error )
-		{
-			console.log( error )
-		} );
-	}
-
-	$scope.settings = {
-		enableFriends: true
-	};
-} );
-
-//////////////////////////////////
-//AccountCtrl end
-//////////////////////////////////
-
-
-//////////////////////////////////
 //ChatsCtrl start
 //////////////////////////////////
 
@@ -146,53 +92,116 @@ app.controller( 'DashCtrl', function ( $scope )
 
 
 //////////////////////////////////
+//AccountCtrl start
+//////////////////////////////////
+
+app.controller( 'AccountCtrl', function ( $scope, $state )
+{
+	firebase.auth( ).onAuthStateChanged( function ( user )
+	{
+		if ( user )
+		{
+			$scope.email = user.email
+			$scope.uid = user.uid
+			$scope.displayName = user.displayName
+
+			var isVerified = user.emailVerified
+
+			if ( user.emailVerified )
+			{
+				$scope.isVerified = "You have verified your account";
+			}
+			else
+			{
+				$scope.isVerified = "You have not verified your account";
+			}
+		}
+		else
+		{
+
+		}
+	} );
+
+	$scope.signOut = function ( )
+	{
+		firebase.auth( ).signOut( ).then( function ( )
+		{
+			$state.go( 'login' )
+			console.log( "signed out" )
+		}, function ( error )
+		{
+			console.log( error )
+		} );
+	}
+
+	$scope.settings = {
+		enableFriends: true
+	};
+} );
+
+//////////////////////////////////
+//AccountCtrl end
+//////////////////////////////////
+
+
+//////////////////////////////////
 //FlipCtrl start
 //////////////////////////////////
 
 app.controller( 'FlipCtrl', function ( $scope, Firebase )
 {
-
-	$scope.groups = {}
+	//this would be set by auth instead of hard coded
 	uuid = 'Ucg7kUNTceQjOLqDIwByHLz5FPj2'
+	$scope.groups = {}
+	$scope.comment_data = {
+		pad_id: "",
+		comment: "",
+		user_id: uuid
+	}
+	console.log( $scope.comment_data )
 	Firebase.get_user_groups( uuid ).then( function ( data )
+	{
+		group_ids = data.val( )
+		Firebase.get_groups( group_ids ).then( function ( groups )
 		{
-			group_ids = data.val( )
-			Firebase.get_groups( group_ids ).then( function ( groups )
+			groups.forEach( function ( group, key )
 			{
-				for ( var i = 0; i < groups.length; i++ )
+				$scope.groups[ group.val( ).group_id ] = group.val( )
+			} );
+			//just to get len -.-
+			angular.forEach( $scope.groups, function ( group_obj, group_key )
+			{
+				angular.forEach( group_obj.pads, function ( pad_obj )
 				{
-					console.info( groups[ i ].val( ) )
-				}
-			} )
+					pad_obj.comments.length = Object.keys( pad_obj.comments ).length
+					pad_obj.new_comment = ""
+				} );
+			} );
+			console.info( $scope.groups )
+			console.info( $scope.avalible_pads )
 		} )
-		// firebase.database( )
-		// 	.ref( `/johnny/users/${uuid}/groups` ).once( 'value', function ( data )
-		// 	{
-		// 		console.log( "[Users]", data.val( ) )
-		// 		counter = 0
-		// 		angular.forEach( data.val( ), function ( value, index )
-		// 		{
-		// 			// if ( value.read ) return;
-		// 			console.log( index )
-		// 			var ref = firebase.database( ).ref( `/johnny/groups/${index}` );
-		// 			// 	var ref = ref.orderByChild( "has_changed" ).equalTo( true );
-		// 			ref.once( "value", function ( data )
-		// 			{
-		// 				console.log( "[Groups]", data.val( ) )
+	} )
+	$scope.trigger_comment = function ( element )
+	{
+		var output = {
+			user_id: uuid,
+			sent: Date.now( ),
+			group_id: element.$parent.group_key,
+			pad_id: element.pad_key,
+			comment: element.pad.new_comment
+		}
+		var comment_data = $scope.groups
+		Firebase.post_comment( output )
+	}
 
-	// 				$scope.groups[ counter++ ] = data.val( )
-	// 				console.warn( $scope.groups )
-	// 			} );
-	// 		} );
-	// 	} );
-	// $scope.flip = function ( group_key, pad_key )
-	// {
-	// 	if ( typeof ( $scope.groups[ group_key ].pads[ pad_key ].flipped ) === "undefeined" )
-	// 	{
-	// 		$scope.groups[ group_key ].pads[ pad_key ].flipped = false;
-	// 	}
-	// 	$scope.groups[ group_key ].pads[ pad_key ].flipped = !$scope.groups[ group_key ].pads[ pad_key ].flipped
-	// }
+	$scope.flip = function ( group_key, pad_key )
+	{
+		if ( typeof ( $scope.groups[ group_key ].pads[ pad_key ].flipped ) === "undefeined" )
+		{
+			$scope.groups[ group_key ].pads[ pad_key ].flipped = false;
+		}
+		$scope.groups[ group_key ].pads[ pad_key ].flipped = !$scope.groups[ group_key ].pads[ pad_key ].flipped
+	}
 
 
 } );
@@ -285,8 +294,18 @@ app.controller( 'FromCtrl', function ( $scope )
 //////////////////////////////////
 
 
-app.controller( 'testCtrl', function ( $scope ) {} )
+//////////////////////////////////
+//DashCtrl start
+//////////////////////////////////
 
+app.controller( 'HomeCtrl', function ( $scope )
+{
+
+} );
+
+//////////////////////////////////
+//DashCtrl end
+//////////////////////////////////
 
 //////////////////////////////////
 //LoginCtrl start
@@ -320,28 +339,6 @@ app.controller( 'LoginCtrl', function ( $scope, $state )
 	}
 	$scope.input = {
 		displayName: ""
-	}
-
-	$scope.googleSignIn = function ( )
-	{
-		var provider = new firebase.auth.GoogleAuthProvider();
-
-		firebase.auth().signInWithPopup(provider).then(function(result) {
-		  // This gives you a Google Access Token. You can use it to access the Google API.
-		  var token = result.credential.accessToken;
-		  // The signed-in user info.
-		  var user = result.user;
-		  // ...
-		}).catch(function(error) {
-		  // Handle Errors here.
-		  var errorCode = error.code;
-		  var errorMessage = error.message;
-		  // The email of the user's account used.
-		  var email = error.email;
-		  // The firebase.auth.AuthCredential type that was used.
-		  var credential = error.credential;
-		  // ...
-		});
 	}
 
 
@@ -620,4 +617,7 @@ app.controller( 'LoginCtrl', function ( $scope, $state )
 //////////////////////////////////
 //LoginCtrl end
 //////////////////////////////////
+
+
+app.controller( 'testCtrl', function ( $scope ) {} )
 
