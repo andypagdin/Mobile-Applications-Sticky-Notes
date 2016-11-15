@@ -1,8 +1,7 @@
 //////////////////////////////////
 //FlipCtrl start
 //////////////////////////////////
-
-app.controller('FlipCtrl', function($scope, Firebase) {
+app.controller('FlipCtrl', function ($scope, Firebase) {
     //this would be set by auth instead of hard coded
     uuid = 'Ucg7kUNTceQjOLqDIwByHLz5FPj2'
     $scope.groups = {}
@@ -11,17 +10,17 @@ app.controller('FlipCtrl', function($scope, Firebase) {
         comment: "",
         user_id: uuid
     }
-    console.log($scope.comment_data)
-    Firebase.get_user_groups(uuid).then(function(data) {
+
+    Firebase.get_user_groups(uuid).then(function (data) {
         group_ids = data.val()
         console.log("group_ids", group_ids)
         Firebase.get_groups(group_ids)
-            .then(function(groups) {
+            .then(function (groups) {
                 $scope.groups = groups
                 console.log("$scope.groups", $scope.groups)
             })
     })
-    $scope.trigger_comment = function(element) {
+    $scope.trigger_comment = function (element) {
         var output = {
             user_id: uuid,
             sent: Date.now(),
@@ -33,7 +32,7 @@ app.controller('FlipCtrl', function($scope, Firebase) {
         Firebase.post_comment(output)
     }
 
-    $scope.flip = function(group_key, pad_key) {
+    $scope.flip = function (group_key, pad_key) {
         if (typeof ($scope.groups[group_key].pads[pad_key].flipped) === "undefeined") {
             $scope.groups[group_key].pads[pad_key].flipped = false;
         }

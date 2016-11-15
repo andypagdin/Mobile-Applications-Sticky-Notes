@@ -28,7 +28,7 @@ app.factory('Firebase', function ($q) {
 			}))
 		}
 		return $q.all(promise).then(function (outcome) {
-			outcome_obj = {}
+			var outcome_obj = {}
 			//clears out all undefined outputs and turns it into an object
 			for (var i = 0; i < outcome.length; i++) {
 				if (outcome[i]) {
@@ -43,7 +43,7 @@ app.factory('Firebase', function ($q) {
 				pads = outcome_obj[i].pads
 				pad_keys = Object.keys(pads)
 				pads.length = Object.keys(pads).length
-				for (var x = 0; x < pad_keys.length; x++) {
+				for (var x = 0; x < pads.length; x++) {
 					pad_obj = pads[pad_keys[x]]
 					pad_obj.new_comment = ""
 					comments = pad_obj.comments

@@ -15,9 +15,9 @@
             </label>
         </div>
         <div class="card-container">
-            <div class="group" ng-repeat="(group_key, group) in groups">
+            <div class="group" ng-repeat="(group_key, group) in groups" ng-if="group_key!='length'">
                 <span>{{group.title}}</span>
-                <div class="flip-card" ng-repeat="(pad_key, pad) in group.pads" ng-class="{'flipped':pad.flipped}">
+                <div class="flip-card" ng-repeat="(pad_key, pad) in group.pads" ng-class="{'flipped':pad.flipped}"  ng-if="pad_key!='length'">
                     <div class="front" tabindex="-1 ">
                         <div class="flip-header">
                             <h2 class="ion-document white">
@@ -41,7 +41,7 @@
                         </div>
                         <div class="flip-body">
                             <ul>
-                                <li ng-repeat="(key, comment) in pad.comments">{{comment.content}}</li>
+                                <li ng-repeat="(key, comment) in pad.comments" ng-if="key!='length'">{{comment.content}}</li>
                             </ul>
                             <label>Add comment:
                                 <textarea name="comment" id="comment" placeholder="comment goes here..." ng-model="pad.new_comment"></textarea>
