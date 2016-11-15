@@ -17,11 +17,25 @@ app.config( function ( $stateProvider, $urlRouterProvider )
 			controller: 'LoginCtrl'
 		} )
 
+		.state( 'login_faz',
+	{
+		url: '/login_faz',
+		templateUrl: 'templates/login_faz.html',
+		controller: 'Login_Faz_Ctrl'
+	} )
+
 	.state( 'name',
 	{
 		url: '/name',
 		templateUrl: 'templates/login-name.html',
 		controller: 'LoginCtrl'
+	} )
+
+	.state( 'accordion',
+	{
+		url: '/accordion',
+		templateUrl: 'templates/accordion.html',
+		controller: 'AccordionCtrl'
 	} )
 
 	.state( 'test',
