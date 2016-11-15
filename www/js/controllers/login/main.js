@@ -32,6 +32,13 @@ app.controller( 'LoginCtrl', function ( $scope, $state )
 		displayName: ""
 	}
 
+	$scope.googleSignIn = function ( )
+    {
+        var provider = new firebase.auth.GoogleAuthProvider();
+
+        firebase.auth().signInWithRedirect(provider);
+    }
+
 
 	/**
 	 * Handles the sign in button press.

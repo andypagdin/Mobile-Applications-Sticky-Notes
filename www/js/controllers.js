@@ -28,6 +28,65 @@ app = angular.module( 'starter.controllers', [ ] )
 
 
 //////////////////////////////////
+//AccordionCtrl start
+//////////////////////////////////
+
+app.controller( 'AccordionCtrl', function ( $scope )
+{
+
+	$scope.groups = [];
+  for (var i=0; i<10; i++) {
+    $scope.groups[i] = {
+      name: i,
+      items: []
+    };
+    for (var j=0; j<3; j++) {
+      $scope.groups[i].items.push(i + '-' + j);
+     
+     //togglestar
+     $scope.toggleStar = function(item){
+     	item.star = !item.star;
+     }
+     //delete function 
+     $scope.onItemDelete = function(item){
+     	$scope.groups.splice($scope.groups.indexOf(item), 1);
+     } 
+	//ReOrder function
+    $scope.moveItem = function(item, fromIndex, toIndex){
+    $scope.groups.splice(fromIndex, 1);
+    $scope.groups.splice(toIndex, 0, item);
+
+      };
+    
+    }   
+  
+  }
+   
+  /*
+   * if given group is the selected group, deselect it
+   * else, select the given group
+   */
+  $scope.toggleGroup = function(group) {
+    if ($scope.isGroupShown(group)) {
+      $scope.shownGroup = null;
+    } else {
+      $scope.shownGroup = group;  
+
+    
+   
+    }
+  };
+  $scope.isGroupShown = function(group) {
+    return $scope.shownGroup === group;  
+
+  };
+} );
+
+//////////////////////////////////
+//AccordionCtrl end
+//////////////////////////////////
+
+//////////////////////////////////
 //AccountCtrl start
 //////////////////////////////////
 
@@ -81,52 +140,42 @@ app.controller( 'AccountCtrl', function ( $scope, $state )
 
 
 //////////////////////////////////
-//FlipCtrl start
+//ChatsCtrl start
 //////////////////////////////////
 
-app.controller('FlipCtrl', function($scope, Firebase) {
-    //this would be set by auth instead of hard coded
-    uuid = 'Ucg7kUNTceQjOLqDIwByHLz5FPj2'
-    $scope.groups = {}
-    $scope.comment_data = {
-        pad_id: "",
-        comment: "",
-        user_id: uuid
-    }
-    console.log($scope.comment_data)
-    Firebase.get_user_groups(uuid).then(function(data) {
-        group_ids = data.val()
-        console.log("group_ids", group_ids)
-        Firebase.get_groups(group_ids)
-            .then(function(groups) {
-                $scope.groups = groups
-                console.log("$scope.groups", $scope.groups)
-            })
-    })
-    $scope.trigger_comment = function(element) {
-        var output = {
-            user_id: uuid,
-            sent: Date.now(),
-            group_id: element.$parent.group_key,
-            pad_id: element.pad_key,
-            comment: element.pad.new_comment
-        }
-        var comment_data = $scope.groups
-        Firebase.post_comment(output)
-    }
+app.controller( 'ChatsCtrl', function ( $scope, Chats )
+{
+	// With the new view caching in Ionic, Controllers are only called
+	// when they are recreated or on app start, instead of every page change.
+	// To listen for when this page is active (for example, to refresh data),
+	// listen for the $ionicView.enter event:
+	//
+	//$scope.$on('$ionicView.enter', function(e) {
+	//});
 
-    $scope.flip = function(group_key, pad_key) {
-        if (typeof ($scope.groups[group_key].pads[pad_key].flipped) === "undefeined") {
-            $scope.groups[group_key].pads[pad_key].flipped = false;
-        }
-        $scope.groups[group_key].pads[pad_key].flipped = !$scope.groups[group_key].pads[pad_key].flipped
-    }
-
-
-});
+	$scope.chats = Chats.all( );
+	$scope.remove = function ( chat )
+	{
+		Chats.remove( chat );
+	};
+} )
 
 //////////////////////////////////
-//FlipCtrl end
+//ChatsCtrl end
+//////////////////////////////////
+
+
+//////////////////////////////////
+//ChatDetailCtrl start
+//////////////////////////////////
+
+app.controller( 'ChatDetailCtrl', function ( $scope, $stateParams, Chats )
+{
+	$scope.chat = Chats.get( $stateParams.chatId );
+} )
+
+//////////////////////////////////
+//ChatDetailCtrl end
 //////////////////////////////////
 
 
@@ -155,42 +204,78 @@ app.controller( 'DashCtrl', function ( $scope )
 
 
 //////////////////////////////////
-//ChatDetailCtrl start
+//FazAccoubtCtrl start
 //////////////////////////////////
 
-app.controller( 'ChatDetailCtrl', function ( $scope, $stateParams, Chats )
+app.controller( 'FazAccountCtrl', function ( $scope )
 {
-	$scope.chat = Chats.get( $stateParams.chatId );
-} )
+
+} );
 
 //////////////////////////////////
-//ChatDetailCtrl end
+//FazAccoubtCtrl end
 //////////////////////////////////
 
-
 //////////////////////////////////
-//ChatsCtrl start
+//Login_Faz_Ctrl start
 //////////////////////////////////
 
-app.controller( 'ChatsCtrl', function ( $scope, Chats )
+app.controller( 'Login_Faz_Ctrl', function ( $scope )
 {
-	// With the new view caching in Ionic, Controllers are only called
-	// when they are recreated or on app start, instead of every page change.
-	// To listen for when this page is active (for example, to refresh data),
-	// listen for the $ionicView.enter event:
-	//
-	//$scope.$on('$ionicView.enter', function(e) {
-	//});
-
-	$scope.chats = Chats.all( );
-	$scope.remove = function ( chat )
-	{
-		Chats.remove( chat );
-	};
-} )
+	console.log('Login_Faz_Ctrl')
+} );
 
 //////////////////////////////////
-//ChatsCtrl end
+//Login_Faz_Ctrl end
+//////////////////////////////////
+
+
+//////////////////////////////////
+//FlipCtrl start
+//////////////////////////////////
+app.controller('FlipCtrl', function ($scope, Firebase) {
+    //this would be set by auth instead of hard coded
+    uuid = 'Ucg7kUNTceQjOLqDIwByHLz5FPj2'
+    $scope.groups = {}
+    $scope.comment_data = {
+        pad_id: "",
+        comment: "",
+        user_id: uuid
+    }
+
+    Firebase.get_user_groups(uuid).then(function (data) {
+        group_ids = data.val()
+        console.log("group_ids", group_ids)
+        Firebase.get_groups(group_ids)
+            .then(function (groups) {
+                $scope.groups = groups
+                console.log("$scope.groups", $scope.groups)
+            })
+    })
+    $scope.trigger_comment = function (element) {
+        var output = {
+            user_id: uuid,
+            sent: Date.now(),
+            group_id: element.$parent.group_key,
+            pad_id: element.pad_key,
+            comment: element.pad.new_comment
+        }
+        var comment_data = $scope.groups
+        Firebase.post_comment(output)
+    }
+
+    $scope.flip = function (group_key, pad_key) {
+        if (typeof ($scope.groups[group_key].pads[pad_key].flipped) === "undefeined") {
+            $scope.groups[group_key].pads[pad_key].flipped = false;
+        }
+        $scope.groups[group_key].pads[pad_key].flipped = !$scope.groups[group_key].pads[pad_key].flipped
+    }
+
+
+});
+
+//////////////////////////////////
+//FlipCtrl end
 //////////////////////////////////
 
 
@@ -278,19 +363,6 @@ app.controller( 'FromCtrl', function ( $scope )
 
 
 //////////////////////////////////
-//DashCtrl start
-//////////////////////////////////
-
-app.controller( 'HomeCtrl', function ( $scope )
-{
-
-} );
-
-//////////////////////////////////
-//DashCtrl end
-//////////////////////////////////
-
-//////////////////////////////////
 //LoginCtrl start
 //////////////////////////////////
 
@@ -323,6 +395,13 @@ app.controller( 'LoginCtrl', function ( $scope, $state )
 	$scope.input = {
 		displayName: ""
 	}
+
+	$scope.googleSignIn = function ( )
+    {
+        var provider = new firebase.auth.GoogleAuthProvider();
+
+        firebase.auth().signInWithRedirect(provider);
+    }
 
 
 	/**
@@ -601,6 +680,32 @@ app.controller( 'LoginCtrl', function ( $scope, $state )
 //LoginCtrl end
 //////////////////////////////////
 
+
+//////////////////////////////////
+//DashCtrl start
+//////////////////////////////////
+
+app.controller( 'HomeCtrl', function ( $scope )
+{
+
+} );
+
+//////////////////////////////////
+//DashCtrl end
+//////////////////////////////////
+
+//////////////////////////////////
+//FazCtrl start
+//////////////////////////////////
+
+app.controller( 'Login_Faz_Ctrl', function ( $scope )
+{
+
+} );
+
+//////////////////////////////////
+//FazCtrl end
+//////////////////////////////////
 
 app.controller( 'testCtrl', function ( $scope ) {} )
 
