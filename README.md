@@ -38,44 +38,27 @@ build file location - [app name]/platforms/[platform name]
 ios example - [app name]/platforms/[platform name]/[app name].ipa
 
 - - -
-##xCode steps:
-
-* Run ipa file from build directory
-
-* Select IQ->iOS Device as Target
-
-* Go to Project Settings
-
-* General -> Team = "Conker Cloud Innovations"
-
-* Ensure com.conkergroup. is the prefix for this application
-
-* Build Settings -> Code Signing -> Provisioning Profile -> Release = "Conker Group 2016 Dist"
-
-* Build Settings -> Code Signing -> Code Signing Identity -> Release = "iPhone Distribution: Conker Cloud Innovations Ltd."
-
-* In the XCode Menu Bar choose: Product -> Archive
-
-* When built & ready, the "Organiser" window should automatically appear. (If not, then choose Window -> Organiser)
-
-* Select latest (verify the date)
-
-* Click "Export..." (right hand side)
-
-* Choose for Enterprise Deployment, press next.
-
-* Ensure team shows as "Conker Cloud Innovations Ltd.", press choose.
-
-* Uncheck "Export from bitcode"
-
-* Continue to export IPA.
-
-- - -
 ##Gulp functions:
 
-* move_js
+* default
 
-This is so you haven't got to have loads of directories open at once, so it moves the js from the pages directory to the js directory, js is where ionic will look for js files [amazing].
+Run all the tasks in the array.
+
+* running
+
+Consoles all the functions in a larger version than the default messages
+
+* merge_controllers
+
+Takes all the files from the app/www/js/controllers/ and below and creates controller.js
+
+* merge_core
+
+Takes all the files from the app/www/js/app/ and below and creates app.js
+
+* merge_services
+
+Takes all the files from the app/www/js/services/ and below and creates service.js
 
 * sass
 
@@ -84,6 +67,10 @@ While I'm not using sass at moment if you add to the sass file it will generate 
 * watch
 
 Watches file in array and runs commands when they change.
+
+* install
+
+Check if bower packages are installed and if not it installs them.
 
 * git-check
 
