@@ -20,7 +20,7 @@
                 <div class="flip-card" ng-repeat="(pad_key, pad) in group.pads" ng-class="{'flipped':pad.flipped}" ng-if="pad_key!='length'">
                     <div class="front" tabindex="-1 ">
                         <div class="flip-header">
-                            <h2 class="ion-document white">
+                            <h2 class="white">
                                 {{pad.title}}
                             </h2>
                         </div>
@@ -28,14 +28,14 @@
                             {{pad.body}}
                         </div>
                         <div class="flip-footer">
-                            <button class="flip_btn ion-android-chat" ng-click="flip(group_id, pad_key)">
+                            <button class="flip_btn" ng-click="flip(group_id, pad_key)">
                                 Comments [{{pad.comments.length}}]
                             </button>
                         </div>
                     </div>
                     <div class="back" tabindex="-1">
                         <div class="flip-header">
-                            <h2 class="ion-document black">
+                            <h2 class="black">
                                 {{pad.title}}
                             </h2>
                         </div>

@@ -35,14 +35,13 @@ app.controller('FlipCtrl', function ($scope, Firebase) {
         }
         Firebase.post_comment(output)
             .then(function (comment_id) {
-                console.log("before",$scope.groups)
                 $scope.groups[output.group_id].pads[output.pad_id].comments[comment_id] = {}
                 $scope.groups[output.group_id].pads[output.pad_id].comments[comment_id].comment_id = comment_id
                 $scope.groups[output.group_id].pads[output.pad_id].comments[comment_id].content = output.comment
                 $scope.groups[output.group_id].pads[output.pad_id].comments[comment_id].sent = output.sent
                 $scope.groups[output.group_id].pads[output.pad_id].comments[comment_id].user_id = output.user_id
                 $scope.groups[output.group_id].pads[output.pad_id].comments.length++
-                console.log("after",$scope.groups)
+                $scope.$apply()
             })
     }
 
