@@ -156,6 +156,13 @@ app.config( function ( $stateProvider, $urlRouterProvider )
 			}
 		} )
 
+		.state( 'addPad',
+	{
+		url: '/addPad',
+		templateUrl: 'templates/addPad.html',
+		controller: 'addPadCtrl'
+	} )
+
 	.state( 'tab.account',
 	{
 		url: '/account',
