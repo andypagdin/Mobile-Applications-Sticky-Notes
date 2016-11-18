@@ -28,19 +28,23 @@ app.factory('Firebase', function ($q) {
 			}))
 		}
 		return $q.all(promise).then(function (outcome) {
+			console.log("outcome",outcome)
 			var outcome_obj = {}
 			//clears out all undefined outputs and turns it into an object
 			for (var i = 0; i < outcome.length; i++) {
 				if (outcome[i]) {
-					outcome_obj[i] = outcome[i]
+					group_id = outcome[i].group_id
+					outcome_obj[group_id] = outcome[i]
 				}
 			};
 			//set lengths of each sub object
 			outcome_obj.length = Object.keys(outcome_obj).length
+			outcome_obj_keys = Object.keys(outcome_obj)
 			for (var i = 0; i < outcome_obj.length; i++) {
-				users = outcome_obj[i].users
+				outcome = outcome_obj[outcome_obj_keys[i]]
+				users = outcome.users
 				users.length = Object.keys(users).length
-				pads = outcome_obj[i].pads
+				pads = outcome.pads
 				pad_keys = Object.keys(pads)
 				pads.length = Object.keys(pads).length
 				for (var x = 0; x < pads.length; x++) {
@@ -59,17 +63,18 @@ app.factory('Firebase', function ($q) {
 	post_comment = function (arg) {
 		var ref = firebase.database().ref(`/groups/${arg.group_id}/pads/${arg.pad_id}/comments/`);
 		var comment_id = ref.push().key;
+		console.log("comment_id",comment_id)
 		var comment_output = {
 			content: arg.comment,
 			comment_id: comment_id,
 			sent: arg.sent,
 			user_id: arg.user_id
 		}
-
+		console.log("comment_output",comment_output)
 		// Write the session to the database
-		ref.child(`${comment_id}`).set(comment_output).then(function () {
+		return ref.child(`${comment_id}`).set(comment_output).then(function () {
 			// Finally, finish with session information
-			// return comment_output;
+			return comment_id;
 		}).catch(function (error) {
 			console.error("error", error)
 		});
