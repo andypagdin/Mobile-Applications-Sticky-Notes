@@ -187,3 +187,12 @@ h2.black:hover {
 //flip end
 /////////////////////////////////*/
 
+/* fav's button on accordion*/
+
+button.button.button-clear.icon.ion-star.button-assertive {
+    float: right;
+}
+
+
+
+/* fav's button on accordion*/

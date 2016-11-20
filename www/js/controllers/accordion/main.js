@@ -15,17 +15,17 @@ app.controller( 'AccordionCtrl', function ( $scope )
       $scope.groups[i].items.push(i + '-' + j);
      
      //togglestar
-     $scope.toggleStar = function(item){
-     	item.star = !item.star;
+     $scope.toggleStar = function(group){
+     	group.star = !group.star;
      }
      //delete function 
-     $scope.onItemDelete = function(item){
-     	$scope.groups.splice($scope.groups.indexOf(item), 1);
+     $scope.onItemDelete = function(group){
+     	$scope.groups.splice($scope.groups.indexOf(group), 1);
      } 
 	//ReOrder function
-    $scope.moveItem = function(item, fromIndex, toIndex){
+    $scope.moveItem = function(group, fromIndex, toIndex){
     $scope.groups.splice(fromIndex, 1);
-    $scope.groups.splice(toIndex, 0, item);
+    $scope.groups.splice(toIndex, 0, group);
 
       };
     
