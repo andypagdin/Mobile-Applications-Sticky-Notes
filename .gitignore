@@ -5,6 +5,7 @@ node_modules/
 platforms/
 plugins/
 
-www/js/app
+www/js/*.js
+www/js/app.js
 www/js/controllers.js
 www/js/services.js
