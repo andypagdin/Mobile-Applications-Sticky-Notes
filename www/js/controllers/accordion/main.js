@@ -41,11 +41,7 @@ app.controller('AccordionCtrl', function ($scope, Firebase) {
   }
   //delete function
   $scope.onItemDelete = function (group) {
-    console.log("here",$scope.page_data)
-    console.log("here",$scope.page_data.groups)
-    console.log("here",$scope.page_data.groups.indexOf(group))
-    console.log("here",group)
-    $scope.page_data.groups.splice($scope.page_data.groups.indexOf(group), 1);
+    delete $scope.page_data.groups[group]
   }
   //ReOrder function
   $scope.moveItem = function (group, fromIndex, toIndex) {
