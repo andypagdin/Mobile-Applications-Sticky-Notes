@@ -3,9 +3,9 @@
 //////////////////////////////////
 
 app.factory('Firebase', function ($q) {
-	get_user_groups = function (uuid) {
-		console.info("get_user_groups", uuid)
-		return firebase.database().ref(`/users/${uuid}/groups`).once('value', function (data) {
+	get_user = function (uuid) {
+		return firebase.database().ref('/users/').child(uuid).once('value', function (data) {
+			console.log(uuid, data.val())
 			return data;
 		})
 	}
@@ -14,11 +14,10 @@ app.factory('Firebase', function ($q) {
 		keys = Object.keys(group_ids)
 		for (var i = 0; i < keys.length; i++) {
 			group_id = group_ids[keys[i]]
-			read = group_id.read
 			current_group_id = keys[i]
 			promise.push($q(function (resolve, reject) {
-				if (!read) {
-					return firebase.database().ref(`/groups/${current_group_id}`).once("value", function (groups) {
+				if (!group_id.read) {
+					return firebase.database().ref('/groups/').child(current_group_id).once("value", function (groups) {
 						resolve(groups.val());
 					}).catch(reject);
 				}
@@ -28,12 +27,11 @@ app.factory('Firebase', function ($q) {
 			}))
 		}
 		return $q.all(promise).then(function (outcome) {
-			console.log("outcome",outcome)
 			var outcome_obj = {}
 			//clears out all undefined outputs and turns it into an object
 			for (var i = 0; i < outcome.length; i++) {
 				if (outcome[i]) {
-					group_id = outcome[i].group_id
+					group_id = outcome[i].id
 					outcome_obj[group_id] = outcome[i]
 				}
 			};
@@ -56,28 +54,67 @@ app.factory('Firebase', function ($q) {
 			};
 			return outcome_obj;
 		}, function (reason) {
-			console.log('Failed: ', reason);
+			console.error('Failed: ', reason);
 			return reason;
 		});
 	}
-	post_comment = function (arg) {
-		var ref = firebase.database().ref(`/groups/${arg.group_id}/pads/${arg.pad_id}/comments/`);
-		var comment_id = ref.push().key;
-		console.log("comment_id",comment_id)
-		var comment_output = {
-			content: arg.comment,
-			comment_id: comment_id,
-			sent: arg.sent,
-			user_id: arg.user_id
-		}
-		console.log("comment_output",comment_output)
-		// Write the session to the database
-		return ref.child(`${comment_id}`).set(comment_output).then(function () {
-			// Finally, finish with session information
-			return comment_id;
+	post = function(arg){
+		var ref = firebase.database().ref(arg.url);
+		var id = ref.push().key;
+		output = arg.output
+		output.id = id
+		output.timestamp = Date.now()
+		// call storage to get uuid here.
+	    uuid = 'Ucg7kUNTceQjOLqDIwByHLz5FPj2'
+		output.created_by = uuid
+		console.log("[post][output]",output)
+		return ref.child(id).set(output).then(function () {
+			return output;
 		}).catch(function (error) {
 			console.error("error", error)
 		});
+	}
+	post_group = function (arg) {
+		console.log("[post_group][arg]",arg)
+		var data = {
+			url: `/groups/`,
+			output:{
+				title: arg.title
+			}
+		}
+		console.log("[post_group][data]",data)
+		return post(data)
+	}
+	post_pad = function (arg) {
+		console.log("[post_pad][arg]",arg)
+		var data = {
+			url: `/groups/${arg.group_id}/pads/`,
+			output:{
+				title: arg.title,
+				body: arg.body
+			}
+		}
+		console.log("[post_pad][data]",data)
+		return post(data)
+	}
+	post_comment = function (arg) {
+		console.log("[post_comment][arg]",arg)
+		var data = {
+			url: `/groups/${arg.group_id}/pads/${arg.pad_id}/comments/`,
+			output:{
+				body: arg.body
+			}
+		}
+		console.log("[post_comment][data]",data)
+		return post(data).then(function(){
+			var new_comment = {
+				id: output.id,
+				body: output.body,
+				timestamp: output.timestamp,
+				created_by: output.created_by,
+			}
+			return new_comment;
+		})
 	}
 	flat_stub = function () {
 		return firebase.database().ref("").once('value', function (data) {
@@ -85,8 +122,10 @@ app.factory('Firebase', function ($q) {
 		})
 	}
 	return {
-		get_user_groups: get_user_groups,
+		get_user: get_user,
 		get_groups: get_groups,
+		post_group: post_group,
+		post_pad: post_pad,
 		post_comment: post_comment
 	};
 });

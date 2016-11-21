@@ -4,54 +4,43 @@
 app.controller('FlipCtrl', function ($scope, Firebase) {
     //this would be set by auth instead of hard coded
     uuid = 'Ucg7kUNTceQjOLqDIwByHLz5FPj2'
-    $scope.groups = {}
-    $scope.comment_data = {
-        pad_id: "",
-        comment: "",
-        user_id: uuid
-    }
+    $scope.page_data = {}
+    $scope.page_data.groups = {}
+    $scope.page_data.comment_models = {}
     var group_ids = {}
 
-    Firebase.get_user_groups(uuid).then(function (data) {
-        group_ids = data.val()
-        console.log("group_ids", group_ids)
-        $scope.get_groups(group_ids)
+    Firebase.get_user(uuid).then(function (data) {
+        user_details = data.val()
+        $scope.get_groups(user_details.groups)
     })
     $scope.get_groups = function (group_ids) {
         Firebase.get_groups(group_ids)
             .then(function (groups) {
-                console.log(groups)
-                $scope.groups = groups
-                console.log("$scope.groups", $scope.groups)
+                $scope.page_data.groups = groups
             })
     }
-    $scope.trigger_comment = function (group_id, element) {
-        var output = {
-            user_id: uuid,
-            sent: Date.now(),
+    $scope.trigger_comment = function (group_id, pad_id) {
+        var input = {
             group_id: group_id,
-            pad_id: element.$parent.pad_key,
-            comment: element.$parent.pad.new_comment
+            pad_id: pad_id,
+            body: $scope.page_data.comment_models[pad_id].body
         }
-        Firebase.post_comment(output)
-            .then(function (comment_id) {
-                $scope.groups[output.group_id].pads[output.pad_id].comments[comment_id] = {}
-                $scope.groups[output.group_id].pads[output.pad_id].comments[comment_id].comment_id = comment_id
-                $scope.groups[output.group_id].pads[output.pad_id].comments[comment_id].content = output.comment
-                $scope.groups[output.group_id].pads[output.pad_id].comments[comment_id].sent = output.sent
-                $scope.groups[output.group_id].pads[output.pad_id].comments[comment_id].user_id = output.user_id
-                $scope.groups[output.group_id].pads[output.pad_id].comments.length++
+        $scope.page_data.comment_models[pad_id].body = "";
+        Firebase.post_comment(input)
+            .then(function (new_comment) {
+                comments_object = $scope.page_data.groups[input.group_id].pads[input.pad_id].comments_object
+                comments_object[output.id] = new_comment
+                comments_object.length++
                 $scope.$apply()
             })
     }
 
     $scope.flip = function (group_id, pad_key) {
-        console.log(group_id)
-        console.log($scope.groups[group_id])
-        if (typeof ($scope.groups[group_id].pads[pad_key].flipped) === "undefeined") {
-            $scope.groups[group_id].pads[pad_key].flipped = false;
+        pads_object = $scope.page_data.groups[group_id].pads[pad_key]
+        if (typeof (pads_object.flipped) === "undefeined") {
+            pads_object.flipped = false;
         }
-        $scope.groups[group_id].pads[pad_key].flipped = !$scope.groups[group_id].pads[pad_key].flipped
+        pads_object.flipped = !pads_object.flipped
     }
 
 
