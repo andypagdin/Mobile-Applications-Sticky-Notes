@@ -6,7 +6,7 @@ app.controller( 'AccordionCtrl', function ( $scope )
 {
 
 	$scope.groups = [];
-  for (var i=0; i<10; i++) {
+  for (var i=0; i<20; i++) {
     $scope.groups[i] = {
       name: i,
       items: []
@@ -14,24 +14,26 @@ app.controller( 'AccordionCtrl', function ( $scope )
     for (var j=0; j<3; j++) {
       $scope.groups[i].items.push(i + '-' + j);
      
-     //togglestar
+    
+    
+    }   
+  
+  }
+
+   //togglestar
      $scope.toggleStar = function(group){
-     	group.star = !group.star;
+      group.star = !group.star;
      }
      //delete function 
      $scope.onItemDelete = function(group){
-     	$scope.groups.splice($scope.groups.indexOf(group), 1);
+      $scope.groups.splice($scope.groups.indexOf(group), 1);
      } 
-	//ReOrder function
+     //ReOrder function
     $scope.moveItem = function(group, fromIndex, toIndex){
     $scope.groups.splice(fromIndex, 1);
     $scope.groups.splice(toIndex, 0, group);
 
       };
-    
-    }   
-  
-  }
    
   /*
    * if given group is the selected group, deselect it
