@@ -37,6 +37,7 @@ app.controller( 'LoginCtrl', function ( $scope, $state )
         var provider = new firebase.auth.GoogleAuthProvider();
 
         firebase.auth().signInWithRedirect(provider);
+
     }
 
 
@@ -131,22 +132,6 @@ app.controller( 'LoginCtrl', function ( $scope, $state )
 			// [END_EXCLUDE]
 		} );
 		// [END createwithemail]
-	}
-
-	/**
-	 * Sends an email verification to the user.
-	 */
-	$scope.sendEmailVerification = function ( )
-	{
-		// [START sendemailverification]
-		firebase.auth( ).currentUser.sendEmailVerification( ).then( function ( )
-		{
-			// Email Verification sent!
-			// [START_EXCLUDE]
-			console.info( 'Email Verification Sent!' );
-			// [END_EXCLUDE]
-		} );
-		// [END sendemailverification]
 	}
 
 	$scope.sendPasswordReset = function ( )

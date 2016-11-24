@@ -11,6 +11,7 @@ app.controller( 'AccountCtrl', function ( $scope, $state )
 			$scope.email = user.email
 			$scope.uid = user.uid
 			$scope.displayName = user.displayName
+			$scope.photoURL = user.photoURL
 
 			var isVerified = user.emailVerified
 
@@ -21,6 +22,7 @@ app.controller( 'AccountCtrl', function ( $scope, $state )
 			else
 			{
 				$scope.isVerified = "You have not verified your account";
+				btnVerifyEmail.classList.remove('hide');
 			}
 		}
 		else
@@ -44,6 +46,22 @@ app.controller( 'AccountCtrl', function ( $scope, $state )
 	$scope.settings = {
 		enableFriends: true
 	};
+
+	/**
+	 * Sends an email verification to the user.
+	 */
+	$scope.sendEmailVerification = function ( )
+	{
+		// [START sendemailverification]
+		firebase.auth( ).currentUser.sendEmailVerification( ).then( function ( )
+		{
+			// Email Verification sent!
+			// [START_EXCLUDE]
+			console.info( 'Email Verification Sent!' );
+			// [END_EXCLUDE]
+		} );
+		// [END sendemailverification]
+	}
 } );
 
 //////////////////////////////////

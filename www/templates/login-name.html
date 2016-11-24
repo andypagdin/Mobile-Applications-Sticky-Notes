@@ -1,8 +1,13 @@
-<ion-view view-title="What would you like to be called?">
+<ion-view view-title="What would you like to be called?" hide-nav-bar="true">
   <ion-content>
+  <div class="name-container">
+    <h4 class="center">What would you like to be called?</h4>
+    <br/>
     <div class="item item-input">
       <input ng-model="input.displayName " type="text" id="displayName" name="displayName"/>
     </div>
-    <button class="button button-full button-positive" ng-click="updateDisplayName()">Continue</button>
+   </div>
+   <br/>
+   <button class="button button-full button-positive" ng-click="updateDisplayName()">Continue</button>
   </ion-content>
 </ion-view>
