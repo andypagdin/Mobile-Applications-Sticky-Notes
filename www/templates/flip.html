@@ -13,47 +13,120 @@
                     <option>option 4</option>
                 </select>
             </label>
+            </br>
+            </br>
+
+            <input
+                type="input"
+                placeholder="group name"
+                name="group_name"
+                id="group_name"
+                ng-model="page_data.group_models.title">
+
+            <button
+                ng-click="create_group()">
+                add new group
+            </button>
+
         </div>
         <div class="card-container">
-            <div class="group" ng-repeat="(group_id, group) in page_data.groups" ng-if="group_id!='length'">
+            <div
+                class="group"
+                ng-repeat="(group_id, group) in page_data.groups"
+                ng-if="group_id!='length'">
+
                 <span>{{group.title}}</span>
-                <div class="flip-card" ng-repeat="(pad_id, pad) in group.pads" ng-class="{'flipped':pad.flipped}" ng-if="pad_id!='length'">
-                    <div class="front" tabindex="-1 ">
+
+                <input type="input"
+                    placeholder="pad title"
+                    name="pad_title" id="pad_title"
+                    ng-model="page_data.pad_models[group_id].title"
+                    ng-disabled="!page_data.groups[group_id].users[page_data.uid]">
+
+                <textarea
+                    placeholder="pad body"
+                    name="pad_body" id="pad_body"
+                    ng-model="page_data.pad_models[group_id].body"
+                    ng-disabled="!page_data.groups[group_id].users[page_data.uid]">
+                </textarea>
+
+                <button
+                    ng-click="create_pad(group_id)"
+                    ng-disabled="!page_data.groups[group_id].users[page_data.uid]">
+                    add new pad
+                </button>
+
+                <div
+                    class="flip-card"
+                    ng-repeat="(pad_id, pad) in group.pads"
+                    ng-class="{'flipped':pad.flipped}"
+                    ng-if="pad_id!='length'">
+
+                    <div
+                        class="front"
+                        tabindex="-1 ">
                         <div class="flip-header">
                             <h2 class="white">
                                 {{pad.title}}
                             </h2>
                         </div>
+
                         <div class="flip-body">
                             {{pad.body}}
                         </div>
+
                         <div class="flip-footer">
-                            <button class="flip_btn" ng-click="flip(group_id, pad_id)">
+                            <button
+                                class="flip_btn"
+                                ng-click="flip(group_id, pad_id)">
                                 Comments [{{pad.comments.length}}]
                             </button>
                         </div>
+
                     </div>
-                    <div class="back" tabindex="-1">
+
+                    <div
+                        class="back"
+                        tabindex="-1">
                         <div class="flip-header">
                             <h2 class="black">
                                 {{pad.title}}
                             </h2>
                         </div>
+
                         <div class="flip-body">
                             <ul>
-                                <li ng-repeat="(comment_id, comment) in pad.comments" ng-if="comment_id!='length'">{{comment.body}}</li>
+                                <li
+                                    ng-repeat="(comment_id, comment) in pad.comments"
+                                    ng-if="comment_id!='length'">
+                                    {{comment.body}}
+                                </li>
                             </ul>
                             <label>Add comment:
-                                <textarea name="comment" id="comment" placeholder="comment goes here..." ng-model="page_data.comment_models[pad_id].body"></textarea>
+                                <textarea
+                                    name="comment"
+                                    id="comment"
+                                    placeholder="comment goes here..."
+                                    ng-model="page_data.comment_models[pad_id].body"
+                                    ng-disabled="!page_data.groups[group_id].users[page_data.uid]">
+                                </textarea>
                             </label>
-                            <button ng-click="trigger_comment(group_id,pad_id)">Post comment!</button>
+                            <button
+                                    ng-click="create_comment(group_id,pad_id)"
+                                    ng-disabled="!page_data.groups[group_id].users[page_data.uid]">
+                                Post comment!
+                            </button>
                         </div>
+
                         <div class="flip-footer">
-                            <button class="flip_btn ion-arrow-left-b" ng-click="flip(group_id, pad_id)">
+                            <button
+                                class="flip_btn ion-arrow-left-b"
+                                ng-click="flip(group_id, pad_id)">
                                 Back
                             </button>
                         </div>
                     </div>
+
                 </div>
             </div>
         </div>
