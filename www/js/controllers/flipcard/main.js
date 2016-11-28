@@ -45,18 +45,14 @@ app.controller('FlipCtrl', function ($scope, Firebase) {
         })
     }
     $scope.update_group = function (group_id) {
-        console.warn('update group')
-        var title = $scope.page_data.edit_group_models[group_id]
         var input = $scope.page_data.groups[group_id]
-        input.title = title
-        console.log("input", input)
+        input.title = $scope.page_data.edit_group_models[group_id]
         $scope.page_data.edit_group_models[group_id] = "";
         Firebase.update_group(input)
             .then(function (output) {
                 group_object = $scope.page_data.groups[output.id]
                 group_object.title = output.title
                 group_object.timestamp = output.timestamp
-                console.log("group_object", group_object)
                 if (!$scope.$$phase) {
                     $scope.$apply()
                 }

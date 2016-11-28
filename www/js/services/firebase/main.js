@@ -142,19 +142,11 @@ app.factory('Firebase', function ($q) {
 			console.error("error", error)
 		});
 	}
-	update = function (arg) { }
 	post = function (arg) {
 		var url = arg.url
 		var ref = firebase.database().ref(url);
 		var output = arg.output
-		if(!arg.update)
-		{
-			var id = ref.push().key;
-		}
-		else
-		{
-			var id = arg.target;
-		}
+		var id = (arg.update) ? arg.target : ref.push().key;
 		output.id = id
 		output.timestamp = Date.now()
 		return ref.child(id).set(output).then(function () {
@@ -176,15 +168,13 @@ app.factory('Firebase', function ($q) {
 		return uid(true).then(function (uid) {
 			var input = {
 				url: `/groups/`,
-				target:arg.id,
-				update:true,
+				target: arg.id,
+				update: true,
 				output: arg,
 			}
-			console.log("[update_group][uid]", uid)
 			console.log("[update_group][input]", input)
 			return post(input)
 				.then(function (output) {
-					console.log("!output!", output)
 					var new_object = {
 						id: output.id,
 						title: output.title,
