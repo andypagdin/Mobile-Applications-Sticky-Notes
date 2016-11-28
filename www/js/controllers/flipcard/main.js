@@ -6,6 +6,7 @@ app.controller('FlipCtrl', function ($scope, Firebase) {
     $scope.page_data = {}
     $scope.page_data.groups = {}
     $scope.page_data.group_models = {}
+    $scope.page_data.edit_group_models = {}
     $scope.page_data.pad_models = {}
     $scope.page_data.comment_models = {}
     var group_ids = {}
@@ -26,8 +27,39 @@ app.controller('FlipCtrl', function ($scope, Firebase) {
     $scope.get_groups = function (input) {
         Firebase.get_groups(input.groups)
             .then(function (groups) {
+                console.warn("LIST OF ALL GROUPS", groups)
                 $scope.page_data.groups = groups
                 $scope.page_data.uid = input.uid
+            })
+    }
+    $scope.remove_group = function (group_id) {
+        var input = {
+            group_id: group_id,
+        }
+        Firebase.remove_group(input).then(function (output) {
+            delete $scope.page_data.groups[group_id]
+            $scope.page_data.groups.length--
+            if (!$scope.$$phase) {
+                $scope.$apply()
+            }
+        })
+    }
+    $scope.update_group = function (group_id) {
+        console.warn('update group')
+        var title = $scope.page_data.edit_group_models[group_id]
+        var input = $scope.page_data.groups[group_id]
+        input.title = title
+        console.log("input", input)
+        $scope.page_data.edit_group_models[group_id] = "";
+        Firebase.update_group(input)
+            .then(function (output) {
+                group_object = $scope.page_data.groups[output.id]
+                group_object.title = output.title
+                group_object.timestamp = output.timestamp
+                console.log("group_object", group_object)
+                if (!$scope.$$phase) {
+                    $scope.$apply()
+                }
             })
     }
     $scope.create_group = function () {
@@ -51,6 +83,19 @@ app.controller('FlipCtrl', function ($scope, Firebase) {
                     $scope.$apply()
                 }
             })
+    }
+    $scope.remove_pad = function (group_id, pad_id) {
+        var input = {
+            group_id: group_id,
+            pad_id: pad_id,
+        }
+        Firebase.remove_pad(input).then(function (output) {
+            delete $scope.page_data.groups[group_id].pads[pad_id]
+            $scope.page_data.groups[group_id].pads.length--
+            if (!$scope.$$phase) {
+                $scope.$apply()
+            }
+        })
     }
     $scope.create_pad = function (group_id) {
         var title = $scope.page_data.pad_models[group_id].title
@@ -77,6 +122,20 @@ app.controller('FlipCtrl', function ($scope, Firebase) {
                     $scope.$apply()
                 }
             })
+    }
+    $scope.remove_comment = function (group_id, pad_id, comment_id) {
+        var input = {
+            group_id: group_id,
+            pad_id: pad_id,
+            comment_id: comment_id,
+        }
+        Firebase.remove_comment(input).then(function (output) {
+            delete $scope.page_data.groups[group_id].pads[pad_id].comments[comment_id]
+            $scope.page_data.groups[group_id].pads[pad_id].comments.length--
+            if (!$scope.$$phase) {
+                $scope.$apply()
+            }
+        })
     }
     $scope.create_comment = function (group_id, pad_id) {
         var body = $scope.page_data.comment_models[pad_id].body

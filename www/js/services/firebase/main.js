@@ -40,7 +40,7 @@ app.factory('Firebase', function ($q) {
 					console.log("groups")
 					return output = {
 						groups: data.val(),
-						uid:user.uid,
+						uid: user.uid,
 					}
 				}
 				console.log("output")
@@ -121,20 +121,6 @@ app.factory('Firebase', function ($q) {
 			return reason;
 		});
 	}
-
-	post = function (arg) {
-		var url = arg.url
-		var ref = firebase.database().ref(url);
-		var id = ref.push().key;
-		var output = arg.output
-		output.id = id
-		output.timestamp = Date.now()
-		return ref.child(id).set(output).then(function () {
-			return output;
-		}).catch(function (error) {
-			console.error("error", error)
-		});
-	}
 	add_user_group = function (arg) {
 		console.log("[add_user_group][arg]", arg)
 		var url = arg.url
@@ -147,6 +133,68 @@ app.factory('Firebase', function ($q) {
 		});
 	}
 
+	remove = function (arg) {
+		console.log("removing -", arg)
+		var url = arg.url
+		var target = arg.target
+		var ref = firebase.database().ref(url);
+		return ref.child(target).remove().catch(function (error) {
+			console.error("error", error)
+		});
+	}
+	update = function (arg) { }
+	post = function (arg) {
+		var url = arg.url
+		var ref = firebase.database().ref(url);
+		var output = arg.output
+		if(!arg.update)
+		{
+			var id = ref.push().key;
+		}
+		else
+		{
+			var id = arg.target;
+		}
+		output.id = id
+		output.timestamp = Date.now()
+		return ref.child(id).set(output).then(function () {
+			return output;
+		}).catch(function (error) {
+			console.error("error", error)
+		});
+	}
+
+	remove_group = function (arg) {
+		input = {
+			url: `/groups/`,
+			target: arg.group_id,
+		}
+		return remove(input)
+	}
+	update_group = function (arg) {
+		console.log("[update_group][arg]", arg)
+		return uid(true).then(function (uid) {
+			var input = {
+				url: `/groups/`,
+				target:arg.id,
+				update:true,
+				output: arg,
+			}
+			console.log("[update_group][uid]", uid)
+			console.log("[update_group][input]", input)
+			return post(input)
+				.then(function (output) {
+					console.log("!output!", output)
+					var new_object = {
+						id: output.id,
+						title: output.title,
+						timestamp: output.timestamp
+					}
+					console.log("!new_object!", new_object)
+					return new_object;
+				})
+		})
+	}
 	post_group = function (arg) {
 		console.log("[post_group][arg]", arg)
 		return uid(true).then(function (uid) {
@@ -189,6 +237,14 @@ app.factory('Firebase', function ($q) {
 				})
 		})
 	}
+	remove_pad = function (arg) {
+		input = {
+			url: `/groups/${arg.group_id}/pads/`,
+			target: arg.pad_id,
+		}
+		return remove(input)
+	}
+	update_pad = function (arg) { }
 	post_pad = function (arg) {
 		console.log("[post_pad][arg]", arg)
 		return uid(true).then(function (uid) {
@@ -217,6 +273,15 @@ app.factory('Firebase', function ($q) {
 				})
 		})
 	}
+	remove_comment = function (arg) {
+		input = {
+			url: `/groups/${arg.group_id}/pads/${arg.pad_id}/comments`,
+			target: arg.comment_id,
+		}
+		return remove(input)
+
+	}
+	update_comment = function (arg) { }
 	post_comment = function (arg) {
 		console.log("[post_comment][arg]", arg)
 		return uid(true).then(function (uid) {
@@ -250,8 +315,14 @@ app.factory('Firebase', function ($q) {
 		create_user: create_user,
 		get_user_groups: get_user_groups,
 		get_groups: get_groups,
+		remove_group: remove_group,
+		update_group: update_group,
 		post_group: post_group,
+		remove_pad: remove_pad,
+		update_pad: update_pad,
 		post_pad: post_pad,
+		remove_comment: remove_comment,
+		update_comment: update_comment,
 		post_comment: post_comment,
 	};
 });
