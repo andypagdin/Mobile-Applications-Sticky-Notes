@@ -4,16 +4,20 @@
             <div class = "col header text-center">
                <img src="./img/ionic.png" class = "logo" />
             </div>
-                <label class="item item-input">
-                    <input type="text" placeholder="Enter User name to invite">
-                </label>
+                <input name="pad_title" 
+                    id="pad_title" type="input" 
+                    placeholder="Title of new pad!" 
+                    ng-model="page_data.currentGroup.title"
+                    >
+                <br>
+                <input type="input" placeholder="Pad Body" 
+                    name="pad_body" id="pad_body"
+                    ng-model="page_data.currentGroup.body"
+                    >
                 <br>                
-                <button class="button button-block  button-balanced">Add User</button>
-                <label class="item item-input">
-                    <input type="text" placeholder="Pad Name">
-                </label>
-                <br>                
-                <button class="button button-block  button-balanced">Create Pad</button>
+                <button class="button button  button-balanced" 
+                ng-click="create_pad()"
+                >Create Pad</button>
         </section>
     </ion-content>
 </ion-view>

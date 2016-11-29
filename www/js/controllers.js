@@ -27,117 +27,63 @@ app = angular.module( 'starter.controllers', [ ] )
 //////////////////////////////////
 
 
-//////////////////////////////////
-//AccountCtrl start
-//////////////////////////////////
-
-app.controller( 'AccountCtrl', function ( $scope, $state )
+app.controller( 'addPadCtrl', function ( $scope, Firebase )
 {
-	firebase.auth( ).onAuthStateChanged( function ( user )
-	{
-		if ( user )
-		{
-			$scope.email = user.email
-			$scope.uid = user.uid
-			$scope.displayName = user.displayName
-
-			var isVerified = user.emailVerified
-
-			if ( user.emailVerified )
-			{
-				$scope.isVerified = "You have verified your account";
-			}
-			else
-			{
-				$scope.isVerified = "You have not verified your account";
-			}
-		}
-		else
-		{
-
-		}
-	} );
-
-	$scope.signOut = function ( )
-	{
-		firebase.auth( ).signOut( ).then( function ( )
-		{
-			$state.go( 'login' )
-			console.log( "signed out" )
-		}, function ( error )
-		{
-			console.log( error )
-		} );
-	}
-
-	$scope.settings = {
-		enableFriends: true
-	};
-} );
-
-//////////////////////////////////
-//AccountCtrl end
-//////////////////////////////////
-
-
-//////////////////////////////////
-//AccordionCtrl start
-//////////////////////////////////
-
-app.controller( 'AccordionCtrl', function ( $scope )
-{
-
-	$scope.groups = [];
-  for (var i=0; i<10; i++) {
-    $scope.groups[i] = {
-      name: i,
-      items: []
-    };
-    for (var j=0; j<3; j++) {
-      $scope.groups[i].items.push(i + '-' + j);
-     
-     //togglestar
-     $scope.toggleStar = function(group){
-     	group.star = !group.star;
-     }
-     //delete function 
-     $scope.onItemDelete = function(group){
-     	$scope.groups.splice($scope.groups.indexOf(group), 1);
-     } 
-	//ReOrder function
-    $scope.moveItem = function(group, fromIndex, toIndex){
-    $scope.groups.splice(fromIndex, 1);
-    $scope.groups.splice(toIndex, 0, group);
-
-      };
-    
-    }   
-  
-  }
-   
-  /*
-   * if given group is the selected group, deselect it
-   * else, select the given group
-   */
-  $scope.toggleGroup = function(group) {
-    if ($scope.isGroupShown(group)) {
-      $scope.shownGroup = null;
-    } else {
-      $scope.shownGroup = group;  
-
-    
-   
+	$scope.page_data = {}
+    $scope.page_data.groups = {}
+    $scope.page_data.group_models = {}
+    $scope.page_data.pad_models = {}
+    $scope.page_data.pad_models["-KXNSUDZByXtgP6KaCQe"] = {} 
+    $scope.page_data.comment_models = {}
+    $scope.page_data.currentGroup = {
+    	id:"-KXNSUDZByXtgP6KaCQe",
+    	title:"",
+    	body:"",
     }
-  };
-  $scope.isGroupShown = function(group) {
-    return $scope.shownGroup === group;  
+    var group_ids = {}
 
-  };
+	$scope.create_pad = function () {
+        var title = $scope.page_data.currentGroup.title
+        var body = $scope.page_data.currentGroup.body
+        var input = {
+            group_id: $scope.page_data.currentGroup.id,
+            title: title,
+            body: body,
+        }        
+        $scope.page_data.currentGroup.title = "";
+        $scope.page_data.currentGroup.body = "";
+        Firebase.post_pad(input)
+            .then(function (new_object) {            	
+                pads_object = $scope.page_data.groups[group_id].pads                
+                if (!pads_object) {
+                    pads_object = {}
+                    pads_object.length = 0
+                }
+                pads_object[new_object.id] = {}
+                pads_object[new_object.id] = new_object
+                pads_object.length++
+                console.log("pads_object", pads_object)
+                if (!$scope.$$phase) {
+                    $scope.$apply()
+                }
+            })
+    }
+
+
 } );
+//////////////////////////////////
+//ChatDetailCtrl start
+//////////////////////////////////
+
+app.controller( 'ChatDetailCtrl', function ( $scope, $stateParams, Chats )
+{
+	$scope.chat = Chats.get( $stateParams.chatId );
+} )
 
 //////////////////////////////////
-//AccordionCtrl end
+//ChatDetailCtrl end
 //////////////////////////////////
+
 
 //////////////////////////////////
 //ChatsCtrl start
@@ -166,18 +112,17 @@ app.controller( 'ChatsCtrl', function ( $scope, Chats )
 
 
 //////////////////////////////////
-//ChatDetailCtrl start
+//FazAccoubtCtrl start
 //////////////////////////////////
 
-app.controller( 'ChatDetailCtrl', function ( $scope, $stateParams, Chats )
+app.controller( 'FazAccountCtrl', function ( $scope )
 {
-	$scope.chat = Chats.get( $stateParams.chatId );
-} )
+
+} );
 
 //////////////////////////////////
-//ChatDetailCtrl end
+//FazAccoubtCtrl end
 //////////////////////////////////
-
 
 //////////////////////////////////
 //DashCtrl start
@@ -204,17 +149,125 @@ app.controller( 'DashCtrl', function ( $scope )
 
 
 //////////////////////////////////
-//FazAccoubtCtrl start
+//FlipCtrl start
+//////////////////////////////////
+app.controller('FlipCtrl', function ($scope, Firebase) {
+
+    $scope.page_data = {}
+    $scope.page_data.groups = {}
+    $scope.page_data.group_models = {}
+    $scope.page_data.pad_models = {}
+    $scope.page_data.comment_models = {}
+    var group_ids = {}
+
+    Firebase.get_user_groups().then(function (outcome) {
+        if (outcome.groups) {
+            console.log("groups", outcome)
+            $scope.get_groups(outcome)
+        }
+        else {
+            console.log("users", outcome)
+            input.groups = {
+                general: true,
+            }
+            Firebase.create_user(outcome)
+        }
+    })
+    $scope.get_groups = function (input) {
+        Firebase.get_groups(input.groups)
+            .then(function (groups) {
+                $scope.page_data.groups = groups
+                $scope.page_data.uid = input.uid
+            })
+    }
+    $scope.create_group = function () {
+        var title = $scope.page_data.group_models.title
+        var input = {
+            title: title,
+        }
+        $scope.page_data.group_models.title = "";
+        Firebase.post_group(input)
+            .then(function (new_object) {
+                group_object = $scope.page_data.groups
+                if (!group_object) {
+                    group_object = {}
+                    group_object.length = 0
+                }
+                group_object[new_object.id] = {}
+                group_object[new_object.id] = new_object
+                group_object.length++
+                console.log("group_object", group_object)
+                if (!$scope.$$phase) {
+                    $scope.$apply()
+                }
+            })
+    }
+    $scope.create_pad = function (group_id) {
+        var title = $scope.page_data.pad_models[group_id].title
+        var body = $scope.page_data.pad_models[group_id].body
+        var input = {
+            group_id: group_id,
+            title: title,
+            body: body,
+        }
+        $scope.page_data.pad_models[group_id].title = "";
+        $scope.page_data.pad_models[group_id].body = "";
+        Firebase.post_pad(input)
+            .then(function (new_object) {
+                pads_object = $scope.page_data.groups[group_id].pads
+                if (!pads_object) {
+                    pads_object = {}
+                    pads_object.length = 0
+                }
+                pads_object[new_object.id] = {}
+                pads_object[new_object.id] = new_object
+                pads_object.length++
+                console.log("pads_object", pads_object)
+                if (!$scope.$$phase) {
+                    $scope.$apply()
+                }
+            })
+    }
+    $scope.create_comment = function (group_id, pad_id) {
+        var body = $scope.page_data.comment_models[pad_id].body
+        var input = {
+            group_id: group_id,
+            pad_id: pad_id,
+            body: body,
+        }
+        $scope.page_data.comment_models[pad_id].body = "";
+        Firebase.post_comment(input)
+            .then(function (new_object) {
+                comments_object = $scope.page_data.groups[input.group_id].pads[input.pad_id].comments
+                if (!comments_object) {
+                    comments_object = {}
+                    comments_object.length = 0
+                }
+                comments_object[new_object.id]
+                comments_object[new_object.id] = new_object
+                comments_object.length++
+                console.log("comments_object", comments_object)
+                if (!$scope.$$phase) {
+                    $scope.$apply()
+                }
+            })
+    }
+
+    $scope.flip = function (group_id, pad_key) {
+        pads_object = $scope.page_data.groups[group_id].pads[pad_key]
+        if (typeof (pads_object.flipped) === "undefeined") {
+            pads_object.flipped = false;
+        }
+        pads_object.flipped = !pads_object.flipped
+    }
+
+
+});
+
+//////////////////////////////////
+//FlipCtrl end
 //////////////////////////////////
 
-app.controller( 'FazAccountCtrl', function ( $scope )
-{
-
-} );
-
-//////////////////////////////////
-//FazAccoubtCtrl end
-//////////////////////////////////
 
 //////////////////////////////////
 //Login_Faz_Ctrl start
@@ -227,55 +280,6 @@ app.controller( 'Login_Faz_Ctrl', function ( $scope )
 
 //////////////////////////////////
 //Login_Faz_Ctrl end
-//////////////////////////////////
-
-
-//////////////////////////////////
-//FlipCtrl start
-//////////////////////////////////
-app.controller('FlipCtrl', function ($scope, Firebase) {
-    //this would be set by auth instead of hard coded
-    uuid = 'Ucg7kUNTceQjOLqDIwByHLz5FPj2'
-    $scope.groups = {}
-    $scope.comment_data = {
-        pad_id: "",
-        comment: "",
-        user_id: uuid
-    }
-
-    Firebase.get_user_groups(uuid).then(function (data) {
-        group_ids = data.val()
-        console.log("group_ids", group_ids)
-        Firebase.get_groups(group_ids)
-            .then(function (groups) {
-                $scope.groups = groups
-                console.log("$scope.groups", $scope.groups)
-            })
-    })
-    $scope.trigger_comment = function (element) {
-        var output = {
-            user_id: uuid,
-            sent: Date.now(),
-            group_id: element.$parent.group_key,
-            pad_id: element.pad_key,
-            comment: element.pad.new_comment
-        }
-        var comment_data = $scope.groups
-        Firebase.post_comment(output)
-    }
-
-    $scope.flip = function (group_key, pad_key) {
-        if (typeof ($scope.groups[group_key].pads[pad_key].flipped) === "undefeined") {
-            $scope.groups[group_key].pads[pad_key].flipped = false;
-        }
-        $scope.groups[group_key].pads[pad_key].flipped = !$scope.groups[group_key].pads[pad_key].flipped
-    }
-
-
-});
-
-//////////////////////////////////
-//FlipCtrl end
 //////////////////////////////////
 
 
@@ -363,6 +367,177 @@ app.controller( 'FromCtrl', function ( $scope )
 
 
 //////////////////////////////////
+//AccordionCtrl start
+//////////////////////////////////
+
+app.controller('AccordionCtrl', function ($scope, Firebase) {
+
+  // $scope.page_data.groups = [];
+  // for (var i = 0; i < 20; i++) {
+  //   $scope.page_data.groups[i] = {
+  //     name: i,
+  //     items: []
+  //   };
+  //   for (var j = 0; j < 3; j++) {
+  //     $scope.page_data.groups[i].items.push(i + '-' + j);
+  //   }
+  // }
+  $scope.page_data = {}
+  $scope.page_data.groups = {}
+  $scope.page_data.comment_models = {}
+  var group_ids = {}
+  uuid = 'Ucg7kUNTceQjOLqDIwByHLz5FPj2'
+  Firebase.get_user(uuid).then(function (data) {
+    user_details = data.val()
+
+    console.log("user_details", user_details)
+    $scope.get_groups(user_details.groups)
+  })
+
+  $scope.get_groups = function (group_ids) {
+    console.log("group_ids", group_ids)
+    Firebase.get_groups(group_ids)
+      .then(function (groups) {
+        console.log("groups", groups)
+        $scope.page_data.groups = groups
+      })
+  }
+
+  //togglestar
+  $scope.toggleStar = function (group) {
+    group.star = !group.star;
+  }
+  //delete function
+  $scope.onItemDelete = function (group) {
+    delete $scope.page_data.groups[group]
+  }
+  //ReOrder function
+  $scope.moveItem = function (group, fromIndex, toIndex) {
+    $scope.page_data.groups.splice(fromIndex, 1);
+    $scope.page_data.groups.splice(toIndex, 0, group);
+
+  };
+  /*
+   * if given group is the selected group, deselect it
+   * else, select the given group
+   */
+  $scope.toggleGroup = function (group) {
+    if ($scope.isGroupShown(group)) {
+      $scope.shownGroup = null;
+    } else {
+      $scope.shownGroup = group;
+    }
+  };
+  $scope.isGroupShown = function (group) {
+    return $scope.shownGroup === group;
+  };
+});
+
+//////////////////////////////////
+//AccordionCtrl end
+//////////////////////////////////
+
+//////////////////////////////////
+//DashCtrl start
+//////////////////////////////////
+
+app.controller( 'HomeCtrl', function ( $scope )
+{
+
+} );
+
+//////////////////////////////////
+//DashCtrl end
+//////////////////////////////////
+
+//////////////////////////////////
+//AccountCtrl start
+//////////////////////////////////
+
+app.controller( 'AccountCtrl', function ( $scope, $state )
+{
+	firebase.auth( ).onAuthStateChanged( function ( user )
+	{
+		if ( user )
+		{
+			$scope.email = user.email
+			$scope.uid = user.uid
+			$scope.displayName = user.displayName
+			$scope.photoURL = user.photoURL
+
+			var isVerified = user.emailVerified
+
+			if ( user.emailVerified )
+			{
+				$scope.isVerified = "You have verified your account";
+			}
+			else
+			{
+				$scope.isVerified = "You have not verified your account";
+				btnVerifyEmail.classList.remove('hide');
+			}
+		}
+		else
+		{
+
+		}
+	} );
+
+	$scope.signOut = function ( )
+	{
+		firebase.auth( ).signOut( ).then( function ( )
+		{
+			$state.go( 'login' )
+			console.log( "signed out" )
+		}, function ( error )
+		{
+			console.log( error )
+		} );
+	}
+
+	$scope.settings = {
+		enableFriends: true
+	};
+
+	/**
+	 * Sends an email verification to the user.
+	 */
+	$scope.sendEmailVerification = function ( )
+	{
+		// [START sendemailverification]
+		firebase.auth( ).currentUser.sendEmailVerification( ).then( function ( )
+		{
+			// Email Verification sent!
+			// [START_EXCLUDE]
+			console.info( 'Email Verification Sent!' );
+			// [END_EXCLUDE]
+		} );
+		// [END sendemailverification]
+	}
+} );
+
+//////////////////////////////////
+//AccountCtrl end
+//////////////////////////////////
+
+
+//////////////////////////////////
+//FazCtrl start
+//////////////////////////////////
+
+app.controller( 'Login_Faz_Ctrl', function ( $scope )
+{
+
+} );
+
+//////////////////////////////////
+//FazCtrl end
+//////////////////////////////////
+
+app.controller( 'testCtrl', function ( $scope ) {} )
+
+
+//////////////////////////////////
 //LoginCtrl start
 //////////////////////////////////
 
@@ -401,6 +576,7 @@ app.controller( 'LoginCtrl', function ( $scope, $state )
         var provider = new firebase.auth.GoogleAuthProvider();
 
         firebase.auth().signInWithRedirect(provider);
+
     }
 
 
@@ -495,22 +671,6 @@ app.controller( 'LoginCtrl', function ( $scope, $state )
 			// [END_EXCLUDE]
 		} );
 		// [END createwithemail]
-	}
-
-	/**
-	 * Sends an email verification to the user.
-	 */
-	$scope.sendEmailVerification = function ( )
-	{
-		// [START sendemailverification]
-		firebase.auth( ).currentUser.sendEmailVerification( ).then( function ( )
-		{
-			// Email Verification sent!
-			// [START_EXCLUDE]
-			console.info( 'Email Verification Sent!' );
-			// [END_EXCLUDE]
-		} );
-		// [END sendemailverification]
 	}
 
 	$scope.sendPasswordReset = function ( )
@@ -679,33 +839,4 @@ app.controller( 'LoginCtrl', function ( $scope, $state )
 //////////////////////////////////
 //LoginCtrl end
 //////////////////////////////////
-
-
-//////////////////////////////////
-//DashCtrl start
-//////////////////////////////////
-
-app.controller( 'HomeCtrl', function ( $scope )
-{
-
-} );
-
-//////////////////////////////////
-//DashCtrl end
-//////////////////////////////////
-
-//////////////////////////////////
-//FazCtrl start
-//////////////////////////////////
-
-app.controller( 'Login_Faz_Ctrl', function ( $scope )
-{
-
-} );
-
-//////////////////////////////////
-//FazCtrl end
-//////////////////////////////////
-
-app.controller( 'testCtrl', function ( $scope ) {} )
 
