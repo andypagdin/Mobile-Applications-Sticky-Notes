@@ -32,12 +32,10 @@ app.factory('Firebase', function ($q) {
 	get_user_groups = function () {
 		return uid().then(function (user) {
 			var url = `/users/${user.uid}/groups/`
-			console.log("url", url)
 			return firebase.database().ref(url).once('value', function (data) {
 				return data.val()
 			}).then(function (data) {
 				if (data.val()) {
-					console.log("groups")
 					return output = {
 						groups: data.val(),
 						uid: user.uid,
@@ -89,14 +87,15 @@ app.factory('Firebase', function ($q) {
 		}
 		return $q.all(promise).then(function (outcome) {
 			var outcome_obj = {}
-			//clears out all undefined outputs and turns it into an object
+			// clears out all undefined outputs and turns it into an object
 			for (var i = 0; i < outcome.length; i++) {
 				if (outcome[i]) {
 					group_id = outcome[i].id
 					outcome_obj[group_id] = outcome[i]
 				}
 			};
-			//set lengths of each sub object
+
+			// set lengths of each sub object
 			outcome_obj.length = Object.keys(outcome_obj).length
 			outcome_obj_keys = Object.keys(outcome_obj)
 			for (var i = 0; i < outcome_obj.length; i++) {
@@ -156,12 +155,22 @@ app.factory('Firebase', function ($q) {
 		});
 	}
 
+	//////////////////////////////////
+	// groups start
+	//////////////////////////////////
 	remove_group = function (arg) {
-		input = {
+		group_input = {
 			url: `/groups/`,
 			target: arg.group_id,
 		}
-		return remove(input)
+		user_input = {
+			url: `/users/${arg.uid}/groups/`,
+			target: arg.group_id,
+		}
+
+		return remove(group_input).then(function () {
+			return remove(user_input)
+		})
 	}
 	update_group = function (arg) {
 		console.log("[update_group][arg]", arg)
@@ -213,13 +222,13 @@ app.factory('Firebase', function ($q) {
 				.then(function (output) {
 					console.log("!ouput!", output)
 					var new_object = {
+						created_by: output.created_by,
 						id: output.id,
 						title: output.title,
 						timestamp: output.timestamp,
-						pads: {
-							length: 0
-						},
 						users: {
+						},
+						pads: {
 						},
 					}
 					new_object.users[output.created_by] = true;
@@ -227,6 +236,12 @@ app.factory('Firebase', function ($q) {
 				})
 		})
 	}
+	//////////////////////////////////
+	// groups end
+	//////////////////////////////////
+	//////////////////////////////////
+	// pads start
+	//////////////////////////////////
 	remove_pad = function (arg) {
 		input = {
 			url: `/groups/${arg.group_id}/pads/`,
@@ -250,11 +265,12 @@ app.factory('Firebase', function ($q) {
 			return post(data)
 				.then(function (output) {
 					var new_object = {
-						id: output.id,
-						title: output.title,
 						body: output.body,
-						timestamp: output.timestamp,
 						created_by: output.created_by,
+						id: output.id,
+						new_comment: '',
+						timestamp: output.timestamp,
+						title: output.title,
 						comments: {
 							length: 0
 						},
@@ -263,6 +279,12 @@ app.factory('Firebase', function ($q) {
 				})
 		})
 	}
+	//////////////////////////////////
+	// pads end
+	//////////////////////////////////
+	//////////////////////////////////
+	// comments start
+	//////////////////////////////////
 	remove_comment = function (arg) {
 		input = {
 			url: `/groups/${arg.group_id}/pads/${arg.pad_id}/comments`,
@@ -295,6 +317,9 @@ app.factory('Firebase', function ($q) {
 				})
 		})
 	}
+	//////////////////////////////////
+	// comments end
+	//////////////////////////////////
 	flat_stub = function () {
 		return firebase.database().ref("").once('value', function (data) {
 			return data;
