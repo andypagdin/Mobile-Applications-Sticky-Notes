@@ -2,6 +2,8 @@
 <ion-view>
     <ion-content class="padding has-header">
         <div class="add_new_card">
+            <!--
+                ELEMENT SNIPPETS
             <label for="stub">stub
                 <input type="input" name="stub" id="stub">
             </label>
@@ -13,15 +15,14 @@
                     <option>option 4</option>
                 </select>
             </label>
-            </br>
-            </br>
-
+            -->
+            
             <input
                 type="input"
                 placeholder="group name"
                 name="group_name"
                 id="group_name"
-                ng-model="page_data.group_models.title">
+                ng-model="page.models.group.create.title">
 
             <button
                 ng-click="create_group()">
@@ -32,7 +33,7 @@
         <div class="card-container">
             <div
                 class="group"
-                ng-repeat="(group_id, group) in page_data.groups"
+                ng-repeat="(group_id, group) in page.data.groups"
                 ng-if="group_id!='length'">
 
                 <span>{{group.title}}</span>
@@ -47,7 +48,7 @@
                 placeholder="edit group name"
                 name="edit_group_name"
                 id="edit_group_name"
-                ng-model="page_data.edit_group_models[group_id]">
+                ng-model="page.models.group.edit[group_id].title">
 
                 <button
                     ng-click="update_group(group_id)">
@@ -57,19 +58,19 @@
                 <input type="input"
                     placeholder="pad title"
                     name="pad_title" id="pad_title"
-                    ng-model="page_data.pad_models[group_id].title"
-                    ng-disabled="!page_data.groups[group_id].users[page_data.uid]">
+                    ng-model="page.models.pad.create[group_id].title"
+                    ng-disabled="!page.data.groups[group_id].users[page.data.uid]">
 
                 <textarea
                     placeholder="pad body"
                     name="pad_body" id="pad_body"
-                    ng-model="page_data.pad_models[group_id].body"
-                    ng-disabled="!page_data.groups[group_id].users[page_data.uid]">
+                    ng-model="page.models.pad.create[group_id].body"
+                    ng-disabled="!page.data.groups[group_id].users[page.data.uid]">
                 </textarea>
 
                 <button
                     ng-click="create_pad(group_id)"
-                    ng-disabled="!page_data.groups[group_id].users[page_data.uid]">
+                    ng-disabled="!page.data.groups[group_id].users[page.data.uid]">
                     add new pad
                 </button>
 
@@ -132,13 +133,13 @@
                                     name="comment"
                                     id="comment"
                                     placeholder="comment goes here..."
-                                    ng-model="page_data.comment_models[pad_id].body"
-                                    ng-disabled="!page_data.groups[group_id].users[page_data.uid]">
+                                    ng-model="page.data.comment_models[pad_id].body"
+                                    ng-disabled="!page.data.groups[group_id].users[page.data.uid]">
                                 </textarea>
                             </label>
                             <button
                                     ng-click="create_comment(group_id,pad_id)"
-                                    ng-disabled="!page_data.groups[group_id].users[page_data.uid]">
+                                    ng-disabled="!page.data.groups[group_id].users[page.data.uid]">
                                 Post comment!
                             </button>
                         </div>
