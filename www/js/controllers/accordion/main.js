@@ -14,16 +14,32 @@ app.controller('AccordionCtrl', function ($scope, Firebase) {
   //     $scope.page_data.groups[i].items.push(i + '-' + j);
   //   }
   // }
-$scope.page_data = {}
+  $scope.page_data = {}
   $scope.page_data.groups = {}
   $scope.page_data.comment_models = {}
   var group_ids = {}
-  uid = Firebase.uid(true)
-  Firebase.check_user(uid).then(function (data) {
-    user_details = data
 
+  // Firebase.uid(true) gets uid
+  // Firebase.uid() gets full user object
+  // uid = Firebase.uid(true)
+
+  // check user doesnt need a uid
+  // Firebase.check_user(uid).then(function (data) {
+
+    // user_details = data
+    // console.log("user_details", user_details)
+
+    // This wont work check user isnt in $scope its in Firebase
+    // $scope/Firebase are like an objects but are at the same level
+    // {$scope:{},Firebase:{}}
+    // $scope.check_user(user_details.groups)
+
+  // })
+
+
+  Firebase.check_user().then(function (data) {
+    user_details = data
     console.log("user_details", user_details)
-    $scope.check_user(user_details.groups)
   })
 
   $scope.get_user_groups = function (group_ids) {
