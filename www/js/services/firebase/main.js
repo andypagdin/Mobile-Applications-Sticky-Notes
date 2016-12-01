@@ -1,56 +1,64 @@
 //////////////////////////////////
 //firebaseServ start
 //////////////////////////////////
-
 app.factory('Firebase', function ($q, $state) {
+	//global refference to the current user
 	current_user = {}
-	uid = function (uid) {
+	uid = function (only_uid) {
+		// create a promise
 		return $q(function (resolve, reject) {
+			// do we already have user data?
+			// if no -
 			if (Object.keys(current_user).length < 1) {
+				// get user data from Auth
 				firebase.auth().onAuthStateChanged(function (user) {
-					console.warn("user", user)
+					// user is the users data, if no data they didnt login!
 					if (user) {
+						// set global ref
 						current_user = user
-						if (uid) {
+						// only return the uid
+						if (only_uid) {
 							resolve(user.uid)
 						}
+						// return full user obj
 						resolve(user)
 					}
 					else {
+						// kick user to log in screen
 						$state.go('login')
 						reject()
 					}
 				});
 			}
+			// if yes -
 			else {
-				if (uid) {
-					console.log("[uid][else]current_user", current_user.public.uid)
+				if (only_uid) {
+					// only return the uid
 					resolve(current_user.public.uid)
 				}
+				// return full user obj
 				resolve(current_user)
 			}
 		})
 	}
 	create_user = function (user_data) {
-		console.log("user_data", user_data)
+		// add timestamp
 		user_data.private.timestamp = Date.now()
-		var input = {
-			url: `/users/`,
-			target: user_data.public.uid,
-			update: true,
-			output: user_data,
-		}
-		console.log("[create_user][input]", input)
+		// I would normaly use post here but users has a different structure
 		var ref = firebase.database().ref('/users/');
-		return ref.child(user_data.public.uid).set(input.output).then(function () {
-			return input;
+		return ref.child(user_data.public.uid).set(user_data).then(function () {
+			// pass back the new user_data
+			return user_data;
 		}).catch(function (error) {
+			// if error say so!
 			console.error("error", error)
 		});
 	}
 	get_groups = function (group_ids) {
-		console.info(group_ids)
 		promise = []
+		// if there are no groud ids we need to return
+		// but get_groups still needs to return a promise
+		// with its associated object
 		if (!group_ids) {
 			promise.push($q(function () {
 				return {};
@@ -59,42 +67,43 @@ app.factory('Firebase', function ($q, $state) {
 				return outcome;
 			})
 		}
+
+		// for every group_id build a promise
+		// and if successfull add the resolve value to an array
 		keys = Object.keys(group_ids)
 		for (var i = 0; i < keys.length; i++) {
-			console.info(i)
 			group_id = group_ids[keys[i]]
 			current_group_id = keys[i]
 			promise.push($q(function (resolve, reject) {
-				if (!group_id.read) {
-					return firebase.database().ref('/groups/').child(current_group_id).once("value", function (groups) {
-						resolve(groups.val());
-					}).catch(function (error) {
-						console.error("[get_groups] We hit an error!", error)
-						reject()
-					});
-				}
-				else {
-					resolve();
-				}
+				return firebase.database().ref('/groups/').child(current_group_id).once("value", function (groups) {
+					resolve(groups.val());
+				}).catch(function (error) {
+					console.error("[get_groups] We hit an error!", error)
+					reject()
+				});
 			}))
 		}
-		return $q.all(promise).then(function (outcome) {
-			var outcome_obj = {}
+		// once all promise have finished
+		return $q.all(promise).then(function (output) {
+			var output_obj = {}
 			// clears out all undefined outputs and turns it into an object
-			for (var i = 0; i < outcome.length; i++) {
-				if (outcome[i]) {
-					group_id = outcome[i].id
-					outcome_obj[group_id] = outcome[i]
+			// i think this is now redundant but need ###TESTING###
+			for (var i = 0; i < output.length; i++) {
+				if (output[i]) {
+					group_id = output[i].id
+					output_obj[group_id] = output[i]
 				}
 			};
-			return outcome_obj;
+			// return output
+			return output_obj;
 		}, function (error) {
 			console.error("[get_groups][$q.all] We hit an error!", error)
 			return {}
 		});
 	}
 	add_user_group = function (arg) {
-		console.log("[add_user_group][arg]", arg)
+		// this is used to update the groups object for each user
+		// output/structure should always be a hashmap
 		var url = arg.url
 		var ref = firebase.database().ref(url);
 		var group_id = arg.group_id
@@ -114,10 +123,11 @@ app.factory('Firebase', function ($q, $state) {
 		});
 	}
 	post = function (arg) {
-		console.info("[post] arg", arg)
-		var url = arg.url
-		var ref = firebase.database().ref(url);
+		// post acts as post and update
+		var ref = firebase.database().ref(arg.url);
 		var output = arg.output
+		// if we are updating we use the target instead of generating a new key
+		// I might add an extra flag to this so I can use post() for different objects
 		var id = (arg.update) ? arg.target : ref.push().key;
 		output.id = id
 		output.timestamp = Date.now()
@@ -140,7 +150,8 @@ app.factory('Firebase', function ($q, $state) {
 			url: `/users/${arg.uid}/groups/`,
 			target: arg.group_id,
 		}
-
+		// remove the group
+		// then remove the users reference to the group
 		return remove(group_input).then(function () {
 			return remove(user_input)
 		}).catch(function (error) {
@@ -151,6 +162,11 @@ app.factory('Firebase', function ($q, $state) {
 	update_group = function (arg) {
 		console.log("[update_group][arg]", arg)
 		return uid(true).then(function (uid) {
+			// ###TEMP###
+			// removes lengths and flip states from arg
+			// flip should be put in its own object
+			// and im thinking of making an assiciative array of lengths
+			// though that might be a pain to maintain
 			pad_keys = []
 			pads = {}
 			if (arg.pads) {
@@ -176,7 +192,6 @@ app.factory('Firebase', function ($q, $state) {
 				update: true,
 				output: arg,
 			}
-			console.log("[update_group][input]", input)
 			return post(input)
 				.then(function (output) {
 					var new_object = {
@@ -184,7 +199,6 @@ app.factory('Firebase', function ($q, $state) {
 						title: output.title,
 						timestamp: output.timestamp
 					}
-					console.log("!new_object!", new_object)
 					return new_object;
 				}).catch(function (error) {
 					console.error("We hit an error!", error)
@@ -196,10 +210,7 @@ app.factory('Firebase', function ($q, $state) {
 		})
 	}
 	post_group = function (arg) {
-		console.log("[post_group][arg]", arg)
 		return uid(true).then(function (uid) {
-			console.log("uid", uid)
-			console.log("arg", arg)
 			var data = {
 				url: `/groups/`,
 				output: {
@@ -210,11 +221,10 @@ app.factory('Firebase', function ($q, $state) {
 				},
 			}
 			data.output.users[uid] = true
-			console.log("[post_group][uid]", uid)
-			console.log("[post_group][data]", data)
+			// update group object
+			// then update the users group reference
 			return post(data)
 				.then(function (arg) {
-					console.log("[post return][arg]", arg)
 					var data = {
 						url: `users/${arg.created_by}/groups/`,
 						group_id: arg.id,
@@ -223,7 +233,7 @@ app.factory('Firebase', function ($q, $state) {
 					return arg;
 				})
 				.then(function (output) {
-					console.log("!ouput!", output)
+					// return the new group object for display
 					var new_object = {
 						created_by: output.created_by,
 						id: output.id,
@@ -261,9 +271,10 @@ app.factory('Firebase', function ($q, $state) {
 			return {}
 		})
 	}
+	// not yet done as couldnt fit it in the UX
 	update_pad = function (arg) { }
 	post_pad = function (arg) {
-		console.log("[post_pad][arg]", arg)
+		// get the uid then create input
 		return uid(true).then(function (uid) {
 			var data = {
 				url: `/groups/${arg.group_id}/pads/`,
@@ -273,9 +284,9 @@ app.factory('Firebase', function ($q, $state) {
 					body: arg.body,
 				},
 			}
-			console.log("[post_pad][data]", data)
 			return post(data)
 				.then(function (output) {
+					// return new pad
 					var new_object = {
 						body: output.body,
 						created_by: output.created_by,
@@ -314,9 +325,10 @@ app.factory('Firebase', function ($q, $state) {
 		})
 
 	}
+	// not yet done as couldnt fit it in the UX
 	update_comment = function (arg) { }
 	post_comment = function (arg) {
-		console.log("[post_comment][arg]", arg)
+		// get the uid then create input
 		return uid(true).then(function (uid) {
 			var data = {
 				url: `/groups/${arg.group_id}/pads/${arg.pad_id}/comments/`,
@@ -325,8 +337,8 @@ app.factory('Firebase', function ($q, $state) {
 					body: arg.body,
 				}
 			}
-			console.log("[post_comment][data]", data)
 			return post(data)
+				// return new comment
 				.then(function (output) {
 					var new_object = {
 						id: output.id,
@@ -350,6 +362,7 @@ app.factory('Firebase', function ($q, $state) {
 	//////////////////////////////////
 	// contact start
 	//////////////////////////////////
+	// general search function, but not yet full tested
 	search = function (arg) {
 		ref = firebase.database().ref(arg.url)
 		ref = (arg.orderByChild) ? ref.orderByChild(arg.orderByChild) : ref;
@@ -359,8 +372,11 @@ app.factory('Firebase', function ($q, $state) {
 			return output.val()
 		})
 	}
+	// search users but their contactName
+	// contactName is the displayName made lowerCase
 	search_contacts = function (arg) {
 		input = {
+			// probably broken with new rules
 			url: `users/`,
 			orderByChild: 'contactName',
 			startAt: arg.search.toLowerCase(),
@@ -378,6 +394,7 @@ app.factory('Firebase', function ($q, $state) {
 			return data;
 		})
 	}
+	// read indavidual parts of user object
 	read_user = function (arg) {
 		console.info("[read_user]ARG", arg)
 		var user_ref = firebase.database().ref('/users/').child(arg.uid);
@@ -402,9 +419,12 @@ app.factory('Firebase', function ($q, $state) {
 		return check_user(user_data)
 	}
 	check_user = function (user_data) {
+		// get the uid then check that we can get the private data
 		return uid().then(function (user_data) {
-			return read_private(user_data.uid).then(function (private_ouput) {
-				if (!private_ouput) {
+			return read_private(user_data.uid).then(function (private_data) {
+				// if we can't get the private data then the user doesnt exsist
+				if (!private_data) {
+					// the new user object!
 					return current_user = {
 						public: {
 							displayName: user_data.displayName,
@@ -419,6 +439,7 @@ app.factory('Firebase', function ($q, $state) {
 						},
 					}
 				}
+				// if there is data, get the users groups and return the full user object
 				return read_groups(user_data.uid).then(function (groups_ouput) {
 					return current_user = {
 						public: {
@@ -439,10 +460,10 @@ app.factory('Firebase', function ($q, $state) {
 		})
 	}
 
+	// reference to all the Firebase.functions()
 	return {
 		check_user: check_user,
 		uid: uid,
-
 		create_user: create_user,
 		get_user_groups: get_user_groups,
 		get_groups: get_groups,
