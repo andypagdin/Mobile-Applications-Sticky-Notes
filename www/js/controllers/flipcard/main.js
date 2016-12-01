@@ -21,6 +21,9 @@ app.controller('FlipCtrl', function ($scope, Firebase) {
     $scope.page.data.uid = ""
     // the values for tha page.
     $scope.page.models = {}
+    // search models.
+    $scope.page.models.search = {}
+    $scope.page.models.search.displayName = ''
     // group models.
     $scope.page.models.group = {}
     $scope.page.models.group.create = {}
@@ -41,18 +44,59 @@ app.controller('FlipCtrl', function ($scope, Firebase) {
     //////////////////////////////////
     // groups start
     //////////////////////////////////
-
+    //check the user exsists in the database
+    // Firebase.check_user().then(function (output) {
+    //     console.log("users", output)
+    // })
+    // Firebase.get_groups2().then(function (output) {
+    //     console.log("users", output)
+    //     // assign current user
+    //     // $scope.page.data.uid = input.uid
+    //     // assign current users groups
+    //     $scope.page.data.groups = output
+    // })
+    console.log("running")
     // getting the users groups
-    Firebase.get_user_groups().then(function (outcome) {
+    Firebase.check_user().then(function (user_output) {
         // are there any groups?
-        if (outcome.groups) {
+        console.log("user_output --- ", user_output)
+        // return
+        if (user_output.groups) {
             // get the group objects
-            $scope.get_groups(outcome)
+            console.log("user_output.groups --- ", user_output.groups)
+            $scope.get_groups(user_output)
+            console.warn("data", $scope.page.data)
         }
         else {
             // no groups means the user isnt create as they will
             // always have a default group, so we create that new user.
-            Firebase.create_user(outcome)
+            Firebase.create_user(user_output).then(function (new_user_output) {
+                post_group({
+                    created_by: user_output.public.uid,
+                    title: 'general',
+                }).then(function (group_output) {
+                    group_object = $scope.page.data.groups
+                    group_object.length = 0
+                    group_object[group_output.id] = group_output
+                    $scope.page.data.uid = group_output.created_by
+                    group_object[group_output.id].users[group_output.created_by] = true
+                    post_pad({
+                        group_id: group_output.id,
+                        created_by: user_output.public.uid,
+                        title: 'Your first note!',
+                        body: 'This is an example note, flip me over to add a comment!',
+                    }).then(function (pad_output) {
+                        pads_object = $scope.page.data.groups[group_output.id].pads
+                        pads_object.length = 0
+                        pads_object[pad_output.id] = {}
+                        pads_object[pad_output.id] = pad_output
+                        if (!$scope.$$phase) {
+                            $scope.$apply()
+                        }
+                        console.warn("data", $scope.page.data)
+                    })
+                })
+            })
         }
     })
 
@@ -60,8 +104,10 @@ app.controller('FlipCtrl', function ($scope, Firebase) {
         // trigger Firebase function.
         Firebase.get_groups(input.groups)
             .then(function (groups) {
+                console.info("input", input)
+                console.info("groups", groups)
                 // assign current user
-                $scope.page.data.uid = input.uid
+                $scope.page.data.uid = input.public.uid
                 // assign current users groups
                 $scope.page.data.groups = groups
             })
@@ -86,9 +132,13 @@ app.controller('FlipCtrl', function ($scope, Firebase) {
     }
 
     $scope.update_group = function (group_id) {
+        group = $scope.page.models.group.edit[group_id]
+        if (!group) {
+            return
+        }
         // build input.
         var input = $scope.page.data.groups[group_id]
-        input.title = $scope.page.models.group.edit[group_id].title
+        input.title = group.title
         // clear page inputs values and UX.
         $scope.page.models.group.edit[group_id].title = "";
         // trigger Firebase function.
@@ -106,6 +156,9 @@ app.controller('FlipCtrl', function ($scope, Firebase) {
     $scope.create_group = function () {
         // build input.
         var title = $scope.page.models.group.create.title
+        if (!title) {
+            return
+        }
         var input = {
             title: title,
         }
@@ -221,22 +274,32 @@ app.controller('FlipCtrl', function ($scope, Firebase) {
             pad_id: pad_id,
             body: body,
         }
+        console.info(input)
         // clear page inputs values and UX.
         $scope.page.models.comment.create[pad_id].body = "";
         // trigger Firebase function.
         Firebase.post_comment(input)
             .then(function (new_object) {
-                comments_object = $scope.page.data.groups[input.group_id].pads[input.pad_id].comments
+                console.info("new_object", new_object)
+                console.info("$scope.page.data", $scope.page.data)
+                current_pad = $scope.page.data.groups[input.group_id].pads[input.pad_id]
+                comments_object = current_pad.comments
                 if (!comments_object) {
-                    comments_object = {}
+                    current_pad.comments = {}
+                    comments_object = current_pad.comments
                     comments_object.length = 0
+                    comments_object.lengthe = "testing"
+
                 }
+                console.log("new pad obj", current_pad)
+                console.log("new comment obj", comments_object)
                 // update the length. (this is important as wont happen automaticaly)
                 comments_object.length++;
                 // create new object with its key as the new id then populate it.
                 comments_object[new_object.id]
                 comments_object[new_object.id] = new_object
                 // a check to see if $apply() is already running and if not run it.
+                console.info("$scope.page.data", $scope.page.data)
                 if (!$scope.$$phase) {
                     $scope.$apply()
                 }
@@ -245,6 +308,18 @@ app.controller('FlipCtrl', function ($scope, Firebase) {
     //////////////////////////////////
     // comments end
     //////////////////////////////////
+    $scope.search_contact = function () {
+        if (!$scope.page.models.search.displayName) {
+            return
+        }
+        input = {
+            search: $scope.page.models.search.displayName,
+        }
+        Firebase.search_contacts(input).then(function (output) {
+            console.log(output)
+        })
+    }
+
     $scope.flip = function (group_id, pad_key) {
         //create reference to scoped object
         pads_object = $scope.page.data.groups[group_id].pads[pad_key]

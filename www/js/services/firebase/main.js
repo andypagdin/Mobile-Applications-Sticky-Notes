@@ -2,12 +2,13 @@
 //firebaseServ start
 //////////////////////////////////
 
-app.factory('Firebase', function ($q) {
+app.factory('Firebase', function ($q, $state) {
 	current_user = {}
 	uid = function (uid) {
 		return $q(function (resolve, reject) {
 			if (Object.keys(current_user).length < 1) {
 				firebase.auth().onAuthStateChanged(function (user) {
+					console.warn("user", user)
 					if (user) {
 						current_user = user
 						if (uid) {
@@ -16,51 +17,39 @@ app.factory('Firebase', function ($q) {
 						resolve(user)
 					}
 					else {
+						$state.go('login')
 						reject()
 					}
 				});
 			}
 			else {
 				if (uid) {
-					console.log("cu", current_user.uid)
-					resolve(current_user.uid)
+					console.log("[uid][else]current_user", current_user.public.uid)
+					resolve(current_user.public.uid)
 				}
 				resolve(current_user)
 			}
 		})
 	}
-	get_user_groups = function () {
-		return uid().then(function (user) {
-			var url = `/users/${user.uid}/groups/`
-			return firebase.database().ref(url).once('value', function (data) {
-				return data.val()
-			}).then(function (data) {
-				if (data.val()) {
-					return output = {
-						groups: data.val(),
-						uid: user.uid,
-					}
-				}
-				console.log("output")
-				return output = {
-					displayName: user.displayName,
-					email: user.email,
-					photoURL: user.photoURL,
-					uid: user.uid,
-				}
-			})
-		})
-	}
-	create_user = function (user) {
-		console.log("user", user)
-		var ref = firebase.database().ref('/users');
-		return ref.child(user.uid).set(user).then(function () {
-			return user;
+	create_user = function (user_data) {
+		console.log("user_data", user_data)
+		user_data.private.timestamp = Date.now()
+		var input = {
+			url: `/users/`,
+			target: user_data.public.uid,
+			update: true,
+			output: user_data,
+		}
+		console.log("[create_user][input]", input)
+		var ref = firebase.database().ref('/users/');
+		return ref.child(user_data.public.uid).set(input.output).then(function () {
+			return input;
 		}).catch(function (error) {
 			console.error("error", error)
 		});
 	}
 	get_groups = function (group_ids) {
+		console.info(group_ids)
 		promise = []
 		if (!group_ids) {
 			promise.push($q(function () {
@@ -72,13 +61,17 @@ app.factory('Firebase', function ($q) {
 		}
 		keys = Object.keys(group_ids)
 		for (var i = 0; i < keys.length; i++) {
+			console.info(i)
 			group_id = group_ids[keys[i]]
 			current_group_id = keys[i]
 			promise.push($q(function (resolve, reject) {
 				if (!group_id.read) {
 					return firebase.database().ref('/groups/').child(current_group_id).once("value", function (groups) {
 						resolve(groups.val());
-					}).catch(reject);
+					}).catch(function (error) {
+						console.error("[get_groups] We hit an error!", error)
+						reject()
+					});
 				}
 				else {
 					resolve();
@@ -94,30 +87,10 @@ app.factory('Firebase', function ($q) {
 					outcome_obj[group_id] = outcome[i]
 				}
 			};
-
-			// set lengths of each sub object
-			outcome_obj.length = Object.keys(outcome_obj).length
-			outcome_obj_keys = Object.keys(outcome_obj)
-			for (var i = 0; i < outcome_obj.length; i++) {
-				outcome = outcome_obj[outcome_obj_keys[i]]
-				pads = outcome.pads
-				if (pads) {
-					pad_keys = Object.keys(pads)
-					pads.length = Object.keys(pads).length
-					for (var x = 0; x < pads.length; x++) {
-						pad_obj = pads[pad_keys[x]]
-						pad_obj.new_comment = ""
-						comments = pad_obj.comments
-						if (comments) {
-							comments.length = Object.keys(comments).length
-						}
-					};
-				}
-			};
 			return outcome_obj;
-		}, function (reason) {
-			console.error('Failed: ', reason);
-			return reason;
+		}, function (error) {
+			console.error("[get_groups][$q.all] We hit an error!", error)
+			return {}
 		});
 	}
 	add_user_group = function (arg) {
@@ -131,7 +104,6 @@ app.factory('Firebase', function ($q) {
 			console.error("error", error)
 		});
 	}
-
 	remove = function (arg) {
 		console.log("removing -", arg)
 		var url = arg.url
@@ -142,6 +114,7 @@ app.factory('Firebase', function ($q) {
 		});
 	}
 	post = function (arg) {
+		console.info("[post] arg", arg)
 		var url = arg.url
 		var ref = firebase.database().ref(url);
 		var output = arg.output
@@ -170,11 +143,33 @@ app.factory('Firebase', function ($q) {
 
 		return remove(group_input).then(function () {
 			return remove(user_input)
+		}).catch(function (error) {
+			console.error("We hit an error!", error)
+			return {}
 		})
 	}
 	update_group = function (arg) {
 		console.log("[update_group][arg]", arg)
 		return uid(true).then(function (uid) {
+			pad_keys = []
+			pads = {}
+			if (arg.pads) {
+				pad_keys = Object.keys(arg.pads)
+				pads = arg.pads
+			}
+			for (var i = 0; i < pad_keys.length; i++) {
+				current_pad = pads[pad_keys[i]]
+				if (pads.length) {
+					delete pads.length
+				}
+				if (current_pad.flipped) {
+					delete current_pad.flipped
+				}
+				if (current_pad.comments) {
+					comment = current_pad.comments
+					delete comment.length
+				}
+			}
 			var input = {
 				url: `/groups/`,
 				target: arg.id,
@@ -191,12 +186,20 @@ app.factory('Firebase', function ($q) {
 					}
 					console.log("!new_object!", new_object)
 					return new_object;
+				}).catch(function (error) {
+					console.error("We hit an error!", error)
+					return {}
 				})
+		}).catch(function (error) {
+			console.error("We hit an error!", error)
+			return {}
 		})
 	}
 	post_group = function (arg) {
 		console.log("[post_group][arg]", arg)
 		return uid(true).then(function (uid) {
+			console.log("uid", uid)
+			console.log("arg", arg)
 			var data = {
 				url: `/groups/`,
 				output: {
@@ -233,7 +236,13 @@ app.factory('Firebase', function ($q) {
 					}
 					new_object.users[output.created_by] = true;
 					return new_object;
+				}).catch(function (error) {
+					console.error("We hit an error!", error)
+					return {}
 				})
+		}).catch(function (error) {
+			console.error("We hit an error!", error)
+			return {}
 		})
 	}
 	//////////////////////////////////
@@ -247,7 +256,10 @@ app.factory('Firebase', function ($q) {
 			url: `/groups/${arg.group_id}/pads/`,
 			target: arg.pad_id,
 		}
-		return remove(input)
+		return remove(input).catch(function (error) {
+			console.error("We hit an error!", error)
+			return {}
+		})
 	}
 	update_pad = function (arg) { }
 	post_pad = function (arg) {
@@ -276,7 +288,13 @@ app.factory('Firebase', function ($q) {
 						},
 					}
 					return new_object;
+				}).catch(function (error) {
+					console.error("We hit an error!", error)
+					return {}
 				})
+		}).catch(function (error) {
+			console.error("We hit an error!", error)
+			return {}
 		})
 	}
 	//////////////////////////////////
@@ -290,7 +308,10 @@ app.factory('Firebase', function ($q) {
 			url: `/groups/${arg.group_id}/pads/${arg.pad_id}/comments`,
 			target: arg.comment_id,
 		}
-		return remove(input)
+		return remove(input).catch(function (error) {
+			console.error("We hit an error!", error)
+			return {}
+		})
 
 	}
 	update_comment = function (arg) { }
@@ -314,19 +335,114 @@ app.factory('Firebase', function ($q) {
 						created_by: output.created_by,
 					}
 					return new_object;
+				}).catch(function (error) {
+					console.error("We hit an error!", error)
+					return {}
 				})
+		}).catch(function (error) {
+			console.error("We hit an error!", error)
+			return {}
 		})
 	}
 	//////////////////////////////////
 	// comments end
+	//////////////////////////////////
+	//////////////////////////////////
+	// contact start
+	//////////////////////////////////
+	search = function (arg) {
+		ref = firebase.database().ref(arg.url)
+		ref = (arg.orderByChild) ? ref.orderByChild(arg.orderByChild) : ref;
+		ref = (arg.startAt) ? ref.startAt(arg.startAt) : ref;
+		ref = (arg.endAt) ? ref.endAt(arg.endAt) : ref;
+		return ref.once('value').then(function (output) {
+			return output.val()
+		})
+	}
+	search_contacts = function (arg) {
+		input = {
+			url: `users/`,
+			orderByChild: 'contactName',
+			startAt: arg.search.toLowerCase(),
+		}
+		console.log(input)
+		return search(input).then(function (output) {
+			return output
+		})
+	}
+	//////////////////////////////////
+	// contact end
 	//////////////////////////////////
 	flat_stub = function () {
 		return firebase.database().ref("").once('value', function (data) {
 			return data;
 		})
 	}
+	read_user = function (arg) {
+		console.info("[read_user]ARG", arg)
+		var user_ref = firebase.database().ref('/users/').child(arg.uid);
+		return user_ref.child(arg.child).once('value').then(function (data) {
+			console.log("[read_user]", data.val())
+			return data.val()
+		}).catch(function (error) {
+			console.error("[read_user] We hit an error!", error)
+			return {}
+		})
+	}
+	read_public = function (uid) {
+		return read_user({ uid: uid, child: 'public' })
+	}
+	read_private = function (uid) {
+		return read_user({ uid: uid, child: 'private' })
+	}
+	read_groups = function (uid) {
+		return read_user({ uid: uid, child: 'groups' })
+	}
+	get_user_groups = function (user_data) {
+		return check_user(user_data)
+	}
+	check_user = function (user_data) {
+		return uid().then(function (user_data) {
+			return read_private(user_data.uid).then(function (private_ouput) {
+				if (!private_ouput) {
+					return current_user = {
+						public: {
+							displayName: user_data.displayName,
+							contactName: user_data.displayName.toLowerCase(),
+							uid: user_data.uid,
+							photoURL: user_data.photoURL,
+						},
+						private: {
+							email: user_data.email,
+							emailVerified: user_data.emailVerified,
+							isAnonymous: user_data.isAnonymous,
+						},
+					}
+				}
+				return read_groups(user_data.uid).then(function (groups_ouput) {
+					return current_user = {
+						public: {
+							displayName: user_data.displayName,
+							contactName: user_data.displayName.toLowerCase(),
+							uid: user_data.uid,
+							photoURL: user_data.photoURL,
+						},
+						private: {
+							email: user_data.email,
+							emailVerified: user_data.emailVerified,
+							isAnonymous: user_data.isAnonymous,
+						},
+						groups: groups_ouput,
+					}
+				})
+			})
+		})
+	}
+
 	return {
+		check_user: check_user,
 		uid: uid,
+
 		create_user: create_user,
 		get_user_groups: get_user_groups,
 		get_groups: get_groups,
@@ -339,6 +455,8 @@ app.factory('Firebase', function ($q) {
 		remove_comment: remove_comment,
 		update_comment: update_comment,
 		post_comment: post_comment,
+		search_contacts: search_contacts,
+		search: search,
 	};
 });
 

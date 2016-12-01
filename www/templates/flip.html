@@ -16,7 +16,7 @@
                 </select>
             </label>
             -->
-            
+
             <input
                 type="input"
                 placeholder="group name"
@@ -27,6 +27,18 @@
             <button
                 ng-click="create_group()">
                 add new group
+            </button>
+
+            <input
+                type="input"
+                placeholder="contant name"
+                name="group_name"
+                id="group_name"
+                ng-model="page.models.search.displayName">
+
+            <button
+                ng-click="search_contact()">
+                Search by display name.
             </button>
 
         </div>
@@ -133,7 +145,7 @@
                                     name="comment"
                                     id="comment"
                                     placeholder="comment goes here..."
-                                    ng-model="page.data.comment_models[pad_id].body"
+                                    ng-model="page.models.comment.create[pad_id].body"
                                     ng-disabled="!page.data.groups[group_id].users[page.data.uid]">
                                 </textarea>
                             </label>
