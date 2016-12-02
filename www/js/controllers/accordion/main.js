@@ -18,22 +18,39 @@ app.controller('AccordionCtrl', function ($scope, Firebase) {
   $scope.page_data.groups = {}
   $scope.page_data.comment_models = {}
   var group_ids = {}
-  uuid = 'Ucg7kUNTceQjOLqDIwByHLz5FPj2'
-  Firebase.get_user(uuid).then(function (data) {
-    user_details = data.val()
 
+  // Firebase.uid(true) gets uid
+  // Firebase.uid() gets full user object
+  // uid = Firebase.uid(true)
+
+  // check user doesnt need a uid
+  // Firebase.check_user(uid).then(function (data) {
+
+    // user_details = data
+    // console.log("user_details", user_details)
+
+    // This wont work check user isnt in $scope its in Firebase
+    // $scope/Firebase are like an objects but are at the same level
+    // {$scope:{},Firebase:{}}
+    // $scope.check_user(user_details.groups)
+
+  // })
+
+
+  Firebase.check_user().then(function (data) {
+    user_details = data
     console.log("user_details", user_details)
-    $scope.get_groups(user_details.groups)
   })
 
-  $scope.get_groups = function (group_ids) {
+  $scope.get_user_groups = function (group_ids) {
     console.log("group_ids", group_ids)
-    Firebase.get_groups(group_ids)
+    Firebase.check_user(group_ids)
       .then(function (groups) {
         console.log("groups", groups)
         $scope.page_data.groups = groups
       })
   }
+
 
   //togglestar
   $scope.toggleStar = function (group) {

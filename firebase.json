@@ -1,179 +1,42 @@
 {
   "groups" : {
-    "6o4lSdFak7nkvt9eNp7jvaIb2mVV" : {
-      "id" : "6o4lSdFak7nkvt9eNp7jvaIb2mVV",
-      "title" : "first group!",
-      "timestamp" : 1479464667226,
-      "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2",
-      "users" : {
-        "Ucg7kUNTceQjOLqDIwByHLz5FPj2" : true,
-        "oc1IayHTH8ME6CrQsuqywBqB5Wm1" : true,
-        "q7HZRMcKd8XxJxZwefXl7yZKwhZ2" : true,
-        "sihrWpEELRXNXuOeBhKpGohcRqa2" : true
-      },
+    "-KXPx0IH4iKMMKJ07w3t" : {
+      "created_by" : "268FS9dCyxW18itlA3H6OxDq30G3",
+      "id" : "-KXPx0IH4iKMMKJ07w3t",
       "pads" : {
-        "6o4lSdFak7nkvt9eNp7jvaIb2mV1" : {
-          "id" : "6o4lSdFak7nkvt9eNp7jvaIb2mV1",
-          "title" : "Sample Message 1",
-          "body" : "test note 1",
-          "timestamp" : 1479464667226,
-          "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2",
+        "-KXPx26s3lZZSMvCfiRx" : {
+          "body" : "world",
           "comments" : {
-            "-KWnn8ZOhbtoJZw4OEBJ" : {
-              "id" : "-KWnn8ZOhbtoJZw4OEBJ",
-              "body" : "321",
-              "timestamp" : 1479411526702,
-              "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2"
-            },
-            "-KWqxaJnF46RP6phyb29" : {
-              "id" : "-KWqxaJnF46RP6phyb29",
-              "body" : "what",
-              "timestamp" : 1479464597121,
-              "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2"
-            },
-            "-KWqxrRMdxP9pzQbFHQO" : {
-              "id" : "-KWqxrRMdxP9pzQbFHQO",
-              "body" : "what what",
-              "timestamp" : 1479464667226,
-              "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2"
-            },
-            "-KWqz-AvE-5u-2e9fMbo" : {
-              "id" : "-KWqz-AvE-5u-2e9fMbo",
+            "-KXPx3pX_-o37zdpj75N" : {
               "body" : "hello world",
-              "timestamp" : 1479464965178,
-              "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2"
+              "created_by" : "268FS9dCyxW18itlA3H6OxDq30G3",
+              "id" : "-KXPx3pX_-o37zdpj75N",
+              "timestamp" : 1480068434009
             }
-          }
-        },
-        "6o4lSdFak7nkvt9eNp7jvaIb2mV2" : {
-          "id" : "6o4lSdFak7nkvt9eNp7jvaIb2mV2",
-          "title" : "Sample Message 1",
-          "body" : "test note 1",
-          "timestamp" : 1479464667226,
-          "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2",
-          "comments" : {
-            "-KWnn8ZOhbtoJZw4OEBJ" : {
-              "id" : "-KWnn8ZOhbtoJZw4OEBJ",
-              "body" : "321",
-              "timestamp" : 1479411526702,
-              "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2"
-            },
-            "-KWqxaJnF46RP6phyb29" : {
-              "id" : "-KWqxaJnF46RP6phyb29",
-              "body" : "what",
-              "timestamp" : 1479464597121,
-              "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2"
-            },
-            "-KWqxrRMdxP9pzQbFHQO" : {
-              "id" : "-KWqxrRMdxP9pzQbFHQO",
-              "body" : "what what",
-              "timestamp" : 1479464667226,
-              "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2"
-            },
-            "-KWqz-AvE-5u-2e9fMbo" : {
-              "id" : "-KWqz-AvE-5u-2e9fMbo",
-              "body" : "hello world",
-              "timestamp" : 1479464965178,
-              "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2"
-            }
-          }
+          },
+          "created_by" : "268FS9dCyxW18itlA3H6OxDq30G3",
+          "id" : "-KXPx26s3lZZSMvCfiRx",
+          "timestamp" : 1480068426991,
+          "title" : "hello"
         }
-      }
-    },
-    "bxTWj2bNkjmIMGKaAirVwgsyZLjA" : {
-      "id" : "bxTWj2bNkjmIMGKaAirVwgsyZLjA",
-      "title" : "first group!",
-      "timestamp" : 1479464667226,
-      "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2",
-      "users" : {
-        "Ucg7kUNTceQjOLqDIwByHLz5FPj2" : true,
-        "oc1IayHTH8ME6CrQsuqywBqB5Wm1" : true,
-        "q7HZRMcKd8XxJxZwefXl7yZKwhZ2" : true,
-        "sihrWpEELRXNXuOeBhKpGohcRqa2" : true
       },
-      "pads" : {
-        "6o4lSdFak7nkvt9eNp7jvaIb2mV1" : {
-          "id" : "6o4lSdFak7nkvt9eNp7jvaIb2mV1",
-          "title" : "Sample Message 1",
-          "body" : "test note 1",
-          "timestamp" : 1479464667226,
-          "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2",
-          "comments" : {
-            "-KWnn8ZOhbtoJZw4OEBJ" : {
-              "id" : "-KWnn8ZOhbtoJZw4OEBJ",
-              "body" : "321",
-              "timestamp" : 1479411526702,
-              "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2"
-            },
-            "-KWqxaJnF46RP6phyb29" : {
-              "id" : "-KWqxaJnF46RP6phyb29",
-              "body" : "what",
-              "timestamp" : 1479464597121,
-              "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2"
-            },
-            "-KWqxrRMdxP9pzQbFHQO" : {
-              "id" : "-KWqxrRMdxP9pzQbFHQO",
-              "body" : "what what",
-              "timestamp" : 1479464667226,
-              "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2"
-            },
-            "-KWqz-AvE-5u-2e9fMbo" : {
-              "id" : "-KWqz-AvE-5u-2e9fMbo",
-              "body" : "hello world",
-              "timestamp" : 1479464965178,
-              "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2"
-            }
-          }
-        },
-        "6o4lSdFak7nkvt9eNp7jvaIb2mV2" : {
-          "id" : "6o4lSdFak7nkvt9eNp7jvaIb2mV1",
-          "title" : "Sample Message 1",
-          "body" : "test note 1",
-          "timestamp" : 1479464667226,
-          "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2",
-          "comments" : {
-            "-KWnn8ZOhbtoJZw4OEBJ" : {
-              "id" : "-KWnn8ZOhbtoJZw4OEBJ",
-              "body" : "321",
-              "timestamp" : 1479411526702,
-              "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2"
-            },
-            "-KWqxaJnF46RP6phyb29" : {
-              "id" : "-KWqxaJnF46RP6phyb29",
-              "body" : "what",
-              "timestamp" : 1479464597121,
-              "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2"
-            },
-            "-KWqxrRMdxP9pzQbFHQO" : {
-              "id" : "-KWqxrRMdxP9pzQbFHQO",
-              "body" : "what what",
-              "timestamp" : 1479464667226,
-              "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2"
-            },
-            "-KWqz-AvE-5u-2e9fMbo" : {
-              "id" : "-KWqz-AvE-5u-2e9fMbo",
-              "body" : "hello world",
-              "timestamp" : 1479464965178,
-              "created_by" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2"
-            }
-          }
-        }
+      "timestamp" : 1480068419529,
+      "title" : "hello world",
+      "users" : {
+        "268FS9dCyxW18itlA3H6OxDq30G3" : true
       }
     }
   },
   "users" : {
-    "Ucg7kUNTceQjOLqDIwByHLz5FPj2" : {
-      "id" : "Ucg7kUNTceQjOLqDIwByHLz5FPj2",
-      "firstName" : "Jonathon",
-      "lastName" : "Hawkins",
+    "268FS9dCyxW18itlA3H6OxDq30G3" : {
+      "displayName" : "Jonathon Hawkins",
+      "email" : "jonathonhawkins92@gmail.com",
       "groups" : {
-        "6o4lSdFak7nkvt9eNp7jvaIb2mVV" : {
-          "read" : false
-        },
-        "bxTWj2bNkjmIMGKaAirVwgsyZLjA" : {
-          "read" : true
-        }
-      }
+        "-KXPx0IH4iKMMKJ07w3t" : true,
+        "general" : true
+      },
+      "photoURL" : "https://lh3.googleusercontent.com/-Tznv4Q5H2R4/AAAAAAAAAAI/AAAAAAAAAB8/q6W34Eqv3j8/photo.jpg",
+      "uid" : "268FS9dCyxW18itlA3H6OxDq30G3"
     }
   }
 }
