@@ -114,6 +114,13 @@ app.config( function ( $stateProvider, $urlRouterProvider )
 		controller: 'addPadCtrl'
 	} )
 
+	.state( 'nav',
+	{
+		url: '/nav',
+		templateUrl: 'templates/nav.html',
+		controller: 'NavCtrl'
+	} )
+
 	.state( 'tab.account',
 	{
 		url: '/account',
