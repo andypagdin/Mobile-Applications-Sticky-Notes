@@ -39,17 +39,28 @@ app.controller('AccordionCtrl', function ($scope, Firebase) {
 
   Firebase.check_user().then(function (data) {
     user_details = data
+    $scope.get_groups(data)
     console.log("user_details", user_details)
   })
 
-  $scope.get_user_groups = function (group_ids) {
+  /*$scope.get_user_groups = function (group_ids) {
     console.log("group_ids", group_ids)
     Firebase.check_user(group_ids)
       .then(function (groups) {
         console.log("groups", groups)
         $scope.page_data.groups = groups
       })
-  }
+  }*/
+
+  $scope.get_groups = function (input) {
+    // trigger Firebase function.
+    Firebase.get_groups(input.groups)
+        .then(function (groups) {
+            console.info("input", input)
+            console.info("groups", groups)
+            $scope.groups = groups
+        })
+    }
 
 
   //togglestar
@@ -58,12 +69,12 @@ app.controller('AccordionCtrl', function ($scope, Firebase) {
   }
   //delete function
   $scope.onItemDelete = function (group) {
-    delete $scope.page_data.groups[group]
+    delete $scope.groups[group]
   }
   //ReOrder function
   $scope.moveItem = function (group, fromIndex, toIndex) {
-    $scope.page_data.groups.splice(fromIndex, 1);
-    $scope.page_data.groups.splice(toIndex, 0, group);
+    $scope.groups.splice(fromIndex, 1);
+    $scope.groups.splice(toIndex, 0, group);
 
   };
   /*
