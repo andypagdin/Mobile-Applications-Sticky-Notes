@@ -31,6 +31,7 @@ app.controller('DashCtrl', function ($scope, $state, Firebase) {
 	  $scope.page_data.groups = {}
 	  $scope.page_data.comment_models = {}
 	  var group_ids = {}
+	  database = firebase.database();
 
 	  Firebase.check_user().then(function (data) {
 	    user_details = data
@@ -54,7 +55,9 @@ app.controller('DashCtrl', function ($scope, $state, Firebase) {
 	  }
 	  //delete function
 	  $scope.onItemDelete = function (group) {
-	    delete $scope.groups[group]
+	  	groupId = $scope.groups[group].id
+	  	delete $scope.groups[group]
+	  	firebase.database().ref('groups/' + groupId).remove()
 	  }
 	  //ReOrder function
 	  $scope.moveItem = function (group, fromIndex, toIndex) {
