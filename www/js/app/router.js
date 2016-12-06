@@ -38,6 +38,16 @@ app.config( function ( $stateProvider, $urlRouterProvider )
 		controller: 'AccordionCtrl'
 	} )
 
+	.state( 'editPad',
+	{
+		url: '/edit',
+		templateUrl: 'templates/editPad.html',
+		controller: 'EditPadCtrl',
+		params: { id: null,
+				  title: null,
+				  body: null, },
+	} )
+
 	.state( 'test',
 	{
 		url: '/test',
@@ -107,7 +117,7 @@ app.config( function ( $stateProvider, $urlRouterProvider )
 			}
 		} )
 
-		.state( 'addPad',
+	.state( 'addPad',
 	{
 		url: '/addPad',
 		templateUrl: 'templates/addPad.html',

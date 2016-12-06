@@ -29,8 +29,9 @@
 
         </ion-item>
 
-        <ion-item class="item-accordion" ng-repeat="item in group.pads" ng-show="isGroupShown(group)">
-          {{group.title}}
+        <ion-item class="item-accordion" ng-repeat="(pad_id, item) in group.pads" ng-show="isGroupShown(group)">
+          {{item.title}}
+          <button class="pad-edit-btn" ui-sref="editPad({id:'{{item.id}}', title:'{{item.title}}', body:'{{item.body}}'})">Edit</button>
         </ion-item>
 
       </div>
