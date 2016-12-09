@@ -43,9 +43,10 @@ app.config( function ( $stateProvider, $urlRouterProvider )
 		url: '/edit',
 		templateUrl: 'templates/editPad.html',
 		controller: 'EditPadCtrl',
-		params: { id: null,
+		params: { pad_id: null,
 				  title: null,
-				  body: null, },
+				  body: null,
+				  group_id: null, },
 	} )
 
 	.state( 'test',

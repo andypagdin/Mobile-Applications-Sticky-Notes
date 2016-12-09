@@ -23,15 +23,13 @@
             <i class="icon ion-minus-circled margin-center"></i>
           </ion-option-button>
 
-         <!--  <ion-delete-button class="ion-minus-circled" ng-click="onItemDelete(group_id)"></ion-delete-button> -->
-
           <ion-reorder-button class="ion-navicon" on-reorder="moveItem(group, $fromIndex, $toIndex)"></ion-reorder-button>
 
         </ion-item>
 
         <ion-item class="item-accordion" ng-repeat="(pad_id, item) in group.pads" ng-show="isGroupShown(group)">
           {{item.title}}
-          <button class="pad-edit-btn" ui-sref="editPad({id:'{{item.id}}', title:'{{item.title}}', body:'{{item.body}}'})">Edit</button>
+          <button class="pad-edit-btn" ui-sref="editPad({pad_id:'{{item.id}}', title:'{{item.title}}', body:'{{item.body}}', group_id:'{{group.id}}'})">Edit</button>
         </ion-item>
 
       </div>
