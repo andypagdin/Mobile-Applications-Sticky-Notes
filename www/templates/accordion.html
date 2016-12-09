@@ -7,20 +7,24 @@
   </ion-header-bar>
   <ion-content>
     <ion-list show-reorder="groups.showReorder" show-delete="groups.showDelete" class="">
-      <div ng-repeat="(group_id, group) in page_data.groups">
+      <div ng-repeat="(group_id, group) in groups">
+
         <ion-item class="item-stable ion-star-right" ng-click="toggleGroup(group)" ng-class="{active: isGroupShown(group)}">
           <i class="icon" ng-class="isGroupShown(group) ? 'ion-minus' : 'ion-plus'"></i> &nbsp; Group {{group.title}}
-          <button class="button button-clear icon ion-star button-assertive" ng-click="toggleStar(group)" ng-show="group.star">
-            </button>
+
+          <!-- Pop up star on star click -->
+          <button class="button button-clear icon ion-star button-assertive" ng-click="toggleStar(group)" ng-show="group.star"></button>
+
           <ion-option-button class="button-dark" ng-click="toggleStar(group)">
             <i class="icon ion-star"></i>
           </ion-option-button>
+
           <ion-delete-button class="ion-minus-circled" ng-click="onItemDelete(group_id)">
           </ion-delete-button>
           <ion-reorder-button class="ion-navicon" on-reorder="moveItem(group, $fromIndex, $toIndex)"></ion-reorder-button>
         </ion-item>
         <ion-item class="item-accordion" ng-repeat="item in group.pads" ng-show="isGroupShown(group)">
-          {{item.title}}
+          {{group.title}}
         </ion-item>
       </div>
     </ion-list>

@@ -1,5 +1,28 @@
 /* Empty. Add your own CSS if you like */
 
+.pad-edit-btn{
+    float: right;
+    height: 27px;
+    width: 40px;
+}
+
+.headerDash{
+    top: 0;
+    background: #3498db;
+    padding: 10px;
+}
+
+.headerText{
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+.margin-center{
+    margin: 0 auto;
+}
+
 .center {
     text-align: center;
 }
