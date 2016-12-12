@@ -17,12 +17,7 @@ app.config( function ( $stateProvider, $urlRouterProvider )
 			controller: 'LoginCtrl'
 		} )
 
-		.state( 'login_faz',
-	{
-		url: '/login_faz',
-		templateUrl: 'templates/login_faz.html',
-		controller: 'Login_Faz_Ctrl'
-	} )
+
 
 	.state( 'name',
 	{
