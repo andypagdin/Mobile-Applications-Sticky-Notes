@@ -41,9 +41,7 @@ app.config( function ( $stateProvider, $urlRouterProvider )
 		params: { pad_id: null,
 				  title: null,
 				  body: null,
-				  group_id: null,
-				  created_by: null,
-				  timestamp: null },
+				  group_id: null, },
 	} )
 
 	.state( 'test',
