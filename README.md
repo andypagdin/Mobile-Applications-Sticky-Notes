@@ -22,6 +22,19 @@
 
 * npm install
 
+* cordova plugin add cordova-plugin-whitelist
+
+- - -
+##Build/Emulation requierments:
+
+* [Android Studio (currently 2.2.3, also run all updates) ](https://developer.android.com/studio/index.html)
+
+* [JDK (currently v8) ](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html)
+
+* Create an evnironment variable for Android Studio - key: _JAVA_OPTIONS value: -Xmx512M (Assigns 512MB for build to use.)
+
+* Create a new project in Android Studio and attempt to emulate it, this will cause HAXM to download and install.
+
 - - -
 ##Development commands:
 
@@ -32,6 +45,7 @@ ionic platform | lists added platforms (ios, android, ect)
 ionic platform add [platform name] | adds [platform name]
 ionic build | builds all platforms
 ionic build [platform name] | builds [platform name]
+ionic emulate [platform name] | emulates [platform name]
 
 build file location - [app name]/platforms/[platform name]
 
@@ -75,3 +89,8 @@ Check if bower packages are installed and if not it installs them.
 * git-check
 
 Check if you have git!
+
+build steps
+Java
+Bash
+Android sdk (including Android home)

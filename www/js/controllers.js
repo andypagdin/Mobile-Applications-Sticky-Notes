@@ -33,53 +33,26 @@ app = angular.module( 'starter.controllers', [ ] )
 
 app.controller('AccordionCtrl', function ($scope, Firebase) {
 
-  // $scope.page_data.groups = [];
-  // for (var i = 0; i < 20; i++) {
-  //   $scope.page_data.groups[i] = {
-  //     name: i,
-  //     items: []
-  //   };
-  //   for (var j = 0; j < 3; j++) {
-  //     $scope.page_data.groups[i].items.push(i + '-' + j);
-  //   }
-  // }
   $scope.page_data = {}
   $scope.page_data.groups = {}
   $scope.page_data.comment_models = {}
   var group_ids = {}
 
-  // Firebase.uid(true) gets uid
-  // Firebase.uid() gets full user object
-  // uid = Firebase.uid(true)
-
-  // check user doesnt need a uid
-  // Firebase.check_user(uid).then(function (data) {
-
-    // user_details = data
-    // console.log("user_details", user_details)
-
-    // This wont work check user isnt in $scope its in Firebase
-    // $scope/Firebase are like an objects but are at the same level
-    // {$scope:{},Firebase:{}}
-    // $scope.check_user(user_details.groups)
-
-  // })
-
-
   Firebase.check_user().then(function (data) {
     user_details = data
+    $scope.get_groups(data)
     console.log("user_details", user_details)
   })
 
-  $scope.get_user_groups = function (group_ids) {
-    console.log("group_ids", group_ids)
-    Firebase.check_user(group_ids)
-      .then(function (groups) {
-        console.log("groups", groups)
-        $scope.page_data.groups = groups
-      })
-  }
-
+  $scope.get_groups = function (input) {
+    // trigger Firebase function.
+    Firebase.get_groups(input.groups)
+        .then(function (groups) {
+            console.info("input", input)
+            console.info("groups", groups)
+            $scope.groups = groups
+        })
+    }
 
   //togglestar
   $scope.toggleStar = function (group) {
@@ -87,12 +60,12 @@ app.controller('AccordionCtrl', function ($scope, Firebase) {
   }
   //delete function
   $scope.onItemDelete = function (group) {
-    delete $scope.page_data.groups[group]
+    delete $scope.groups[group]
   }
   //ReOrder function
   $scope.moveItem = function (group, fromIndex, toIndex) {
-    $scope.page_data.groups.splice(fromIndex, 1);
-    $scope.page_data.groups.splice(toIndex, 0, group);
+    $scope.groups.splice(fromIndex, 1);
+    $scope.groups.splice(toIndex, 0, group);
 
   };
   /*
@@ -231,6 +204,20 @@ app.controller( 'addPadCtrl', function ( $scope, Firebase )
 
 } );
 //////////////////////////////////
+//ChatDetailCtrl start
+//////////////////////////////////
+
+app.controller( 'ChatDetailCtrl', function ( $scope, $stateParams, Chats )
+{
+	$scope.chat = Chats.get( $stateParams.chatId );
+} )
+
+//////////////////////////////////
+//ChatDetailCtrl end
+//////////////////////////////////
+
+
+//////////////////////////////////
 //ChatsCtrl start
 //////////////////////////////////
 
@@ -257,16 +244,23 @@ app.controller( 'ChatsCtrl', function ( $scope, Chats )
 
 
 //////////////////////////////////
-//ChatDetailCtrl start
+//EditPadCtrl start
 //////////////////////////////////
 
-app.controller( 'ChatDetailCtrl', function ( $scope, $stateParams, Chats )
+app.controller( 'EditPadCtrl', function ( $scope, $state, Firebase, $stateParams )
 {
-	$scope.chat = Chats.get( $stateParams.chatId );
-} )
+	$scope.id = $stateParams.id
+	$scope.title = $stateParams.title
+	$scope.body = $stateParams.body
+
+	$scope.goBack = function () {
+		$state.go("tab.dash")
+	}
+
+} );
 
 //////////////////////////////////
-//ChatDetailCtrl end
+//EditPadCtrl end
 //////////////////////////////////
 
 
@@ -274,7 +268,8 @@ app.controller( 'ChatDetailCtrl', function ( $scope, $stateParams, Chats )
 //DashCtrl start
 //////////////////////////////////
 
-app.controller('DashCtrl', function ($scope, $state) {
+app.controller('DashCtrl', function ($scope, $state, Firebase) {
+
 	firebase.auth().onAuthStateChanged(function (user) {
 		if (user) {
 			$scope.signed_out = false
@@ -285,6 +280,7 @@ app.controller('DashCtrl', function ($scope, $state) {
 			$scope.signed_out = true
 		}
 	});
+
 	$scope.sign_out = function () {
 		firebase.auth().signOut().then(function () {
 			console.log('Signed Out');
@@ -292,7 +288,67 @@ app.controller('DashCtrl', function ($scope, $state) {
 			console.error('Sign Out Error', error);
 		});
 	}
-});
+
+	//////////////////////////////////
+	// Accordion Controller Underneath
+	//////////////////////////////////
+
+	  $scope.page_data = {}
+	  $scope.page_data.groups = {}
+	  $scope.page_data.comment_models = {}
+	  var group_ids = {}
+
+	  Firebase.check_user().then(function (data) {
+	    user_details = data
+	    $scope.get_groups(data)
+	    console.log("user_details", user_details)
+	  })
+
+	  $scope.get_groups = function (input) {
+	    // trigger Firebase function.
+	    Firebase.get_groups(input.groups)
+	        .then(function (groups) {
+	            console.info("input", input)
+	            console.info("groups", groups)
+	            $scope.groups = groups
+	        })
+	    }
+
+	  //togglestar
+	  $scope.toggleStar = function (group) {
+	    group.star = !group.star;
+	  }
+	  //delete function
+	  $scope.onItemDelete = function (group) {
+	  	var input = {
+	  		uid: $scope.groups[group].created_by,
+	  		group_id: $scope.groups[group].id,
+	  	}
+        Firebase.remove_group(input)
+        delete $scope.groups[group]
+	  }
+	  //ReOrder function
+	  $scope.moveItem = function (group, fromIndex, toIndex) {
+	    $scope.groups.splice(fromIndex, 1);
+	    $scope.groups.splice(toIndex, 0, group);
+
+	  };
+	  /*
+	   * if given group is the selected group, deselect it
+	   * else, select the given group
+	   */
+	  $scope.toggleGroup = function (group) {
+	    if ($scope.isGroupShown(group)) {
+	      $scope.shownGroup = null;
+	    } else {
+	      $scope.shownGroup = group;
+	    }
+	  };
+	  $scope.isGroupShown = function (group) {
+	    return $scope.shownGroup === group;
+	  };
+	});
+
 
 //////////////////////////////////
 //DashCtrl end
@@ -313,16 +369,85 @@ app.controller( 'FazAccountCtrl', function ( $scope )
 //////////////////////////////////
 
 //////////////////////////////////
-//Login_Faz_Ctrl start
+//FromCtrl start
 //////////////////////////////////
 
-app.controller( 'Login_Faz_Ctrl', function ( $scope )
+app.controller( 'FromCtrl', function ( $scope )
 {
-	console.log('Login_Faz_Ctrl')
-} );
+	// Initialize Firebase
+	$scope.fb_value = "testing"
+	read_ref = firebase.database( ).ref( )
+	set_ref = firebase.database( ).ref( 'level1/' )
+
+	// set_ref.set(
+	// {
+	// 	"l1 subkey1": "timestamp = 1"
+	// } );
+	uuid = 'Ucg7kUNTceQjOLqDIwByHLz5FPj2'
+	firebase.database( )
+		.ref( `/johnny/users/${uuid}/groups` ).once( 'value', function ( data )
+		{
+			console.log( "[Users]", data.val( ) )
+			angular.forEach( data.val( ), function ( value, index )
+			{
+				if ( value.read ) return;
+				console.log( index )
+				var ref = firebase.database( ).ref( `/johnny/groups/` )
+				ref = ref.equalTo( index );
+				console.log( ref )
+					// 	var ref = ref.orderByChild( "has_changed" ).equalTo( true );
+				ref.once( "value", function ( data )
+				{
+					console.log( "[Groups]", data.val( ) )
+				} );
+			} );
+		} );
+
+
+	// read_ref.once( 'value', function ( snap )
+	// {
+	// 	$scope.fb_value = pretty( snap.val( ) )
+	// 	console.log( "ooooooooooohhhhhh snap", snap.val( ) )
+	// } )
+	// var ref = firebase.database( ).ref( "/johnny/data/groups/" );
+	// var ref = ref.orderByChild( "has_changed" ).equalTo( true );
+	// var ref = ref.child( "uuid" );
+	// ref.once( "value", function ( data )
+	// {
+	// 	console.log( data.val( ) )
+	// } );
+
+	// firebase.database( )
+	// 	.ref( '/johnny/data/users/6X2Yka97bOOomPD1cN9VDj9VryK2/groups' ).once( 'value', function ( snap )
+	// 	{
+	// 		angular.forEach( snap.val( ), function ( value, index )
+	// 		{
+	// 			console.log( value.key )
+	// 			firebase.database( )
+	// 				.ref( '/johnny/data/groups/' )
+	// 				.child( value.key )
+	// 				.orderByChild( 'has_changed' )
+	// 				.startAt( 'true' ).endAt( 'true' )
+	// 				// .orderBy('lead')                  // !!! THIS LINE WILL RAISE AN ERROR !!!
+	// 				// .startAt('Jack Nicholson').endAt('Jack Nicholson')
+	// 				// .orderByChild( 'has changed' )
+	// 				// .child( 'has changed' )
+	// 				// .equalTo( 'true' )
+	// 				.once( 'value', function ( snap )
+	// 				{
+	// 					// console.log( key, value );
+	// 					console.log( 'Group == ', snap.val( ) );
+	// 				} );
+	// 		} );
+
+
+	// 	} );
+
+
+} )
 
 //////////////////////////////////
-//Login_Faz_Ctrl end
+//FromCtrl end
 //////////////////////////////////
 
 
@@ -664,89 +789,6 @@ app.controller('FlipCtrl', function ($scope, Firebase) {
 //////////////////////////////////
 
 //////////////////////////////////
-//FromCtrl start
-//////////////////////////////////
-
-app.controller( 'FromCtrl', function ( $scope )
-{
-	// Initialize Firebase
-	$scope.fb_value = "testing"
-	read_ref = firebase.database( ).ref( )
-	set_ref = firebase.database( ).ref( 'level1/' )
-
-	// set_ref.set(
-	// {
-	// 	"l1 subkey1": "timestamp = 1"
-	// } );
-	uuid = 'Ucg7kUNTceQjOLqDIwByHLz5FPj2'
-	firebase.database( )
-		.ref( `/johnny/users/${uuid}/groups` ).once( 'value', function ( data )
-		{
-			console.log( "[Users]", data.val( ) )
-			angular.forEach( data.val( ), function ( value, index )
-			{
-				if ( value.read ) return;
-				console.log( index )
-				var ref = firebase.database( ).ref( `/johnny/groups/` )
-				ref = ref.equalTo( index );
-				console.log( ref )
-					// 	var ref = ref.orderByChild( "has_changed" ).equalTo( true );
-				ref.once( "value", function ( data )
-				{
-					console.log( "[Groups]", data.val( ) )
-				} );
-			} );
-		} );
-
-
-	// read_ref.once( 'value', function ( snap )
-	// {
-	// 	$scope.fb_value = pretty( snap.val( ) )
-	// 	console.log( "ooooooooooohhhhhh snap", snap.val( ) )
-	// } )
-	// var ref = firebase.database( ).ref( "/johnny/data/groups/" );
-	// var ref = ref.orderByChild( "has_changed" ).equalTo( true );
-	// var ref = ref.child( "uuid" );
-	// ref.once( "value", function ( data )
-	// {
-	// 	console.log( data.val( ) )
-	// } );
-
-	// firebase.database( )
-	// 	.ref( '/johnny/data/users/6X2Yka97bOOomPD1cN9VDj9VryK2/groups' ).once( 'value', function ( snap )
-	// 	{
-	// 		angular.forEach( snap.val( ), function ( value, index )
-	// 		{
-	// 			console.log( value.key )
-	// 			firebase.database( )
-	// 				.ref( '/johnny/data/groups/' )
-	// 				.child( value.key )
-	// 				.orderByChild( 'has_changed' )
-	// 				.startAt( 'true' ).endAt( 'true' )
-	// 				// .orderBy('lead')                  // !!! THIS LINE WILL RAISE AN ERROR !!!
-	// 				// .startAt('Jack Nicholson').endAt('Jack Nicholson')
-	// 				// .orderByChild( 'has changed' )
-	// 				// .child( 'has changed' )
-	// 				// .equalTo( 'true' )
-	// 				.once( 'value', function ( snap )
-	// 				{
-	// 					// console.log( key, value );
-	// 					console.log( 'Group == ', snap.val( ) );
-	// 				} );
-	// 		} );
-
-
-	// 	} );
-
-
-} )
-
-//////////////////////////////////
-//FromCtrl end
-//////////////////////////////////
-
-
-//////////////////////////////////
 //DashCtrl start
 //////////////////////////////////
 
@@ -760,306 +802,16 @@ app.controller( 'HomeCtrl', function ( $scope )
 //////////////////////////////////
 
 //////////////////////////////////
-//LoginCtrl start
+//Login_Faz_Ctrl start
 //////////////////////////////////
 
-app.controller( 'LoginCtrl', function ( $scope, $state )
+app.controller( 'Login_Faz_Ctrl', function ( $scope )
 {
-	//////////////////////////////////
-	// !!!IMPORTANT!!! - JH
-	// -------------------------------
-	// stupid angular scoping issues means that the ion-content 
-	// container makes a clone of the $scope meaning you need to decalre vars ahead of
-	// using them in the view otherwise the js wont know what you are refferencing
-	//////////////////////////////////
-	$scope.auth = {
-		email: "",
-		password: ""
-	}
-	$scope.error_output = {
-		user: "",
-		admin: ""
-	}
-	$scope.user_data = {
-		displayName: "",
-		email: "",
-		emailVerified: "",
-		photoURL: "",
-		isAnonymous: "",
-		uid: "",
-		providerData: ""
-	}
-	$scope.input = {
-		displayName: ""
-	}
-
-	$scope.googleSignIn = function ( )
-    {
-        var provider = new firebase.auth.GoogleAuthProvider();
-
-        firebase.auth().signInWithRedirect(provider);
-
-    }
-
-
-	/**
-	 * Handles the sign in button press.
-	 */
-	$scope.toggleSignIn = function ( )
-	{
-		if ( firebase.auth( ).currentUser )
-		{
-			// [START signout]
-			firebase.auth( ).signOut( );
-			// [END signout]
-		}
-		else
-		{
-			var email = $scope.auth.email;
-			var password = $scope.auth.password;
-			if ( !email || email.length < 4 )
-			{
-				$scope.error_output.user = 'Please enter an email address.';
-				return;
-			}
-			if ( !password || password.length < 4 )
-			{
-				$scope.error_output.user = 'Please enter a password.';
-				return;
-			}
-			// Sign in with email and pass.
-			// [START authwithemail]
-			firebase.auth( ).signInWithEmailAndPassword( email, password ).catch( function ( error )
-			{
-				// Handle Errors here.
-				var errorCode = error.code;
-				var errorMessage = error.message;
-				// [START_EXCLUDE]
-				if ( errorCode === 'auth/wrong-password' )
-				{
-					$scope.error_output.user = "Wrong password."
-				}
-				else
-				{
-					$scope.error_output.admin = "Wrong password."
-					console.error( errorMessage );
-				}
-				console.log( error );
-
-				$scope.signinable = false
-					// document.getElementById( 'quickstart-sign-in' ).disabled = false;
-					// [END_EXCLUDE]
-			} );
-			// [END authwithemail]
-		}
-		$scope.signinable = true
-			// document.getElementById( 'quickstart-sign-in' ).disabled = true;
-	}
-
-	/**
-	 * Handles the sign up button press.
-	 */
-	$scope.handleSignUp = function ( )
-	{
-		var email = $scope.auth.email;
-		var password = $scope.auth.password;
-		if ( email.length < 4 )
-		{
-			console.info( 'Please enter an email address.' );
-			return;
-		}
-		if ( password.length < 4 )
-		{
-			console.info( 'Please enter a password.' );
-			return;
-		}
-		// Sign in with email and pass.
-		// [START createwithemail]
-		firebase.auth( ).createUserWithEmailAndPassword( email, password ).catch( function ( error )
-		{
-			// Handle Errors here.
-			var errorCode = error.code;
-			var errorMessage = error.message;
-			// [START_EXCLUDE]
-			if ( errorCode == 'auth/weak-password' )
-			{
-				console.error( 'The password is too weak.' );
-			}
-			else
-			{
-				console.error( errorMessage );
-			}
-			console.log( error );
-			// [END_EXCLUDE]
-		} );
-		// [END createwithemail]
-	}
-
-	$scope.sendPasswordReset = function ( )
-		{
-			var email = $scope.auth.email;
-			// var email = document.getElementById( 'email' ).value;
-			// [START sendpasswordemail]
-			firebase.auth( ).sendPasswordResetEmail( email ).then( function ( )
-			{
-				// Password Reset Email Sent!
-				// [START_EXCLUDE]
-				console.info( 'Password Reset Email Sent!' );
-				// [END_EXCLUDE]
-			} ).catch( function ( error )
-			{
-				// Handle Errors here.
-				var errorCode = error.code;
-				var errorMessage = error.message;
-				// [START_EXCLUDE]
-				if ( errorCode == 'auth/invalid-email' )
-				{
-					console.error( errorMessage );
-				}
-				else if ( errorCode == 'auth/user-not-found' )
-				{
-					console.error( errorMessage );
-				}
-				console.log( error );
-				// [END_EXCLUDE]
-			} );
-			// [END sendpasswordemail];
-		}
-		// firebase.auth( ).onAuthStateChanged( function ( user )
-		// 	{
-		// 		console.log( "AUTH CHANGE", user )
-		// 	} )
-
-
-	/**
-	 * initApp handles setting up UI event listeners and registering Firebase auth listeners:
-	 *  - firebase.auth().onAuthStateChanged: This listener is called when the user is signed in or
-	 *    out, and that is where we update the UI.
-	 */
-	$scope.initApp = function ( )
-	{
-		// Listening for auth state changes.[START authstatelistener]
-		firebase.auth( ).onAuthStateChanged( function ( user )
-		{
-			console.log( "AUTH CHANGE", user )
-				// [START_EXCLUDE silent]
-				// document.getElementById('quickstart-verify-email').disabled = true;
-			$scope.verifyable = true
-				// [END_EXCLUDE]
-			if ( user )
-			{
-				// User is signed in.
-				$scope.signed_in = true;
-				var displayName = user.displayName;
-				var email = user.email;
-				var emailVerified = user.emailVerified;
-				var photoURL = user.photoURL;
-				var isAnonymous = user.isAnonymous;
-				var uid = user.uid;
-				var providerData = user.providerData;
-				$scope.user_data.displayName = displayName
-				$scope.user_data.email = email
-				$scope.user_data.emailVerified = emailVerified
-				$scope.user_data.photoURL = photoURL
-				$scope.user_data.isAnonymous = isAnonymous
-				$scope.user_data.uid = uid
-				$scope.user_data.providerData = providerData
-					// [START_EXCLUDE silent]
-				$scope.login_status = 'Signed in'
-				$scope.sign_status_text = 'Sign out'
-				$scope.quick_start_acc_details = pretty( user )
-
-				// If the user does not have a display name set (first time visiting)
-				// Point them to set one, else go home 
-				if ( displayName )
-				{
-					$state.go( 'tab.dash' );
-					console.log( "display name set " + displayName )
-				}
-				else
-				{
-					$state.go( 'name' );
-					console.log( "display name not set" )
-				}
-
-				console.log( "view should have changed with this data - ", $scope.user_data )
-
-				// document.getElementById( 'quickstart-sign-in-status' ).textContent = 'Signed in';
-				// document.getElementById( 'quickstart-sign-in' ).textContent = 'Sign out';
-				// document.getElementById( 'quickstart-account-details' ).textContent = JSON.stringify( user, null, '  ' );
-				if ( !emailVerified )
-				{
-
-					$scope.verifyable = false
-						// document.getElementById( 'quickstart-verify-email' ).disabled = false;
-				}
-				// [END_EXCLUDE]
-			}
-			else
-			{
-				// User is signed out.
-				// [START_EXCLUDE silent]
-				$scope.user_data.displayName = ""
-				$scope.user_data.email = ""
-				$scope.user_data.emailVerified = ""
-				$scope.user_data.photoURL = ""
-				$scope.user_data.isAnonymous = ""
-				$scope.user_data.uid = ""
-				$scope.user_data.providerData = ""
-				$scope.signed_in = false;
-				$scope.login_status = 'Signed out'
-				$scope.sign_status_text = 'Sign in'
-				$scope.quick_start_acc_details = 'null'
-				console.log( "view should have changed with this data - ", $scope.user_data )
-					// document.getElementById( 'quickstart-sign-in-status' ).textContent = 'Signed out';
-					// document.getElementById( 'quickstart-sign-in' ).textContent = 'Sign in';
-					// document.getElementById( 'quickstart-account-details' ).textContent = 'null';
-					// [END_EXCLUDE]
-			}
-			// [START_EXCLUDE silent]
-			// document.getElementById( 'quickstart-sign-in' ).disabled = false;
-			$scope.signinable = false
-				// [END_EXCLUDE]
-			$scope.$apply( )
-		} );
-		// [END authstatelistener]
-
-		// document.getElementById( 'quickstart-sign-in' ).addEventListener( 'click', toggleSignIn, false );
-		// document.getElementById( 'quickstart-sign-up' ).addEventListener( 'click', handleSignUp, false );
-		// document.getElementById( 'quickstart-verify-email' ).addEventListener( 'click', sendEmailVerification, false );
-		// document.getElementById( 'quickstart-password-reset' ).addEventListener( 'click', sendPasswordReset, false );
-	}
-
-	$scope.updateDisplayName = function ( )
-	{
-
-		var user = firebase.auth( ).currentUser;
-
-		var displayName = $scope.input.displayName
-
-		user.updateProfile(
-		{
-			displayName: displayName
-		} ).then( function ( )
-		{
-			$state.go( 'tab.dash' )
-			console.log( "update success " + displayName )
-		}, function ( error )
-		{
-			console.log( error )
-		} );
-	};
-
-	// window.onload = function ( )
-	// {
-	$scope.initApp( );
-	// };
-
-
-} )
+	console.log('Login_Faz_Ctrl')
+} );
 
 //////////////////////////////////
-//LoginCtrl end
+//Login_Faz_Ctrl end
 //////////////////////////////////
 
 
@@ -1074,6 +826,280 @@ app.controller( 'Login_Faz_Ctrl', function ( $scope )
 
 //////////////////////////////////
 //FazCtrl end
+//////////////////////////////////
+
+//////////////////////////////////
+//LoginCtrl start
+//////////////////////////////////
+
+app.controller( 'LoginCtrl', function ( $scope, $state ) {
+    //////////////////////////////////
+    // !!!IMPORTANT!!! - JH
+    // -------------------------------
+    // stupid angular scoping issues means that the ion-content 
+    // container makes a clone of the $scope meaning you need to decalre vars ahead of
+    // using them in the view otherwise the js wont know what you are refferencing
+    //////////////////////////////////
+    $scope.auth = {
+        email: "",
+        password: ""
+    }
+    $scope.error_output = {
+        user: "",
+        admin: ""
+    }
+    $scope.user_data = {
+        displayName: "",
+        email: "",
+        emailVerified: "",
+        photoURL: "",
+        isAnonymous: "",
+        uid: "",
+        providerData: ""
+    }
+    $scope.input = {
+        displayName: ""
+    }
+
+    $scope.googleSignIn = function ( ) {
+        alert( "googleSignIn" );
+        var provider = new firebase.auth.GoogleAuthProvider( );
+        alert( "past provider" );
+
+        firebase.auth( ).signInWithRedirect( provider ).then( function ( ) {
+            alert( "all seems fine!?" );
+        } ).catch( function ( error ) {
+            alert( JSON.stringify( error ) );
+        } );
+    }
+
+
+    /**
+     * Handles the sign in button press.
+     */
+    $scope.toggleSignIn = function ( ) {
+        if ( firebase.auth( ).currentUser ) {
+            // [START signout]
+            firebase.auth( ).signOut( );
+            // [END signout]
+        } else {
+            var email = $scope.auth.email;
+            var password = $scope.auth.password;
+            if ( !email || email.length < 4 ) {
+                $scope.error_output.user = 'Please enter an email address.';
+                return;
+            }
+            if ( !password || password.length < 4 ) {
+                $scope.error_output.user = 'Please enter a password.';
+                return;
+            }
+            // Sign in with email and pass.
+            // [START authwithemail]
+            firebase.auth( ).signInWithEmailAndPassword( email, password ).catch( function ( error ) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // [START_EXCLUDE]
+                if ( errorCode === 'auth/wrong-password' ) {
+                    $scope.error_output.user = "Wrong password."
+                } else {
+                    $scope.error_output.admin = "Wrong password."
+                    console.error( errorMessage );
+                    alert( JSON.stringify( errorMessage ) );
+                }
+                console.log( error );
+
+                $scope.signinable = false
+                    // document.getElementById( 'quickstart-sign-in' ).disabled = false;
+                    // [END_EXCLUDE]
+            } );
+            // [END authwithemail]
+        }
+        $scope.signinable = true
+            // document.getElementById( 'quickstart-sign-in' ).disabled = true;
+    }
+
+    /**
+     * Handles the sign up button press.
+     */
+    $scope.handleSignUp = function ( ) {
+        var email = $scope.auth.email;
+        var password = $scope.auth.password;
+        if ( email.length < 4 ) {
+            console.info( 'Please enter an email address.' );
+            return;
+        }
+        if ( password.length < 4 ) {
+            console.info( 'Please enter a password.' );
+            return;
+        }
+        // Sign in with email and pass.
+        // [START createwithemail]
+        firebase.auth( ).createUserWithEmailAndPassword( email, password ).catch( function ( error ) {
+            // Handle Errors here.
+            var errorCode = error.code;
+            var errorMessage = error.message;
+            // [START_EXCLUDE]
+            if ( errorCode == 'auth/weak-password' ) {
+                console.error( 'The password is too weak.' );
+            } else {
+                console.error( errorMessage );
+                alert( JSON.stringify( errorMessage ) );
+            }
+            console.log( error );
+            // [END_EXCLUDE]
+        } );
+        // [END createwithemail]
+    }
+
+    $scope.sendPasswordReset = function ( ) {
+            var email = $scope.auth.email;
+            // var email = document.getElementById( 'email' ).value;
+            // [START sendpasswordemail]
+            firebase.auth( ).sendPasswordResetEmail( email ).then( function ( ) {
+                // Password Reset Email Sent!
+                // [START_EXCLUDE]
+                console.info( 'Password Reset Email Sent!' );
+                // [END_EXCLUDE]
+            } ).catch( function ( error ) {
+                // Handle Errors here.
+                var errorCode = error.code;
+                var errorMessage = error.message;
+                // [START_EXCLUDE]
+                if ( errorCode == 'auth/invalid-email' ) {
+                    console.error( errorMessage );
+                    alert( JSON.stringify( errorMessage ) );
+                } else if ( errorCode == 'auth/user-not-found' ) {
+                    console.error( errorMessage );
+                    alert( JSON.stringify( errorMessage ) );
+                }
+                console.log( error );
+                // [END_EXCLUDE]
+            } );
+            // [END sendpasswordemail];
+        }
+        // firebase.auth( ).onAuthStateChanged( function ( user )
+        // 	{
+        // 		console.log( "AUTH CHANGE", user )
+        // 	} )
+
+
+    /**
+     * initApp handles setting up UI event listeners and registering Firebase auth listeners:
+     *  - firebase.auth().onAuthStateChanged: This listener is called when the user is signed in or
+     *    out, and that is where we update the UI.
+     */
+    $scope.initApp = function ( ) {
+        // Listening for auth state changes.[START authstatelistener]
+        firebase.auth( ).onAuthStateChanged( function ( user ) {
+            console.log( "AUTH CHANGE", user )
+                // [START_EXCLUDE silent]
+                // document.getElementById('quickstart-verify-email').disabled = true;
+            $scope.verifyable = true
+                // [END_EXCLUDE]
+            if ( user ) {
+                // User is signed in.
+                $scope.signed_in = true;
+                var displayName = user.displayName;
+                var email = user.email;
+                var emailVerified = user.emailVerified;
+                var photoURL = user.photoURL;
+                var isAnonymous = user.isAnonymous;
+                var uid = user.uid;
+                var providerData = user.providerData;
+                $scope.user_data.displayName = displayName
+                $scope.user_data.email = email
+                $scope.user_data.emailVerified = emailVerified
+                $scope.user_data.photoURL = photoURL
+                $scope.user_data.isAnonymous = isAnonymous
+                $scope.user_data.uid = uid
+                $scope.user_data.providerData = providerData
+                    // [START_EXCLUDE silent]
+                $scope.login_status = 'Signed in'
+                $scope.sign_status_text = 'Sign out'
+                $scope.quick_start_acc_details = pretty( user )
+
+                // If the user does not have a display name set (first time visiting)
+                // Point them to set one, else go home 
+                if ( displayName ) {
+                    $state.go( 'tab.dash' );
+                    console.log( "display name set " + displayName )
+                } else {
+                    $state.go( 'name' );
+                    console.log( "display name not set" )
+                }
+
+                console.log( "view should have changed with this data - ", $scope.user_data )
+
+                // document.getElementById( 'quickstart-sign-in-status' ).textContent = 'Signed in';
+                // document.getElementById( 'quickstart-sign-in' ).textContent = 'Sign out';
+                // document.getElementById( 'quickstart-account-details' ).textContent = JSON.stringify( user, null, '  ' );
+                if ( !emailVerified ) {
+
+                    $scope.verifyable = false
+                        // document.getElementById( 'quickstart-verify-email' ).disabled = false;
+                }
+                // [END_EXCLUDE]
+            } else {
+                // User is signed out.
+                // [START_EXCLUDE silent]
+                $scope.user_data.displayName = ""
+                $scope.user_data.email = ""
+                $scope.user_data.emailVerified = ""
+                $scope.user_data.photoURL = ""
+                $scope.user_data.isAnonymous = ""
+                $scope.user_data.uid = ""
+                $scope.user_data.providerData = ""
+                $scope.signed_in = false;
+                $scope.login_status = 'Signed out'
+                $scope.sign_status_text = 'Sign in'
+                $scope.quick_start_acc_details = 'null'
+                console.log( "view should have changed with this data - ", $scope.user_data )
+                    // document.getElementById( 'quickstart-sign-in-status' ).textContent = 'Signed out';
+                    // document.getElementById( 'quickstart-sign-in' ).textContent = 'Sign in';
+                    // document.getElementById( 'quickstart-account-details' ).textContent = 'null';
+                    // [END_EXCLUDE]
+            }
+            // [START_EXCLUDE silent]
+            // document.getElementById( 'quickstart-sign-in' ).disabled = false;
+            $scope.signinable = false
+                // [END_EXCLUDE]
+            $scope.$apply( )
+        } );
+        // [END authstatelistener]
+
+        // document.getElementById( 'quickstart-sign-in' ).addEventListener( 'click', toggleSignIn, false );
+        // document.getElementById( 'quickstart-sign-up' ).addEventListener( 'click', handleSignUp, false );
+        // document.getElementById( 'quickstart-verify-email' ).addEventListener( 'click', sendEmailVerification, false );
+        // document.getElementById( 'quickstart-password-reset' ).addEventListener( 'click', sendPasswordReset, false );
+    }
+
+    $scope.updateDisplayName = function ( ) {
+
+        var user = firebase.auth( ).currentUser;
+
+        var displayName = $scope.input.displayName
+
+        user.updateProfile( {
+            displayName: displayName
+        } ).then( function ( ) {
+            $state.go( 'tab.dash' )
+            console.log( "update success " + displayName )
+        }, function ( error ) {
+            console.log( error )
+        } );
+    };
+
+    // window.onload = function ( )
+    // {
+    $scope.initApp( );
+    // };
+
+
+} )
+
+//////////////////////////////////
+//LoginCtrl end
 //////////////////////////////////
 
 app.controller( 'NavCtrl', function ( $scope, $location )
