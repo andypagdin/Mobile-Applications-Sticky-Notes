@@ -89,8 +89,3 @@ Check if bower packages are installed and if not it installs them.
 * git-check
 
 Check if you have git!
-
-build steps
-Java
-Bash
-Android sdk (including Android home)
