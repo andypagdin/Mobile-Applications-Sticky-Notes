@@ -31,62 +31,106 @@ app = angular.module( 'starter.controllers', [ ] )
 //AccordionCtrl start
 //////////////////////////////////
 
-app.controller('AccordionCtrl', function ($scope, Firebase) {
+app.controller( 'AccordionCtrl', function ( $scope, FirebaseServ ) {
 
-  $scope.page_data = {}
-  $scope.page_data.groups = {}
-  $scope.page_data.comment_models = {}
-  var group_ids = {}
+    $scope.page_data = {}
+    $scope.page_data.groups = {}
+    $scope.page_data.comment_models = {}
+    var group_ids = {}
 
-  Firebase.check_user().then(function (data) {
-    user_details = data
-    $scope.get_groups(data)
-    console.log("user_details", user_details)
-  })
+    FirebaseServ.check_user( ).then( function ( data ) {
+        user_details = data
+        $scope.get_groups( data )
+        console.log( "user_details", user_details )
+    } )
 
-  $scope.get_groups = function (input) {
-    // trigger Firebase function.
-    Firebase.get_groups(input.groups)
-        .then(function (groups) {
-            console.info("input", input)
-            console.info("groups", groups)
-            $scope.groups = groups
-        })
+    $scope.get_groups = function ( input ) {
+        // trigger FirebaseServ function.
+        FirebaseServ.get_groups( input.groups )
+            .then( function ( groups ) {
+                console.info( "input", input )
+                console.info( "groups", groups )
+                $scope.groups = groups
+            } )
     }
 
-  //togglestar
-  $scope.toggleStar = function (group) {
-    group.star = !group.star;
-  }
-  //delete function
-  $scope.onItemDelete = function (group) {
-    delete $scope.groups[group]
-  }
-  //ReOrder function
-  $scope.moveItem = function (group, fromIndex, toIndex) {
-    $scope.groups.splice(fromIndex, 1);
-    $scope.groups.splice(toIndex, 0, group);
+    //togglestar
+    $scope.toggleStar = function ( group ) {
+            group.star = !group.star;
+        }
+        //delete function
+    $scope.onItemDelete = function ( group ) {
+            delete $scope.groups[ group ]
+        }
+        //ReOrder function
+    $scope.moveItem = function ( group, fromIndex, toIndex ) {
+        $scope.groups.splice( fromIndex, 1 );
+        $scope.groups.splice( toIndex, 0, group );
 
-  };
-  /*
-   * if given group is the selected group, deselect it
-   * else, select the given group
-   */
-  $scope.toggleGroup = function (group) {
-    if ($scope.isGroupShown(group)) {
-      $scope.shownGroup = null;
-    } else {
-      $scope.shownGroup = group;
-    }
-  };
-  $scope.isGroupShown = function (group) {
-    return $scope.shownGroup === group;
-  };
-});
+    };
+    /*
+     * if given group is the selected group, deselect it
+     * else, select the given group
+     */
+    $scope.toggleGroup = function ( group ) {
+        if ( $scope.isGroupShown( group ) ) {
+            $scope.shownGroup = null;
+        } else {
+            $scope.shownGroup = group;
+        }
+    };
+    $scope.isGroupShown = function ( group ) {
+        return $scope.shownGroup === group;
+    };
+} );
 
 //////////////////////////////////
 //AccordionCtrl end
 //////////////////////////////////
+
+app.controller( 'addPadCtrl', function ( $scope, FirebaseServ ) {
+    $scope.page_data = {}
+    $scope.page_data.groups = {}
+    $scope.page_data.group_models = {}
+    $scope.page_data.pad_models = {}
+    $scope.page_data.pad_models[ "-KXNSUDZByXtgP6KaCQe" ] = {}
+    $scope.page_data.comment_models = {}
+    $scope.page_data.currentGroup = {
+        id: "-KXNSUDZByXtgP6KaCQe",
+        title: "",
+        body: "",
+    }
+    var group_ids = {}
+
+    $scope.create_pad = function ( ) {
+        var title = $scope.page_data.currentGroup.title
+        var body = $scope.page_data.currentGroup.body
+        var input = {
+            group_id: $scope.page_data.currentGroup.id,
+            title: title,
+            body: body,
+        }
+        $scope.page_data.currentGroup.title = "";
+        $scope.page_data.currentGroup.body = "";
+        FirebaseServ.post_pad( input )
+            .then( function ( new_object ) {
+                pads_object = $scope.page_data.groups[ group_id ].pads
+                if ( !pads_object ) {
+                    pads_object = {}
+                    pads_object.length = 0
+                }
+                pads_object[ new_object.id ] = {}
+                pads_object[ new_object.id ] = new_object
+                pads_object.length++
+                    console.log( "pads_object", pads_object )
+                if ( !$scope.$$phase ) {
+                    $scope.$apply( )
+                }
+            } )
+    }
+
+
+} );
 
 //////////////////////////////////
 //AccountCtrl start
@@ -159,103 +203,134 @@ app.controller( 'AccountCtrl', function ( $scope, $state )
 //////////////////////////////////
 
 
-app.controller( 'addPadCtrl', function ( $scope, Firebase )
-{
-	$scope.page_data = {}
-    $scope.page_data.groups = {}
-    $scope.page_data.group_models = {}
-    $scope.page_data.pad_models = {}
-    $scope.page_data.pad_models["-KXNSUDZByXtgP6KaCQe"] = {} 
-    $scope.page_data.comment_models = {}
-    $scope.page_data.currentGroup = {
-    	id:"-KXNSUDZByXtgP6KaCQe",
-    	title:"",
-    	body:"",
+//////////////////////////////////
+//AuthCtrl start
+//////////////////////////////////
+
+app.controller( 'AuthCtrl', function ( $scope, $state ) {
+
+} )
+
+//////////////////////////////////
+//AuthCtrl end
+//////////////////////////////////
+
+//////////////////////////////////
+//DashCtrl start
+//////////////////////////////////
+
+app.controller( 'DashCtrl', function ( $scope, $state, FirebaseServ ) {
+
+    firebase.auth( ).onAuthStateChanged( function ( user ) {
+        if ( user ) {
+            $scope.signed_out = false
+            $scope.displayName = user.displayName
+        } else {
+            $state.go( 'login' );
+            $scope.signed_out = true
+        }
+    } );
+
+    $scope.sign_out = function ( ) {
+        firebase.auth( ).signOut( ).then( function ( ) {
+            console.log( 'Signed Out' );
+        }, function ( error ) {
+            console.error( 'Sign Out Error', error );
+        } );
     }
+
+    //////////////////////////////////
+    // Accordion Controller Underneath
+    //////////////////////////////////
+
+    $scope.page_data = {}
+    $scope.page_data.groups = {}
+    $scope.page_data.comment_models = {}
     var group_ids = {}
 
-	$scope.create_pad = function () {
-        var title = $scope.page_data.currentGroup.title
-        var body = $scope.page_data.currentGroup.body
-        var input = {
-            group_id: $scope.page_data.currentGroup.id,
-            title: title,
-            body: body,
-        }        
-        $scope.page_data.currentGroup.title = "";
-        $scope.page_data.currentGroup.body = "";
-        Firebase.post_pad(input)
-            .then(function (new_object) {            	
-                pads_object = $scope.page_data.groups[group_id].pads                
-                if (!pads_object) {
-                    pads_object = {}
-                    pads_object.length = 0
-                }
-                pads_object[new_object.id] = {}
-                pads_object[new_object.id] = new_object
-                pads_object.length++
-                console.log("pads_object", pads_object)
-                if (!$scope.$$phase) {
-                    $scope.$apply()
-                }
-            })
+    FirebaseServ.check_user( ).then( function ( data ) {
+        user_details = data
+        $scope.get_groups( data )
+        console.log( "user_details", user_details )
+    } )
+
+    $scope.get_groups = function ( input ) {
+        // trigger FirebaseServ function.
+        FirebaseServ.get_groups( input.groups )
+            .then( function ( groups ) {
+                console.info( "input", input )
+                console.info( "groups", groups )
+                $scope.groups = groups
+            } )
     }
 
+    //togglestar
+    $scope.toggleStar = function ( group ) {
+            group.star = !group.star;
+        }
+        //delete function
+    $scope.onItemDelete = function ( group ) {
+            var input = {
+                uid: $scope.groups[ group ].created_by,
+                group_id: $scope.groups[ group ].id,
+            }
+            FirebaseServ.remove_group( input )
+            delete $scope.groups[ group ]
+        }
+        //ReOrder function
+    $scope.moveItem = function ( group, fromIndex, toIndex ) {
+        $scope.groups.splice( fromIndex, 1 );
+        $scope.groups.splice( toIndex, 0, group );
 
+    };
+    /*
+     * if given group is the selected group, deselect it
+     * else, select the given group
+     */
+    $scope.toggleGroup = function ( group ) {
+        if ( $scope.isGroupShown( group ) ) {
+            $scope.shownGroup = null;
+        } else {
+            $scope.shownGroup = group;
+        }
+    };
+    $scope.isGroupShown = function ( group ) {
+        return $scope.shownGroup === group;
+    };
 } );
-//////////////////////////////////
-//ChatDetailCtrl start
-//////////////////////////////////
-
-app.controller( 'ChatDetailCtrl', function ( $scope, $stateParams, Chats )
-{
-	$scope.chat = Chats.get( $stateParams.chatId );
-} )
-
-//////////////////////////////////
-//ChatDetailCtrl end
-//////////////////////////////////
 
 
 //////////////////////////////////
-//ChatsCtrl start
+//DashCtrl end
 //////////////////////////////////
-
-app.controller( 'ChatsCtrl', function ( $scope, Chats )
-{
-	// With the new view caching in Ionic, Controllers are only called
-	// when they are recreated or on app start, instead of every page change.
-	// To listen for when this page is active (for example, to refresh data),
-	// listen for the $ionicView.enter event:
-	//
-	//$scope.$on('$ionicView.enter', function(e) {
-	//});
-
-	$scope.chats = Chats.all( );
-	$scope.remove = function ( chat )
-	{
-		Chats.remove( chat );
-	};
-} )
-
-//////////////////////////////////
-//ChatsCtrl end
-//////////////////////////////////
-
 
 //////////////////////////////////
 //EditPadCtrl start
 //////////////////////////////////
 
-app.controller( 'EditPadCtrl', function ( $scope, $state, Firebase, $stateParams )
-{
-	$scope.id = $stateParams.id
-	$scope.title = $stateParams.title
-	$scope.body = $stateParams.body
+app.controller( 'EditPadCtrl', function ( $scope, $state, FirebaseServ, $stateParams ) {
+    // Put state parameters into the scope
+    $scope.pad_id = $stateParams.pad_id
+    $scope.title = $stateParams.title
+    $scope.body = $stateParams.body
+    $scope.group_id = $stateParams.group_id
+    $scope.created_by = $stateParams.created_by
+    $scope.timestamp = $stateParams.timestamp
 
-	$scope.goBack = function () {
-		$state.go("tab.dash")
-	}
+    $scope.goBack = function ( ) {
+        $state.go( "tab.dash" )
+    }
+
+
+    $scope.updateNote = function ( $body ) {
+        firebase.database( ).ref( 'groups/' + $scope.group_id + '/pads/' + $scope.pad_id ).set( {
+            body: $body,
+            created_by: $scope.created_by,
+            id: $scope.pad_id,
+            timestamp: $scope.timestamp,
+            title: $scope.title
+        } )
+    }
 
 } );
 
@@ -263,231 +338,43 @@ app.controller( 'EditPadCtrl', function ( $scope, $state, Firebase, $stateParams
 //EditPadCtrl end
 //////////////////////////////////
 
-
-//////////////////////////////////
-//DashCtrl start
-//////////////////////////////////
-
-app.controller('DashCtrl', function ($scope, $state, Firebase) {
-
-	firebase.auth().onAuthStateChanged(function (user) {
-		if (user) {
-			$scope.signed_out = false
-			$scope.displayName = user.displayName
-		}
-		else {
-			$state.go( 'login' );
-			$scope.signed_out = true
-		}
-	});
-
-	$scope.sign_out = function () {
-		firebase.auth().signOut().then(function () {
-			console.log('Signed Out');
-		}, function (error) {
-			console.error('Sign Out Error', error);
-		});
-	}
-
-	//////////////////////////////////
-	// Accordion Controller Underneath
-	//////////////////////////////////
-
-	  $scope.page_data = {}
-	  $scope.page_data.groups = {}
-	  $scope.page_data.comment_models = {}
-	  var group_ids = {}
-
-	  Firebase.check_user().then(function (data) {
-	    user_details = data
-	    $scope.get_groups(data)
-	    console.log("user_details", user_details)
-	  })
-
-	  $scope.get_groups = function (input) {
-	    // trigger Firebase function.
-	    Firebase.get_groups(input.groups)
-	        .then(function (groups) {
-	            console.info("input", input)
-	            console.info("groups", groups)
-	            $scope.groups = groups
-	        })
-	    }
-
-	  //togglestar
-	  $scope.toggleStar = function (group) {
-	    group.star = !group.star;
-	  }
-	  //delete function
-	  $scope.onItemDelete = function (group) {
-	  	var input = {
-	  		uid: $scope.groups[group].created_by,
-	  		group_id: $scope.groups[group].id,
-	  	}
-        Firebase.remove_group(input)
-        delete $scope.groups[group]
-	  }
-	  //ReOrder function
-	  $scope.moveItem = function (group, fromIndex, toIndex) {
-	    $scope.groups.splice(fromIndex, 1);
-	    $scope.groups.splice(toIndex, 0, group);
-
-	  };
-	  /*
-	   * if given group is the selected group, deselect it
-	   * else, select the given group
-	   */
-	  $scope.toggleGroup = function (group) {
-	    if ($scope.isGroupShown(group)) {
-	      $scope.shownGroup = null;
-	    } else {
-	      $scope.shownGroup = group;
-	    }
-	  };
-	  $scope.isGroupShown = function (group) {
-	    return $scope.shownGroup === group;
-	  };
-	});
-
-
-//////////////////////////////////
-//DashCtrl end
-//////////////////////////////////
-
-
-//////////////////////////////////
-//FazAccoubtCtrl start
-//////////////////////////////////
-
-app.controller( 'FazAccountCtrl', function ( $scope )
-{
-
-} );
-
-//////////////////////////////////
-//FazAccoubtCtrl end
-//////////////////////////////////
-
-//////////////////////////////////
-//FromCtrl start
-//////////////////////////////////
-
-app.controller( 'FromCtrl', function ( $scope )
-{
-	// Initialize Firebase
-	$scope.fb_value = "testing"
-	read_ref = firebase.database( ).ref( )
-	set_ref = firebase.database( ).ref( 'level1/' )
-
-	// set_ref.set(
-	// {
-	// 	"l1 subkey1": "timestamp = 1"
-	// } );
-	uuid = 'Ucg7kUNTceQjOLqDIwByHLz5FPj2'
-	firebase.database( )
-		.ref( `/johnny/users/${uuid}/groups` ).once( 'value', function ( data )
-		{
-			console.log( "[Users]", data.val( ) )
-			angular.forEach( data.val( ), function ( value, index )
-			{
-				if ( value.read ) return;
-				console.log( index )
-				var ref = firebase.database( ).ref( `/johnny/groups/` )
-				ref = ref.equalTo( index );
-				console.log( ref )
-					// 	var ref = ref.orderByChild( "has_changed" ).equalTo( true );
-				ref.once( "value", function ( data )
-				{
-					console.log( "[Groups]", data.val( ) )
-				} );
-			} );
-		} );
-
-
-	// read_ref.once( 'value', function ( snap )
-	// {
-	// 	$scope.fb_value = pretty( snap.val( ) )
-	// 	console.log( "ooooooooooohhhhhh snap", snap.val( ) )
-	// } )
-	// var ref = firebase.database( ).ref( "/johnny/data/groups/" );
-	// var ref = ref.orderByChild( "has_changed" ).equalTo( true );
-	// var ref = ref.child( "uuid" );
-	// ref.once( "value", function ( data )
-	// {
-	// 	console.log( data.val( ) )
-	// } );
-
-	// firebase.database( )
-	// 	.ref( '/johnny/data/users/6X2Yka97bOOomPD1cN9VDj9VryK2/groups' ).once( 'value', function ( snap )
-	// 	{
-	// 		angular.forEach( snap.val( ), function ( value, index )
-	// 		{
-	// 			console.log( value.key )
-	// 			firebase.database( )
-	// 				.ref( '/johnny/data/groups/' )
-	// 				.child( value.key )
-	// 				.orderByChild( 'has_changed' )
-	// 				.startAt( 'true' ).endAt( 'true' )
-	// 				// .orderBy('lead')                  // !!! THIS LINE WILL RAISE AN ERROR !!!
-	// 				// .startAt('Jack Nicholson').endAt('Jack Nicholson')
-	// 				// .orderByChild( 'has changed' )
-	// 				// .child( 'has changed' )
-	// 				// .equalTo( 'true' )
-	// 				.once( 'value', function ( snap )
-	// 				{
-	// 					// console.log( key, value );
-	// 					console.log( 'Group == ', snap.val( ) );
-	// 				} );
-	// 		} );
-
-
-	// 	} );
-
-
-} )
-
-//////////////////////////////////
-//FromCtrl end
-//////////////////////////////////
-
-
 //////////////////////////////////
 //FlipCtrl start
 //////////////////////////////////
-app.controller('FlipCtrl', function ($scope, Firebase) {
+app.controller( 'FlipCtrl', function ( $scope, FirebaseServ ) {
     //////////////////////////////////
     // Information - JH
     // -------------------------------
     // intro to function structure,
-    // All Firebase.functions are asynchronous
+    // All FirebaseServ.functions are asynchronous
     // because of this we use the .then() method
-    // which returns once the Firebase function has finished running
+    // which returns once the FirebaseServ function has finished running
     //////////////////////////////////
 
     // data related to the view is in $scope.page.data
     $scope.page = {}
-    //core data for the page.
+        //core data for the page.
     $scope.page.data = {}
-    // groups > pads > comments data for the page.
+        // groups > pads > comments data for the page.
     $scope.page.data.groups = {}
-    // current user id for the page.
+        // current user id for the page.
     $scope.page.data.uid = ""
-    // the values for tha page.
+        // the values for tha page.
     $scope.page.models = {}
-    // search models.
+        // search models.
     $scope.page.models.search = {}
     $scope.page.models.search.displayName = ''
-    // group models.
+        // group models.
     $scope.page.models.group = {}
     $scope.page.models.group.create = {}
     $scope.page.models.group.edit = {}
     $scope.page.models.group.remove = {}
-    // pad models.
+        // pad models.
     $scope.page.models.pad = {}
     $scope.page.models.pad.create = {}
     $scope.page.models.pad.edit = {}
     $scope.page.models.pad.remove = {}
-    // comment models.
+        // comment models.
     $scope.page.models.comment = {}
     $scope.page.models.comment.create = {}
     $scope.page.models.comment.edit = {}
@@ -498,334 +385,293 @@ app.controller('FlipCtrl', function ($scope, Firebase) {
     // groups start
     //////////////////////////////////
     //check the user exsists in the database
-    // Firebase.check_user().then(function (output) {
+    // FirebaseServ.check_user().then(function (output) {
     //     console.log("users", output)
     // })
-    // Firebase.get_groups2().then(function (output) {
+    // FirebaseServ.get_groups2().then(function (output) {
     //     console.log("users", output)
     //     // assign current user
     //     // $scope.page.data.uid = input.uid
     //     // assign current users groups
     //     $scope.page.data.groups = output
     // })
-    console.log("running")
-    // getting the users groups
-    Firebase.check_user().then(function (user_output) {
+    console.log( "running" )
+        // getting the users groups
+    FirebaseServ.check_user( ).then( function ( user_output ) {
         // are there any groups?
-        console.log("user_output --- ", user_output)
-        // return
-        if (user_output.groups) {
+        console.log( "user_output --- ", user_output )
+            // return
+        if ( user_output.groups ) {
             // get the group objects
-            console.log("user_output.groups --- ", user_output.groups)
-            $scope.get_groups(user_output)
-            console.warn("data", $scope.page.data)
-        }
-        else {
+            console.log( "user_output.groups --- ", user_output.groups )
+            $scope.get_groups( user_output )
+            console.warn( "data", $scope.page.data )
+        } else {
             // no groups means the user isnt create as they will
             // always have a default group, so we create that new user.
-            Firebase.create_user(user_output).then(function (new_user_output) {
-                post_group({
+            FirebaseServ.create_user( user_output ).then( function ( new_user_output ) {
+                post_group( {
                     created_by: user_output.public.uid,
                     title: 'general',
-                }).then(function (group_output) {
+                } ).then( function ( group_output ) {
                     group_object = $scope.page.data.groups
                     group_object.length = 0
-                    group_object[group_output.id] = group_output
+                    group_object[ group_output.id ] = group_output
                     $scope.page.data.uid = group_output.created_by
-                    group_object[group_output.id].users[group_output.created_by] = true
-                    post_pad({
+                    group_object[ group_output.id ].users[ group_output.created_by ] = true
+                    post_pad( {
                         group_id: group_output.id,
                         created_by: user_output.public.uid,
                         title: 'Your first note!',
                         body: 'This is an example note, flip me over to add a comment!',
-                    }).then(function (pad_output) {
-                        pads_object = $scope.page.data.groups[group_output.id].pads
+                    } ).then( function ( pad_output ) {
+                        pads_object = $scope.page.data.groups[ group_output.id ].pads
                         pads_object.length = 0
-                        pads_object[pad_output.id] = {}
-                        pads_object[pad_output.id] = pad_output
-                        if (!$scope.$$phase) {
-                            $scope.$apply()
+                        pads_object[ pad_output.id ] = {}
+                        pads_object[ pad_output.id ] = pad_output
+                        if ( !$scope.$$phase ) {
+                            $scope.$apply( )
                         }
-                        console.warn("data", $scope.page.data)
-                    })
-                })
-            })
+                        console.warn( "data", $scope.page.data )
+                    } )
+                } )
+            } )
         }
-    })
+    } )
 
-    $scope.get_groups = function (input) {
-        // trigger Firebase function.
-        Firebase.get_groups(input.groups)
-            .then(function (groups) {
-                console.info("input", input)
-                console.info("groups", groups)
-                // assign current user
+    $scope.get_groups = function ( input ) {
+        // trigger FirebaseServ function.
+        FirebaseServ.get_groups( input.groups )
+            .then( function ( groups ) {
+                console.info( "input", input )
+                console.info( "groups", groups )
+                    // assign current user
                 $scope.page.data.uid = input.public.uid
-                // assign current users groups
+                    // assign current users groups
                 $scope.page.data.groups = groups
-            })
+            } )
     }
 
-    $scope.remove_group = function (group_id) {
+    $scope.remove_group = function ( group_id ) {
         // build input.
         var input = {
-            uid: $scope.page.data.uid,
-            group_id: group_id,
-        }
-        // trigger Firebase function.
-        Firebase.remove_group(input).then(function (output) {
-            delete $scope.page.data.groups[group_id]
-            // update the length. (this is important as wont happen automaticaly)
-            $scope.page.data.groups.length--
-            // a check to see if $apply() is already running and if not run it.
-            if (!$scope.$$phase) {
-                $scope.$apply()
+                uid: $scope.page.data.uid,
+                group_id: group_id,
             }
-        })
+            // trigger FirebaseServ function.
+        FirebaseServ.remove_group( input ).then( function ( output ) {
+            delete $scope.page.data.groups[ group_id ]
+                // update the length. (this is important as wont happen automaticaly)
+            $scope.page.data.groups.length--
+                // a check to see if $apply() is already running and if not run it.
+                if ( !$scope.$$phase ) {
+                    $scope.$apply( )
+                }
+        } )
     }
 
-    $scope.update_group = function (group_id) {
-        group = $scope.page.models.group.edit[group_id]
-        if (!group) {
+    $scope.update_group = function ( group_id ) {
+        group = $scope.page.models.group.edit[ group_id ]
+        if ( !group ) {
             return
         }
         // build input.
-        var input = $scope.page.data.groups[group_id]
+        var input = $scope.page.data.groups[ group_id ]
         input.title = group.title
-        // clear page inputs values and UX.
-        $scope.page.models.group.edit[group_id].title = "";
-        // trigger Firebase function.
-        Firebase.update_group(input)
-            .then(function (output) {
-                group_object = $scope.page.data.groups[output.id]
+            // clear page inputs values and UX.
+        $scope.page.models.group.edit[ group_id ].title = "";
+        // trigger FirebaseServ function.
+        FirebaseServ.update_group( input )
+            .then( function ( output ) {
+                group_object = $scope.page.data.groups[ output.id ]
                 group_object.title = output.title
                 group_object.timestamp = output.timestamp
-                //a check to see if $apply() is already running and if not run it.
-                if (!$scope.$$phase) {
-                    $scope.$apply()
+                    //a check to see if $apply() is already running and if not run it.
+                if ( !$scope.$$phase ) {
+                    $scope.$apply( )
                 }
-            })
+            } )
     }
-    $scope.create_group = function () {
-        // build input.
-        var title = $scope.page.models.group.create.title
-        if (!title) {
-            return
-        }
-        var input = {
-            title: title,
-        }
-        // clear page inputs values and UX.
-        $scope.page.models.group.create.title = "";
-        // trigger Firebase function.
-        Firebase.post_group(input)
-            .then(function (new_object) {
-                group_object = $scope.page.data.groups
-                if (!group_object) {
-                    group_object = {}
-                    group_object.length = 0
-                }
-                // update the length. (this is important as wont happen automaticaly)
-                group_object.length++;
-                // create new object with its key as the new id then populate it.
-                group_object[new_object.id] = new_object
-                $scope.page.data.uid = new_object.created_by
-                // tell the new group to allow the current user to access it.
-                group_object[new_object.id].users[new_object.created_by] = true
-                // a check to see if $apply() is already running and if not run it.
-                if (!$scope.$$phase) {
-                    $scope.$apply()
-                }
-            })
-    }
-    //////////////////////////////////
-    // groups end
-    //////////////////////////////////
-    //////////////////////////////////
-    // pads start
-    //////////////////////////////////
-    $scope.remove_pad = function (group_id, pad_id) {
-        // build input.
-        var input = {
-            group_id: group_id,
-            pad_id: pad_id,
-        }
-        // trigger Firebase function.
-        Firebase.remove_pad(input).then(function (output) {
-            delete $scope.page.data.groups[group_id].pads[pad_id]
-            // update the length. (this is important as wont happen automaticaly)
-            $scope.page.data.groups[group_id].pads.length--
-            // a check to see if $apply() is already running and if not run it.
-            if (!$scope.$$phase) {
-                $scope.$apply()
+    $scope.create_group = function ( ) {
+            // build input.
+            var title = $scope.page.models.group.create.title
+            if ( !title ) {
+                return
             }
-        })
-    }
-    $scope.create_pad = function (group_id) {
-        // get the data from the page inputs.
-        var title = $scope.page.models.pad.create[group_id].title
-        var body = $scope.page.models.pad.create[group_id].body
+            var input = {
+                    title: title,
+                }
+                // clear page inputs values and UX.
+            $scope.page.models.group.create.title = "";
+            // trigger FirebaseServ function.
+            FirebaseServ.post_group( input )
+                .then( function ( new_object ) {
+                    group_object = $scope.page.data.groups
+                    if ( !group_object ) {
+                        group_object = {}
+                        group_object.length = 0
+                    }
+                    // update the length. (this is important as wont happen automaticaly)
+                    group_object.length++;
+                    // create new object with its key as the new id then populate it.
+                    group_object[ new_object.id ] = new_object
+                    $scope.page.data.uid = new_object.created_by
+                        // tell the new group to allow the current user to access it.
+                    group_object[ new_object.id ].users[ new_object.created_by ] = true
+                        // a check to see if $apply() is already running and if not run it.
+                    if ( !$scope.$$phase ) {
+                        $scope.$apply( )
+                    }
+                } )
+        }
+        //////////////////////////////////
+        // groups end
+        //////////////////////////////////
+        //////////////////////////////////
+        // pads start
+        //////////////////////////////////
+    $scope.remove_pad = function ( group_id, pad_id ) {
         // build input.
         var input = {
-            group_id: group_id,
-            title: title,
-            body: body,
-        }
-        // clear page inputs values and UX.
-        $scope.page.models.pad.create[group_id].title = "";
-        $scope.page.models.pad.create[group_id].body = "";
-        // trigger Firebase function.
-        Firebase.post_pad(input)
-            .then(function (new_object) {
-                // get current list of pads.
-                pads_object = $scope.page.data.groups[group_id].pads
-                // if there isnt any pads make a empty pads array and set the length to 0.
-                if (!pads_object) {
-                    pads_object = {}
-                    pads_object.length = 0
-                }
-                // update the length. (this is important as wont happen automaticaly)
-                pads_object.length++;
-                // create new object with its key as the new id then populate it.
-                pads_object[new_object.id] = {}
-                pads_object[new_object.id] = new_object
-                // a check to see if $apply() is already running and if not run it.
-                if (!$scope.$$phase) {
-                    $scope.$apply()
-                }
-            })
-    }
-    //////////////////////////////////
-    // pads end
-    //////////////////////////////////
-    //////////////////////////////////
-    // comments start
-    //////////////////////////////////
-    $scope.remove_comment = function (group_id, pad_id, comment_id) {
-        // build input.
-        var input = {
-            group_id: group_id,
-            pad_id: pad_id,
-            comment_id: comment_id,
-        }
-        // trigger Firebase function.
-        Firebase.remove_comment(input).then(function (output) {
-            delete $scope.page.data.groups[group_id].pads[pad_id].comments[comment_id]
-            // update the length. (this is important as wont happen automaticaly)
-            $scope.page.data.groups[group_id].pads[pad_id].comments.length--
-            // a check to see if $apply() is already running and if not run it.
-            if (!$scope.$$phase) {
-                $scope.$apply()
+                group_id: group_id,
+                pad_id: pad_id,
             }
-        })
+            // trigger FirebaseServ function.
+        FirebaseServ.remove_pad( input ).then( function ( output ) {
+            delete $scope.page.data.groups[ group_id ].pads[ pad_id ]
+                // update the length. (this is important as wont happen automaticaly)
+            $scope.page.data.groups[ group_id ].pads.length--
+                // a check to see if $apply() is already running and if not run it.
+                if ( !$scope.$$phase ) {
+                    $scope.$apply( )
+                }
+        } )
     }
-    $scope.create_comment = function (group_id, pad_id) {
-        // build input.
-        var body = $scope.page.models.comment.create[pad_id].body
-        var input = {
-            group_id: group_id,
-            pad_id: pad_id,
-            body: body,
+    $scope.create_pad = function ( group_id ) {
+            // get the data from the page inputs.
+            var title = $scope.page.models.pad.create[ group_id ].title
+            var body = $scope.page.models.pad.create[ group_id ].body
+                // build input.
+            var input = {
+                    group_id: group_id,
+                    title: title,
+                    body: body,
+                }
+                // clear page inputs values and UX.
+            $scope.page.models.pad.create[ group_id ].title = "";
+            $scope.page.models.pad.create[ group_id ].body = "";
+            // trigger FirebaseServ function.
+            FirebaseServ.post_pad( input )
+                .then( function ( new_object ) {
+                    // get current list of pads.
+                    pads_object = $scope.page.data.groups[ group_id ].pads
+                        // if there isnt any pads make a empty pads array and set the length to 0.
+                    if ( !pads_object ) {
+                        pads_object = {}
+                        pads_object.length = 0
+                    }
+                    // update the length. (this is important as wont happen automaticaly)
+                    pads_object.length++;
+                    // create new object with its key as the new id then populate it.
+                    pads_object[ new_object.id ] = {}
+                    pads_object[ new_object.id ] = new_object
+                        // a check to see if $apply() is already running and if not run it.
+                    if ( !$scope.$$phase ) {
+                        $scope.$apply( )
+                    }
+                } )
         }
-        console.info(input)
-        // clear page inputs values and UX.
-        $scope.page.models.comment.create[pad_id].body = "";
-        // trigger Firebase function.
-        Firebase.post_comment(input)
-            .then(function (new_object) {
-                console.info("new_object", new_object)
-                console.info("$scope.page.data", $scope.page.data)
-                current_pad = $scope.page.data.groups[input.group_id].pads[input.pad_id]
-                comments_object = current_pad.comments
-                if (!comments_object) {
-                    current_pad.comments = {}
+        //////////////////////////////////
+        // pads end
+        //////////////////////////////////
+        //////////////////////////////////
+        // comments start
+        //////////////////////////////////
+    $scope.remove_comment = function ( group_id, pad_id, comment_id ) {
+        // build input.
+        var input = {
+                group_id: group_id,
+                pad_id: pad_id,
+                comment_id: comment_id,
+            }
+            // trigger FirebaseServ function.
+        FirebaseServ.remove_comment( input ).then( function ( output ) {
+            delete $scope.page.data.groups[ group_id ].pads[ pad_id ].comments[ comment_id ]
+                // update the length. (this is important as wont happen automaticaly)
+            $scope.page.data.groups[ group_id ].pads[ pad_id ].comments.length--
+                // a check to see if $apply() is already running and if not run it.
+                if ( !$scope.$$phase ) {
+                    $scope.$apply( )
+                }
+        } )
+    }
+    $scope.create_comment = function ( group_id, pad_id ) {
+            // build input.
+            var body = $scope.page.models.comment.create[ pad_id ].body
+            var input = {
+                group_id: group_id,
+                pad_id: pad_id,
+                body: body,
+            }
+            console.info( input )
+                // clear page inputs values and UX.
+            $scope.page.models.comment.create[ pad_id ].body = "";
+            // trigger FirebaseServ function.
+            FirebaseServ.post_comment( input )
+                .then( function ( new_object ) {
+                    console.info( "new_object", new_object )
+                    console.info( "$scope.page.data", $scope.page.data )
+                    current_pad = $scope.page.data.groups[ input.group_id ].pads[ input.pad_id ]
                     comments_object = current_pad.comments
-                    comments_object.length = 0
-                    comments_object.lengthe = "testing"
+                    if ( !comments_object ) {
+                        current_pad.comments = {}
+                        comments_object = current_pad.comments
+                        comments_object.length = 0
+                        comments_object.lengthe = "testing"
 
-                }
-                console.log("new pad obj", current_pad)
-                console.log("new comment obj", comments_object)
-                // update the length. (this is important as wont happen automaticaly)
-                comments_object.length++;
-                // create new object with its key as the new id then populate it.
-                comments_object[new_object.id]
-                comments_object[new_object.id] = new_object
-                // a check to see if $apply() is already running and if not run it.
-                console.info("$scope.page.data", $scope.page.data)
-                if (!$scope.$$phase) {
-                    $scope.$apply()
-                }
-            })
-    }
-    //////////////////////////////////
-    // comments end
-    //////////////////////////////////
-    $scope.search_contact = function () {
-        if (!$scope.page.models.search.displayName) {
+                    }
+                    console.log( "new pad obj", current_pad )
+                    console.log( "new comment obj", comments_object )
+                        // update the length. (this is important as wont happen automaticaly)
+                    comments_object.length++;
+                    // create new object with its key as the new id then populate it.
+                    comments_object[ new_object.id ]
+                    comments_object[ new_object.id ] = new_object
+                        // a check to see if $apply() is already running and if not run it.
+                    console.info( "$scope.page.data", $scope.page.data )
+                    if ( !$scope.$$phase ) {
+                        $scope.$apply( )
+                    }
+                } )
+        }
+        //////////////////////////////////
+        // comments end
+        //////////////////////////////////
+    $scope.search_contact = function ( ) {
+        if ( !$scope.page.models.search.displayName ) {
             return
         }
         input = {
             search: $scope.page.models.search.displayName,
         }
-        Firebase.search_contacts(input).then(function (output) {
-            console.log(output)
-        })
+        FirebaseServ.search_contacts( input ).then( function ( output ) {
+            console.log( output )
+        } )
     }
 
-    $scope.flip = function (group_id, pad_key) {
+    $scope.flip = function ( group_id, pad_key ) {
         //create reference to scoped object
-        pads_object = $scope.page.data.groups[group_id].pads[pad_key]
-        // check that flipped exsists and if it doesnt set it to false
-        if (typeof (pads_object.flipped) === "undefeined") {
+        pads_object = $scope.page.data.groups[ group_id ].pads[ pad_key ]
+            // check that flipped exsists and if it doesnt set it to false
+        if ( typeof ( pads_object.flipped ) === "undefeined" ) {
             pads_object.flipped = false;
         }
         // toggle the flipped between true/false
         pads_object.flipped = !pads_object.flipped
     }
-});
+} );
 //////////////////////////////////
 //FlipCtrl end
-//////////////////////////////////
-
-//////////////////////////////////
-//DashCtrl start
-//////////////////////////////////
-
-app.controller( 'HomeCtrl', function ( $scope )
-{
-
-} );
-
-//////////////////////////////////
-//DashCtrl end
-//////////////////////////////////
-
-//////////////////////////////////
-//Login_Faz_Ctrl start
-//////////////////////////////////
-
-app.controller( 'Login_Faz_Ctrl', function ( $scope )
-{
-	console.log('Login_Faz_Ctrl')
-} );
-
-//////////////////////////////////
-//Login_Faz_Ctrl end
-//////////////////////////////////
-
-
-//////////////////////////////////
-//FazCtrl start
-//////////////////////////////////
-
-app.controller( 'Login_Faz_Ctrl', function ( $scope )
-{
-
-} );
-
-//////////////////////////////////
-//FazCtrl end
 //////////////////////////////////
 
 //////////////////////////////////
@@ -1108,5 +954,3 @@ app.controller( 'NavCtrl', function ( $scope, $location )
     $location.path( path );
   };
 } );
-app.controller( 'testCtrl', function ( $scope ) {} )
-

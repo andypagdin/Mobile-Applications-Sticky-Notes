@@ -1,27 +1,27 @@
 <ion-view view-title="Account">
-  <ion-content>
-    <ion-list>
-    <div class="list card">
-      <span class="item">
+    <ion-content>
+        <ion-list>
+            <div class="list card">
+                <span class="item">
 	    <img src="{{ photoURL }}" width="150" height="150"></img>
 	  </span>
-      <span class="item">
+                <span class="item">
 	    Display Name - {{ displayName }}
 	  </span>
-	  <span class="item">
+                <span class="item">
 	    Email - {{ email }}
 	  </span>
-	  <span class="item">
+                <span class="item">
 	    Unique ID - {{ uid }}
 	  </span>
-	  <span class="item">
+                <span class="item">
 	    Verified? - {{ isVerified }}
 	  </span>
-	</div>
-	<button class="button button-full button-positive hide" ng-disabled="verifyable" ng-click="sendEmailVerification()" id="btnVerifyEmail" name="verify-email">
+            </div>
+            <button class="button button-full button-positive hide" ng-disabled="verifyable" ng-click="sendEmailVerification()" id="btnVerifyEmail" name="verify-email">
         Send Email Verification
     </button>
-	<button class="button button-full button-assertive" ng-click="signOut()">Sign Out</button>
-    </ion-list>
-  </ion-content>
+            <button class="button button-full button-assertive" ng-click="signOut()">Sign Out</button>
+        </ion-list>
+    </ion-content>
 </ion-view>

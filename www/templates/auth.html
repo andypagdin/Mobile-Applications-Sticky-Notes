@@ -1,0 +1,167 @@
+<style>
+    #auth__container {
+        background: #E0E0E0;
+        height: 100%;
+        width: 100%;
+        position: absolute;
+        z-index: 0;
+        background-image: url('../img/woman.jpg');
+        background-size: cover;
+        background-position: 50% 0;
+    }
+    
+    #auth__container-overlay {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    #auth__container-overlay {
+        background: linear-gradient(to right, rgba(40, 0, 200, 0.3) 0%, rgba(150, 0, 200, 0.3) 30%, rgba(150, 0, 200, 0.3) 70%, rgba(40, 0, 200, 0.3));
+        background-size: 10000px 100%;
+        animation: bg 10s linear infinite;
+    }
+    
+    @keyframes bg {
+        0% {
+            background-position-x: 0;
+        }
+        100% {
+            background-position-x: 10000px;
+        }
+    }
+    
+    #auth__form {
+        width: 80%;
+        margin: 5vh 12.5vw 0;
+    }
+    
+    #auth__form-icon {
+        width: 100%;
+        margin-bottom: 20vh;
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
+    }
+    
+    #auth__form-icon img {
+        height: 15vh;
+    }
+    
+    .auth__input__container {
+        width: 100%;
+        height: 5vh;
+        margin: 2vh 0;
+        padding: 0 1vh;
+    }
+    
+    .auth__input-icon {
+        font-size: 4vh !important;
+        width: 4vh;
+        text-align: center;
+        color: rgba(225, 225, 225, .5) !important;
+        transition: .2s;
+        float: left;
+    }
+    
+    .auth__input:focus+.auth__input-icon {
+        color: rgba(225, 225, 225, 1) !important;
+    }
+    
+    .auth__line {
+        width: 100%;
+        height: .2vh;
+        background-color: rgba(225, 225, 225, .5);
+        transition: .2s;
+        float: left;
+    }
+    
+    .auth__input:focus~.auth__line {
+        background-color: rgba(225, 225, 225, 1) !important;
+    }
+    
+    .auth__input {
+        padding-left: 1vh !important;
+        width: calc(100% - 5vh) !important;
+        background: transparent !important;
+        border: none !important;
+        color: white !important;
+        font-size: 3vh !important;
+        transition: .2s;
+        text-shadow: 0px 0px 2vh black;
+        float: left;
+    }
+    
+    .auth__input::-webkit-input-placeholder {
+        color: white;
+    }
+    
+    .auth__input:-moz-placeholder {
+        /* Firefox 18- */
+        color: white;
+    }
+    
+    .auth__input::-moz-placeholder {
+        /* Firefox 19+ */
+        color: white;
+    }
+    
+    .auth__input:-ms-input-placeholder {
+        color: white;
+    }
+    
+    .auth__button {
+        font-size: 2.5vh;
+        height: 5vh;
+        color: white !important;
+        background: rgba(0, 0, 0, 0.3) !important;
+        text-shadow: 0px 0px 2vh black;
+        border: .1vh solid white;
+        border-radius: .5vh;
+        transition: .1s;
+    }
+    
+    #google {
+        border-color: rgba(197, 57, 41, 1);
+        color: rgb(255, 72, 52) !important;
+    }
+    
+    #google:active {
+        border-color: rgba(197, 57, 41, 0.5);
+    }
+</style>
+<ion-view id="auth" hide-nav-bar="true">
+    <ion-content scroll="false">
+        <div id="auth__container">
+            <div id="auth__container-overlay">
+                <div id="auth__form">
+                    <div id="auth__form-icon">
+                        <img src="../img/icon.png">
+                    </div>
+                    <div class="auth__input__container">
+                        <input ng-model="auth.email" class="auth__input" type="text" name="email" id="email" placeholder="Email" required autofocus>
+                        <label class="icon ion-ios-email-outline auth__input-icon" for="email"></label>
+                        <div class="auth__line"></div>
+                    </div>
+                    <div class="auth__input__container">
+                        <input ng-model="auth.password" class="auth__input" type="password" name="password" id="password" placeholder="Password" required>
+                        <label class="icon ion-ios-locked-outline auth__input-icon" for="password"></label>
+                        <div class="auth__line"></div>
+                    </div>
+
+                    <button class="auth__button button button-block" ng-disabled="signinable" ng-click="toggleSignIn()" id="quickstart-sign-in" name="signin">
+                        Log In
+                    </button>
+                    <button class="auth__button button button-block" ng-click="handleSignUp()" id="quickstart-sign-up" name="signup">
+                        Sign Up
+                    </button>
+                    <button class="auth__button button button-block" id="google" ng-click="googleSignIn()">
+                        Google
+                    </button>
+                </div>
+            </div>
+        </div>
+    </ion-content>
+</ion-view>

@@ -1,19 +1,18 @@
 <ion-view id="app-login" hide-nav-bar="true">
     <ion-content scroll="false">
         <section class="login-container padding">
-            
+
             <!-- <div class = "col header text-center">
                <img src="./img/ionic.png" class = "logo" />
             </div> -->
 
             <div class="login-input-container">
                 <div class="item item-input">
-                    <img src="/img/envelope.png" class="login-img"/>
+                    <img src="/img/envelope.png" class="login-img" />
                     <input ng-model="auth.email" type="text" id="email" name="email" placeholder="Email" />
                 </div>
-                <p>
                 <div class="item item-input">
-                    <img src="/img/padlock.png" class="login-img"/>
+                    <img src="/img/padlock.png" class="login-img" />
                     <input ng-model="auth.password" type="password" id="password" name="password" placeholder="Password" />
                 </div>
 
@@ -21,7 +20,7 @@
                     <button class="auth_btn button button-stable login-btn" ng-click="handleSignUp()" id="quickstart-sign-up" name="signup">
                         Sign Up
                     </button>
-                     <button class="auth_btn button button-positive login-btn log-in-btn" ng-disabled="signinable" ng-click="toggleSignIn()" id="quickstart-sign-in" name="signin">
+                    <button class="auth_btn button button-positive login-btn log-in-btn" ng-disabled="signinable" ng-click="toggleSignIn()" id="quickstart-sign-in" name="signin">
                         Log in
                     </button>
                 </div>
@@ -33,9 +32,9 @@
                 </button>
             </div>
 
-            <div class = "col text-center">
+            <div class="col text-center">
                 <a href="#">Reset password</a>
-            </div>  
+            </div>
 
         </section>
     </ion-content>
