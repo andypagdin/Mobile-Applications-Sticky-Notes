@@ -28,6 +28,77 @@ app = angular.module( 'starter.controllers', [ ] )
 
 
 //////////////////////////////////
+//AccountCtrl start
+//////////////////////////////////
+
+app.controller( 'AccountCtrl', function ( $scope, $state )
+{
+	firebase.auth( ).onAuthStateChanged( function ( user )
+	{
+		if ( user )
+		{
+			$scope.email = user.email
+			$scope.uid = user.uid
+			$scope.displayName = user.displayName
+			$scope.photoURL = user.photoURL
+
+			var isVerified = user.emailVerified
+
+			if ( user.emailVerified )
+			{
+				$scope.isVerified = "You have verified your account";
+			}
+			else
+			{
+				$scope.isVerified = "You have not verified your account";
+				btnVerifyEmail.classList.remove('hide');
+			}
+		}
+		else
+		{
+
+		}
+	} );
+
+	$scope.signOut = function ( )
+	{
+		firebase.auth( ).signOut( ).then( function ( )
+		{
+			$state.go( 'login' )
+			console.log( "signed out" )
+		}, function ( error )
+		{
+			console.log( error )
+		} );
+	}
+
+	$scope.settings = {
+		enableFriends: true
+	};
+
+	/**
+	 * Sends an email verification to the user.
+	 */
+	$scope.sendEmailVerification = function ( )
+	{
+		// [START sendemailverification]
+		firebase.auth( ).currentUser.sendEmailVerification( ).then( function ( )
+		{
+			// Email Verification sent!
+			// [START_EXCLUDE]
+			console.info( 'Email Verification Sent!' );
+			// [END_EXCLUDE]
+		} );
+		// [END sendemailverification]
+	}
+} );
+
+//////////////////////////////////
+//AccountCtrl end
+//////////////////////////////////
+
+
+//////////////////////////////////
 //AccordionCtrl start
 //////////////////////////////////
 
@@ -133,82 +204,162 @@ app.controller( 'addPadCtrl', function ( $scope, FirebaseServ ) {
 } );
 
 //////////////////////////////////
-//AccountCtrl start
-//////////////////////////////////
-
-app.controller( 'AccountCtrl', function ( $scope, $state )
-{
-	firebase.auth( ).onAuthStateChanged( function ( user )
-	{
-		if ( user )
-		{
-			$scope.email = user.email
-			$scope.uid = user.uid
-			$scope.displayName = user.displayName
-			$scope.photoURL = user.photoURL
-
-			var isVerified = user.emailVerified
-
-			if ( user.emailVerified )
-			{
-				$scope.isVerified = "You have verified your account";
-			}
-			else
-			{
-				$scope.isVerified = "You have not verified your account";
-				btnVerifyEmail.classList.remove('hide');
-			}
-		}
-		else
-		{
-
-		}
-	} );
-
-	$scope.signOut = function ( )
-	{
-		firebase.auth( ).signOut( ).then( function ( )
-		{
-			$state.go( 'login' )
-			console.log( "signed out" )
-		}, function ( error )
-		{
-			console.log( error )
-		} );
-	}
-
-	$scope.settings = {
-		enableFriends: true
-	};
-
-	/**
-	 * Sends an email verification to the user.
-	 */
-	$scope.sendEmailVerification = function ( )
-	{
-		// [START sendemailverification]
-		firebase.auth( ).currentUser.sendEmailVerification( ).then( function ( )
-		{
-			// Email Verification sent!
-			// [START_EXCLUDE]
-			console.info( 'Email Verification Sent!' );
-			// [END_EXCLUDE]
-		} );
-		// [END sendemailverification]
-	}
-} );
-
-//////////////////////////////////
-//AccountCtrl end
-//////////////////////////////////
-
-
-//////////////////////////////////
 //AuthCtrl start
 //////////////////////////////////
 
 app.controller( 'AuthCtrl', function ( $scope, $state ) {
+    $scope.auth = {
+        email: "",
+        password: "",
+        error: false,
+        verifed: false,
+        signin: false,
+        loading: false,
+    }
+    $scope.google = function ( ) {
+        $scope.auth.loading = true;
 
+        var provider = new firebase.auth.GoogleAuthProvider( );
+
+        firebase.auth( ).signInWithRedirect( provider )
+            .then( function ( ) {
+                $scope.auth.loading = false;
+                $scope.$apply( )
+            } )
+            .catch( function ( error ) {
+                $scope.auth.error = JSON.stringify( error )
+                $scope.auth.loading = false;
+                $scope.$apply( )
+            } );
+
+    }
+
+    $scope.signout = function ( ) {
+        firebase.auth( ).signOut( );
+        console.log( "signed out" )
+    }
+
+    $scope.signin = function ( ) {
+        $scope.auth.loading = true;
+
+        if ( firebase.auth( ).currentUser ) {
+            $scope.signout( );
+            $scope.auth.loading = false;
+            return;
+        }
+
+        var email = $scope.auth.email;
+        if ( !email || email.length < 4 ) {
+            $scope.auth.error = 'Please enter an email address.';
+            $scope.auth.loading = false;
+            return;
+        }
+
+        var password = $scope.auth.password;
+        if ( !password || password.length < 4 ) {
+            $scope.auth.error = 'Please enter a password.';
+            $scope.auth.loading = false;
+            return;
+        }
+
+        $scope.auth.error = false;
+        firebase.auth( ).signInWithEmailAndPassword( email, password )
+            .then( function ( ) {
+                $scope.auth.loading = false;
+                $scope.$apply( )
+            } )
+            .catch( function ( error ) {
+                $scope.auth.error = ( error.message ) ? error.message : "Request failed, please try again.";
+                $scope.auth.loading = false;
+                $scope.$apply( )
+            } );
+    }
+
+    $scope.signup = function ( ) {
+        $scope.auth.loading = true;
+
+        var email = $scope.auth.email;
+        if ( !email || email.length < 4 ) {
+            $scope.auth.error = "Please enter an email address.";
+            $scope.auth.loading = false;
+            return;
+        }
+
+        var password = $scope.auth.password;
+        if ( !password || password.length < 4 ) {
+            $scope.auth.error = "Please enter a password.";
+            $scope.auth.loading = false;
+            return;
+        }
+
+        firebase.auth( ).createUserWithEmailAndPassword( email, password )
+            .then( function ( ) {
+                $scope.auth.loading = false;
+                $scope.$apply( )
+            } )
+            .catch( function ( error ) {
+                $scope.auth.error = error.message;
+                $scope.auth.loading = false;
+                $scope.$apply( )
+            } );
+    }
+
+    $scope.reset = function ( ) {
+        $scope.auth.loading = true;
+
+        var email = $scope.auth.email;
+        if ( !email || email.length < 4 ) {
+            $scope.auth.error = "Please enter an email address.";
+            $scope.auth.loading = false;
+            return;
+        }
+
+        firebase.auth( ).sendPasswordResetEmail( email ).then( function ( ) {
+                $scope.auth.error = "Password Reset Email Sent!";
+                $scope.auth.loading = false;
+                console.log( "we have a res, auth ---", $scope.auth )
+                $scope.$apply( )
+            } )
+            .catch( function ( local_error ) {
+                console.log( "we have a err, auth ---", $scope.auth )
+                switch ( local_error.code ) {
+                    case 'auth/invalid-email':
+                        $scope.auth.error = "That email address isn't recognised.";
+                        break;
+                    case 'auth/user-not-found':
+                        $scope.auth.error = "That username isn't recognised.";
+                        break;
+                    default:
+                        $scope.auth.error = local_error.message;
+                        break;
+                }
+                $scope.auth.loading = false;
+                $scope.$apply( )
+            } );
+    }
+
+    $scope.init = function ( ) {
+        firebase.auth( ).onAuthStateChanged( function ( user ) {
+            $scope.auth.loading = false;
+            if ( user ) {
+                if ( !$scope.auth.email && !$scope.auth.password ) {
+                    console.log( "there is currently a known user and there shouldnt be", user )
+                    $scope.signout( )
+                }
+                if ( !user.emailVerified ) {
+                    user.sendEmailVerification( )
+                    $scope.auth.error = "Please verify your account.";
+                    console.error( $scope.auth.error )
+                    $scope.signout( )
+                    $scope.$apply( )
+                    return
+                }
+                $scope.auth.error = false;
+                $scope.$apply( )
+            }
+        } )
+    }
+    $scope.init( );
 } )
 
 //////////////////////////////////
@@ -674,6 +825,12 @@ app.controller( 'FlipCtrl', function ( $scope, FirebaseServ ) {
 //FlipCtrl end
 //////////////////////////////////
 
+app.controller( 'NavCtrl', function ( $scope, $location )
+{
+	$scope.go = function ( path ) {
+    $location.path( path );
+  };
+} );
 //////////////////////////////////
 //LoginCtrl start
 //////////////////////////////////
@@ -947,10 +1104,3 @@ app.controller( 'LoginCtrl', function ( $scope, $state ) {
 //////////////////////////////////
 //LoginCtrl end
 //////////////////////////////////
-
-app.controller( 'NavCtrl', function ( $scope, $location )
-{
-	$scope.go = function ( path ) {
-    $location.path( path );
-  };
-} );
