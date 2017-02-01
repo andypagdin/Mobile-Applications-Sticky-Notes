@@ -30,6 +30,7 @@ app = angular.module( 'starter.controllers', [ ] )
 //////////////////////////////////
 //AccordionCtrl start
 //////////////////////////////////
+
 app.controller('AccordionCtrl', function ($scope, Firebase) {
 
   $scope.page_data = {}
@@ -157,16 +158,17 @@ app.controller( 'AccountCtrl', function ( $scope, $state )
 //AccountCtrl end
 //////////////////////////////////
 
-app.controller( 'addPadCtrl', function ( $scope, Firebase ,kauth,$state)
+
+app.controller( 'addPadCtrl', function ( $scope, Firebase )
 {
-    $scope.page_data = {}
+	$scope.page_data = {}
     $scope.page_data.groups = {}
     $scope.page_data.group_models = {}
     $scope.page_data.pad_models = {}
-    $scope.page_data.pad_models[kauth.getGroupId()] = {} 
+    $scope.page_data.pad_models["-KXNSUDZByXtgP6KaCQe"] = {} 
     $scope.page_data.comment_models = {}
     $scope.page_data.currentGroup = {
-    	id:kauth.getGroupId(),
+    	id:"-KXNSUDZByXtgP6KaCQe",
     	title:"",
     	body:"",
     }
@@ -176,7 +178,7 @@ app.controller( 'addPadCtrl', function ( $scope, Firebase ,kauth,$state)
         var title = $scope.page_data.currentGroup.title
         var body = $scope.page_data.currentGroup.body
         var input = {
-            group_id: kauth.getGroupId(),
+            group_id: $scope.page_data.currentGroup.id,
             title: title,
             body: body,
         }        
@@ -184,7 +186,7 @@ app.controller( 'addPadCtrl', function ( $scope, Firebase ,kauth,$state)
         $scope.page_data.currentGroup.body = "";
         Firebase.post_pad(input)
             .then(function (new_object) {            	
-                /*pads_object = $scope.page_data.groups[kauth.getGroupId()].pads                
+                pads_object = $scope.page_data.groups[group_id].pads                
                 if (!pads_object) {
                     pads_object = {}
                     pads_object.length = 0
@@ -192,10 +194,10 @@ app.controller( 'addPadCtrl', function ( $scope, Firebase ,kauth,$state)
                 pads_object[new_object.id] = {}
                 pads_object[new_object.id] = new_object
                 pads_object.length++
+                console.log("pads_object", pads_object)
                 if (!$scope.$$phase) {
                     $scope.$apply()
-                }*/
-                $state.go( 'tab.dash' );
+                }
             })
     }
 
@@ -242,11 +244,33 @@ app.controller( 'ChatsCtrl', function ( $scope, Chats )
 
 
 //////////////////////////////////
+//EditPadCtrl start
+//////////////////////////////////
+
+app.controller( 'EditPadCtrl', function ( $scope, $state, Firebase, $stateParams )
+{
+	$scope.id = $stateParams.id
+	$scope.title = $stateParams.title
+	$scope.body = $stateParams.body
+
+	$scope.goBack = function () {
+		$state.go("tab.dash")
+	}
+
+} );
+
+//////////////////////////////////
+//EditPadCtrl end
+//////////////////////////////////
+
+
+//////////////////////////////////
 //DashCtrl start
 //////////////////////////////////
 
-app.controller('DashCtrl', function ($scope, $state, Firebase,$window,kauth) {
-    firebase.auth().onAuthStateChanged(function (user) {
+app.controller('DashCtrl', function ($scope, $state, Firebase) {
+
+	firebase.auth().onAuthStateChanged(function (user) {
 		if (user) {
 			$scope.signed_out = false
 			$scope.displayName = user.displayName
@@ -264,10 +288,7 @@ app.controller('DashCtrl', function ($scope, $state, Firebase,$window,kauth) {
 			console.error('Sign Out Error', error);
 		});
 	}
-    $scope.add_new_pad=function(id){
-         kauth.setGroupId(id);
-         $state.go( 'addPad' );
-    };
+
 	//////////////////////////////////
 	// Accordion Controller Underneath
 	//////////////////////////////////
@@ -275,84 +296,27 @@ app.controller('DashCtrl', function ($scope, $state, Firebase,$window,kauth) {
 	  $scope.page_data = {}
 	  $scope.page_data.groups = {}
 	  $scope.page_data.comment_models = {}
-      $scope.last_data={};
-/*      $scope.$on("$ionicView.enter", function(event, data){
-           if($scope.last_data.groups!=undefined)
-           {
-                $window.location.reload(true)
-           }
-        });*/
-        $scope.$on("$ionicView.enter", function(event, data){
-           if($scope.last_data.groups!=undefined)
-           {
-                $window.location.reload(true)
-           }
-        });
-      
-      var group_ids = {}
-	  $scope.cu=function(){
-        Firebase.check_user().then(function (data) {
-            user_details = data
-            $scope.last_data=data;
-           /* delete user_details.groups['-KbP-T3GeKm3MMz_k4BJ'];
-            delete user_details.groups['-KbP4sQjbZbq2zwBwllK'];
-            delete user_details.groups['-KbP5YZeNxTVI2NePhXw'];*/
-            $scope.get_groups(data)
-            //console.log("As");
-          });  
-      };
-      $scope.cu();
-      
-      
-      var cdateObj=new Date();
-      var cdate =  cdateObj.getFullYear()+(cdateObj.getMonth()+1)+cdateObj.getDate();
-      var cdate =  cdateObj.getFullYear()+(cdateObj.getMonth()+1)+cdateObj.getDate();
+	  var group_ids = {}
+
+	  Firebase.check_user().then(function (data) {
+	    user_details = data
+	    $scope.get_groups(data)
+	    console.log("user_details", user_details)
+	  })
+
 	  $scope.get_groups = function (input) {
 	    // trigger Firebase function.
-        console.log("As");
 	    Firebase.get_groups(input.groups)
 	        .then(function (groups) {
 	            console.info("input", input)
 	            console.info("groups", groups)
-	            var flag=0;
-                angular.forEach(groups, function(value, key) {
-                    if(flag==0){
-                        kauth.setGroupId(key);
-                    }
-                    flag++;
-                    if(value.gdate!=undefined)
-                    {
-                        var dObj=new Date(value.gdate);
-                        var d =  dObj.getFullYear()+(dObj.getMonth()+1)+dObj.getDate();
-                        var hours = Math.abs(cdateObj - dObj) / 36e5;
-                        if(d==cdate)
-                        {
-                            value.color="note_today";
-                            if(cdateObj.getTime() < dObj.getTime() && hours<=1) 
-                            {   
-                                value.color="note_today_hours";    
-                            }
-                        }else
-                        {
-                            value.color="note_not_today";
-                        }
-                    }else
-                    {
-                           value.color=""; 
-                    }
-                });
-                $scope.groups = groups
-	        }).catch(function(res){
-
-            })
+	            $scope.groups = groups
+	        })
 	    }
 
 	  //togglestar
 	  $scope.toggleStar = function (group) {
-	    console.log(group);
-        Firebase.update_group(group);
-        //
-        group.star = !group.star;
+	    group.star = !group.star;
 	  }
 	  //delete function
 	  $scope.onItemDelete = function (group) {
@@ -390,45 +354,107 @@ app.controller('DashCtrl', function ($scope, $state, Firebase,$window,kauth) {
 //DashCtrl end
 //////////////////////////////////
 
+
 //////////////////////////////////
-//EditPadCtrl start
+//FazAccoubtCtrl start
 //////////////////////////////////
 
-app.controller( 'EditPadCtrl', function ( $scope, $state, Firebase, $stateParams)
+app.controller( 'FazAccountCtrl', function ( $scope )
 {
-	// Put state parameters into the scope
-	$scope.pad_id = $stateParams.pad_id
-	$scope.title = $stateParams.title
-	$scope.body = $stateParams.body
-	$scope.group_id = $stateParams.group_id
-	$scope.created_by = $stateParams.created_by
-	$scope.timestamp = $stateParams.timestamp
-
-	$scope.goBack = function () {
-		$state.go("tab.dash")
-	}
-
-
-	$scope.updateNote = function ( $body ) {
-		firebase.database().ref('groups/' + $scope.group_id + '/pads/' + $scope.pad_id).set({
-			body: $body,
-			created_by: $scope.created_by,
-			id: $scope.pad_id,
-			timestamp: $scope.timestamp,
-			title: $scope.title
-		})
-	}
 
 } );
 
 //////////////////////////////////
-//EditPadCtrl end
+//FazAccoubtCtrl end
 //////////////////////////////////
+
+//////////////////////////////////
+//FromCtrl start
+//////////////////////////////////
+
+app.controller( 'FromCtrl', function ( $scope )
+{
+	// Initialize Firebase
+	$scope.fb_value = "testing"
+	read_ref = firebase.database( ).ref( )
+	set_ref = firebase.database( ).ref( 'level1/' )
+
+	// set_ref.set(
+	// {
+	// 	"l1 subkey1": "timestamp = 1"
+	// } );
+	uuid = 'Ucg7kUNTceQjOLqDIwByHLz5FPj2'
+	firebase.database( )
+		.ref( `/johnny/users/${uuid}/groups` ).once( 'value', function ( data )
+		{
+			console.log( "[Users]", data.val( ) )
+			angular.forEach( data.val( ), function ( value, index )
+			{
+				if ( value.read ) return;
+				console.log( index )
+				var ref = firebase.database( ).ref( `/johnny/groups/` )
+				ref = ref.equalTo( index );
+				console.log( ref )
+					// 	var ref = ref.orderByChild( "has_changed" ).equalTo( true );
+				ref.once( "value", function ( data )
+				{
+					console.log( "[Groups]", data.val( ) )
+				} );
+			} );
+		} );
+
+
+	// read_ref.once( 'value', function ( snap )
+	// {
+	// 	$scope.fb_value = pretty( snap.val( ) )
+	// 	console.log( "ooooooooooohhhhhh snap", snap.val( ) )
+	// } )
+	// var ref = firebase.database( ).ref( "/johnny/data/groups/" );
+	// var ref = ref.orderByChild( "has_changed" ).equalTo( true );
+	// var ref = ref.child( "uuid" );
+	// ref.once( "value", function ( data )
+	// {
+	// 	console.log( data.val( ) )
+	// } );
+
+	// firebase.database( )
+	// 	.ref( '/johnny/data/users/6X2Yka97bOOomPD1cN9VDj9VryK2/groups' ).once( 'value', function ( snap )
+	// 	{
+	// 		angular.forEach( snap.val( ), function ( value, index )
+	// 		{
+	// 			console.log( value.key )
+	// 			firebase.database( )
+	// 				.ref( '/johnny/data/groups/' )
+	// 				.child( value.key )
+	// 				.orderByChild( 'has_changed' )
+	// 				.startAt( 'true' ).endAt( 'true' )
+	// 				// .orderBy('lead')                  // !!! THIS LINE WILL RAISE AN ERROR !!!
+	// 				// .startAt('Jack Nicholson').endAt('Jack Nicholson')
+	// 				// .orderByChild( 'has changed' )
+	// 				// .child( 'has changed' )
+	// 				// .equalTo( 'true' )
+	// 				.once( 'value', function ( snap )
+	// 				{
+	// 					// console.log( key, value );
+	// 					console.log( 'Group == ', snap.val( ) );
+	// 				} );
+	// 		} );
+
+
+	// 	} );
+
+
+} )
+
+//////////////////////////////////
+//FromCtrl end
+//////////////////////////////////
+
 
 //////////////////////////////////
 //FlipCtrl start
 //////////////////////////////////
-app.controller('FlipCtrl', function ($scope, Firebase,$state) {
+app.controller('FlipCtrl', function ($scope, Firebase) {
     //////////////////////////////////
     // Information - JH
     // -------------------------------
@@ -467,8 +493,7 @@ app.controller('FlipCtrl', function ($scope, Firebase,$state) {
     $scope.page.models.comment.edit = {}
     $scope.page.models.comment.remove = {}
 
-    $scope.page.models.group.create.date=new Date();
-    //console.log($scope.page.models.group.create.date);
+
     //////////////////////////////////
     // groups start
     //////////////////////////////////
@@ -584,28 +609,15 @@ app.controller('FlipCtrl', function ($scope, Firebase,$state) {
     $scope.create_group = function () {
         // build input.
         var title = $scope.page.models.group.create.title
-        var gdate = $scope.page.models.group.create.date
         if (!title) {
             return
         }
-        if (!gdate) {
-            return
-        }
-        var datetime =  gdate.getFullYear() + "/"
-                + (gdate.getMonth()+1)  + "/" 
-                + gdate.getDate() + "  "  
-                + gdate.getHours() + ":"  
-                + gdate.getMinutes() + ":" 
-                + gdate.getSeconds();
-       
         var input = {
             title: title,
-            gdate: datetime,
         }
         // clear page inputs values and UX.
         $scope.page.models.group.create.title = "";
         // trigger Firebase function.
-    //    console.log(input);return false;
         Firebase.post_group(input)
             .then(function (new_object) {
                 group_object = $scope.page.data.groups
@@ -681,7 +693,6 @@ app.controller('FlipCtrl', function ($scope, Firebase,$state) {
                 if (!$scope.$$phase) {
                     $scope.$apply()
                 }
-                $state.go( 'tab.dash' )
             })
     }
     //////////////////////////////////
@@ -776,90 +787,9 @@ app.controller('FlipCtrl', function ($scope, Firebase,$state) {
 //////////////////////////////////
 //FlipCtrl end
 //////////////////////////////////
-//////////////////////////////////
-//FromCtrl start
-//////////////////////////////////
-
-app.controller( 'FromCtrl', function ( $scope )
-{
-	// Initialize Firebase
-	$scope.fb_value = "testing"
-	read_ref = firebase.database( ).ref( )
-	set_ref = firebase.database( ).ref( 'level1/' )
-
-	// set_ref.set(
-	// {
-	// 	"l1 subkey1": "timestamp = 1"
-	// } );
-	uuid = 'Ucg7kUNTceQjOLqDIwByHLz5FPj2'
-	firebase.database( )
-		.ref( `/johnny/users/${uuid}/groups` ).once( 'value', function ( data )
-		{
-			console.log( "[Users]", data.val( ) )
-			angular.forEach( data.val( ), function ( value, index )
-			{
-				if ( value.read ) return;
-				console.log( index )
-				var ref = firebase.database( ).ref( `/johnny/groups/` )
-				ref = ref.equalTo( index );
-				console.log( ref )
-					// 	var ref = ref.orderByChild( "has_changed" ).equalTo( true );
-				ref.once( "value", function ( data )
-				{
-					console.log( "[Groups]", data.val( ) )
-				} );
-			} );
-		} );
-
-
-	// read_ref.once( 'value', function ( snap )
-	// {
-	// 	$scope.fb_value = pretty( snap.val( ) )
-	// 	console.log( "ooooooooooohhhhhh snap", snap.val( ) )
-	// } )
-	// var ref = firebase.database( ).ref( "/johnny/data/groups/" );
-	// var ref = ref.orderByChild( "has_changed" ).equalTo( true );
-	// var ref = ref.child( "uuid" );
-	// ref.once( "value", function ( data )
-	// {
-	// 	console.log( data.val( ) )
-	// } );
-
-	// firebase.database( )
-	// 	.ref( '/johnny/data/users/6X2Yka97bOOomPD1cN9VDj9VryK2/groups' ).once( 'value', function ( snap )
-	// 	{
-	// 		angular.forEach( snap.val( ), function ( value, index )
-	// 		{
-	// 			console.log( value.key )
-	// 			firebase.database( )
-	// 				.ref( '/johnny/data/groups/' )
-	// 				.child( value.key )
-	// 				.orderByChild( 'has_changed' )
-	// 				.startAt( 'true' ).endAt( 'true' )
-	// 				// .orderBy('lead')                  // !!! THIS LINE WILL RAISE AN ERROR !!!
-	// 				// .startAt('Jack Nicholson').endAt('Jack Nicholson')
-	// 				// .orderByChild( 'has changed' )
-	// 				// .child( 'has changed' )
-	// 				// .equalTo( 'true' )
-	// 				.once( 'value', function ( snap )
-	// 				{
-	// 					// console.log( key, value );
-	// 					console.log( 'Group == ', snap.val( ) );
-	// 				} );
-	// 		} );
-
-
-	// 	} );
-
-
-} )
 
 //////////////////////////////////
-//FromCtrl end
-//////////////////////////////////
-
-//////////////////////////////////
-//dashCtrl start
+//DashCtrl start
 //////////////////////////////////
 
 app.controller( 'HomeCtrl', function ( $scope )
@@ -868,8 +798,36 @@ app.controller( 'HomeCtrl', function ( $scope )
 } );
 
 //////////////////////////////////
-//dashCtrl end
+//DashCtrl end
 //////////////////////////////////
+
+//////////////////////////////////
+//Login_Faz_Ctrl start
+//////////////////////////////////
+
+app.controller( 'Login_Faz_Ctrl', function ( $scope )
+{
+	console.log('Login_Faz_Ctrl')
+} );
+
+//////////////////////////////////
+//Login_Faz_Ctrl end
+//////////////////////////////////
+
+
+//////////////////////////////////
+//FazCtrl start
+//////////////////////////////////
+
+app.controller( 'Login_Faz_Ctrl', function ( $scope )
+{
+
+} );
+
+//////////////////////////////////
+//FazCtrl end
+//////////////////////////////////
+
 //////////////////////////////////
 //LoginCtrl start
 //////////////////////////////////
@@ -904,9 +862,10 @@ app.controller( 'LoginCtrl', function ( $scope, $state ) {
     }
 
     $scope.googleSignIn = function ( ) {
+        alert( "googleSignIn" );
         var provider = new firebase.auth.GoogleAuthProvider( );
-        console.log(provider);
-        return false;
+        alert( "past provider" );
+
         firebase.auth( ).signInWithRedirect( provider ).then( function ( ) {
             alert( "all seems fine!?" );
         } ).catch( function ( error ) {

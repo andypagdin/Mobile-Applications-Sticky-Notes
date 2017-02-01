@@ -127,7 +127,7 @@
     margin-bottom: 5vh;
     float: left;
     clear: both;
-    background: rgba(41, 128, 185,0.5);
+    background: lightgrey;
 }
 
 .card-container .flip-card {
@@ -316,56 +316,5 @@ button.button.button-clear.icon.ion-star.button-assertive {
 }
 
 
-.item.mydatetime
-{
-    padding: 12px 5px;
-    min-height: 45px;
-}
+
 /* fav's button on accordion*/
-
-
-#note_not_today .item-content
-{
-    background-color: green;
-}
-#note_today .item-content
-{
-    background-color: orange;
-}
-#note_today_hours .item-content
-{
-    background-color: #ff4e4e;
-}
-a.adddata {
-   top: 14px;
-    color: white;
-    font-size: 4em;
-    text-decoration: none;
-    float: right;
-    margin-top: -36px;
-}
-.border-none
-{
-    border: none !important;
-}
-.kbutton
-{
-    min-height: 0 !important;
-    line-height: 0 !important;
-    padding: 20px  !important;
-}
-.kbutton .icon:before, .kbutton.icon:before, .kbutton.icon-left:before, .kbutton.icon-right:before
-{
-    min-height: 0 !important;
-    line-height: 0 !important;
-}
-
-.item-input {
-    padding: 11px 7px;
-}
-
-
-div:empty:before {
-  content:attr(data-placeholder);
-  color:gray
-}

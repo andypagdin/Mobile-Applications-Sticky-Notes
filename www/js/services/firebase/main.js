@@ -160,7 +160,6 @@ app.factory('Firebase', function ($q, $state) {
 		})
 	}
 	update_group = function (arg) {
-		console.log(arg);
 		console.log("[update_group][arg]", arg)
 		return uid(true).then(function (uid) {
 			// ###TEMP###
