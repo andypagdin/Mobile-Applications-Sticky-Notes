@@ -59,8 +59,7 @@ app.controller( 'FlipCtrl', function ( $scope, FirebaseServ ) {
         // getting the users groups
     FirebaseServ.check_user( ).then( function ( user_output ) {
         // are there any groups?
-        console.log( "user_output --- ", user_output )
-            // return
+        // return
         if ( user_output.groups ) {
             // get the group objects
             console.log( "user_output.groups --- ", user_output.groups )

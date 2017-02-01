@@ -37,6 +37,16 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             templateUrl: 'templates/flip.html',
             controller: 'FlipCtrl'
         } )
+        .state( 'home', {
+            url: '/home',
+            templateUrl: 'templates/home.html',
+            controller: 'HomeCtrl'
+        } )
+        .state( 'tab', {
+            url: '/tab',
+            abstract: true,
+            templateUrl: 'templates/tabs.html'
+        } )
         .state( 'tab.dash', {
             url: '/dash',
             views: {

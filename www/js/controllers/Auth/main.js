@@ -140,6 +140,8 @@ app.controller( 'AuthCtrl', function ( $scope, $state ) {
                 if ( !$scope.auth.email && !$scope.auth.password ) {
                     console.log( "there is currently a known user and there shouldnt be", user )
                     $scope.signout( )
+                    $scope.$apply( )
+                    return
                 }
                 if ( !user.emailVerified ) {
                     user.sendEmailVerification( )
@@ -149,8 +151,7 @@ app.controller( 'AuthCtrl', function ( $scope, $state ) {
                     $scope.$apply( )
                     return
                 }
-                $scope.auth.error = false;
-                $scope.$apply( )
+                $state.go( 'home' );
             }
         } )
     }

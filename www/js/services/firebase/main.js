@@ -4,36 +4,36 @@
 app.factory( 'FirebaseServ', function ( $q, $state ) {
     //global refference to the current user
     current_user = {}
-    uid = function ( only_uid ) {
+    uid = function ( only_uid = false ) {
         // create a promise
         return $q( function ( resolve, reject ) {
             // do we already have user data?
             // if no -
             if ( Object.keys( current_user ).length < 1 ) {
                 // get user data from Auth
-                firebase.auth( ).onAuthStateChanged( function ( user ) {
+                user = firebase.auth( ).currentUser
                     // user is the users data, if no data they didnt login!
-                    if ( user ) {
-                        // set global ref
-                        current_user = user
-                            // only return the uid
-                        if ( only_uid ) {
-                            resolve( user.uid )
-                        }
-                        // return full user obj
-                        resolve( user )
-                    } else {
-                        // kick user to log in screen
-                        $state.go( 'login' )
-                        reject( )
+                if ( user ) {
+                    // set global ref
+                    current_user = user
+                        // only return the uid
+                    if ( only_uid ) {
+                        resolve( user.uid )
                     }
-                } );
+                    // return full user obj
+                    resolve( user )
+                } else {
+                    // kick user to log in screen
+                    $state.go( 'auth' )
+                    reject( )
+                }
             }
             // if yes -
             else {
                 if ( only_uid ) {
-                    // only return the uid
-                    resolve( current_user.public.uid )
+                    console.log( current_user )
+                        // only return the uid
+                    resolve( current_user.uid )
                 }
                 // return full user obj
                 resolve( current_user )
@@ -43,14 +43,30 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
     create_user = function ( user_data ) {
         // add timestamp
         user_data.private.timestamp = Date.now( )
-            // I would normaly use post here but users has a different structure
-        var ref = firebase.database( ).ref( '/users/' );
-        return ref.child( user_data.public.uid ).set( user_data ).then( function ( ) {
-            // pass back the new user_data
-            return user_data;
+
+        // I would normaly use post here but users has a different structure
+        // create default group
+        return post_group( {
+            uid: user_data.private.uid,
+            title: "General"
+        } ).then( function ( groups ) {
+            temp_obj = {}
+            user_data.groups[ groups.id ] = true
+            console.log( "groups", groups )
+            console.log( "user_data", user_data )
+            var ref = firebase.database( ).ref( '/users/' );
+            return ref.child( user_data.public.uid ).set( user_data ).then( function ( ) {
+                // pass back the new user_data
+                return user_data;
+            } ).catch( function ( error ) {
+                // if error say so!
+                console.error( "error", error )
+                return {}
+            } );
         } ).catch( function ( error ) {
             // if error say so!
             console.error( "error", error )
+            return {}
         } );
     }
     get_groups = function ( group_ids ) {
@@ -393,10 +409,9 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
         }
         // read indavidual parts of user object
     read_user = function ( arg ) {
-        console.info( "[read_user]ARG", arg )
+        //get user by uid and select the correct child
         var user_ref = firebase.database( ).ref( '/users/' ).child( arg.uid );
         return user_ref.child( arg.child ).once( 'value' ).then( function ( data ) {
-            console.log( "[read_user]", data.val( ) )
             return data.val( )
         } ).catch( function ( error ) {
             console.error( "[read_user] We hit an error!", error )
@@ -421,46 +436,44 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
             child: 'groups'
         } )
     }
-    get_user_groups = function ( user_data ) {
-        return check_user( user_data )
+    get_user_groups = function ( ) {
+        return get_user( )
     }
-    check_user = function ( user_data ) {
+    get_user = function ( ) {
         // get the uid then check that we can get the private data
         return uid( ).then( function ( user_data ) {
+            var displayName = user_data.displayName || user_data.email.substring( 0, user_data.email.indexOf( '@' ) );
+            var contactName = displayName.toLowerCase( );
+            var photoURL = user_data.photoURL || "";
+            var current_user = {
+                public: {
+                    displayName: displayName,
+                    contactName: contactName,
+                    uid: user_data.uid,
+                    photoURL: photoURL,
+                },
+                private: {
+                    email: user_data.email,
+                    emailVerified: user_data.emailVerified,
+                    isAnonymous: user_data.isAnonymous,
+                },
+                groups: {},
+            }
             return read_private( user_data.uid ).then( function ( private_data ) {
                 // if we can't get the private data then the user doesnt exsist
                 if ( !private_data ) {
                     // the new user object!
-                    return current_user = {
-                        public: {
-                            displayName: user_data.displayName,
-                            contactName: user_data.displayName.toLowerCase( ),
-                            uid: user_data.uid,
-                            photoURL: user_data.photoURL,
-                        },
-                        private: {
-                            email: user_data.email,
-                            emailVerified: user_data.emailVerified,
-                            isAnonymous: user_data.isAnonymous,
-                        },
-                    }
+                    return create_user( current_user ).then( function ( user_data ) {
+                        return user_data
+                    } ).catch( function ( error ) {
+                        console.error( "[create_user] We hit an error!", error )
+                        return {}
+                    } )
                 }
                 // if there is data, get the users groups and return the full user object
                 return read_groups( user_data.uid ).then( function ( groups_ouput ) {
-                    return current_user = {
-                        public: {
-                            displayName: user_data.displayName,
-                            contactName: user_data.displayName.toLowerCase( ),
-                            uid: user_data.uid,
-                            photoURL: user_data.photoURL,
-                        },
-                        private: {
-                            email: user_data.email,
-                            emailVerified: user_data.emailVerified,
-                            isAnonymous: user_data.isAnonymous,
-                        },
-                        groups: groups_ouput,
-                    }
+                    current_user.groups = groups_ouput
+                    return current_user
                 } )
             } )
         } )
@@ -468,7 +481,7 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
 
     // reference to all the Firebase.functions()
     return {
-        check_user: check_user,
+        get_user: get_user,
         uid: uid,
         create_user: create_user,
         get_user_groups: get_user_groups,

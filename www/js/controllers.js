@@ -28,77 +28,6 @@ app = angular.module( 'starter.controllers', [ ] )
 
 
 //////////////////////////////////
-//AccountCtrl start
-//////////////////////////////////
-
-app.controller( 'AccountCtrl', function ( $scope, $state )
-{
-	firebase.auth( ).onAuthStateChanged( function ( user )
-	{
-		if ( user )
-		{
-			$scope.email = user.email
-			$scope.uid = user.uid
-			$scope.displayName = user.displayName
-			$scope.photoURL = user.photoURL
-
-			var isVerified = user.emailVerified
-
-			if ( user.emailVerified )
-			{
-				$scope.isVerified = "You have verified your account";
-			}
-			else
-			{
-				$scope.isVerified = "You have not verified your account";
-				btnVerifyEmail.classList.remove('hide');
-			}
-		}
-		else
-		{
-
-		}
-	} );
-
-	$scope.signOut = function ( )
-	{
-		firebase.auth( ).signOut( ).then( function ( )
-		{
-			$state.go( 'login' )
-			console.log( "signed out" )
-		}, function ( error )
-		{
-			console.log( error )
-		} );
-	}
-
-	$scope.settings = {
-		enableFriends: true
-	};
-
-	/**
-	 * Sends an email verification to the user.
-	 */
-	$scope.sendEmailVerification = function ( )
-	{
-		// [START sendemailverification]
-		firebase.auth( ).currentUser.sendEmailVerification( ).then( function ( )
-		{
-			// Email Verification sent!
-			// [START_EXCLUDE]
-			console.info( 'Email Verification Sent!' );
-			// [END_EXCLUDE]
-		} );
-		// [END sendemailverification]
-	}
-} );
-
-//////////////////////////////////
-//AccountCtrl end
-//////////////////////////////////
-
-
-//////////////////////////////////
 //AccordionCtrl start
 //////////////////////////////////
 
@@ -202,6 +131,77 @@ app.controller( 'addPadCtrl', function ( $scope, FirebaseServ ) {
 
 
 } );
+
+//////////////////////////////////
+//AccountCtrl start
+//////////////////////////////////
+
+app.controller( 'AccountCtrl', function ( $scope, $state )
+{
+	firebase.auth( ).onAuthStateChanged( function ( user )
+	{
+		if ( user )
+		{
+			$scope.email = user.email
+			$scope.uid = user.uid
+			$scope.displayName = user.displayName
+			$scope.photoURL = user.photoURL
+
+			var isVerified = user.emailVerified
+
+			if ( user.emailVerified )
+			{
+				$scope.isVerified = "You have verified your account";
+			}
+			else
+			{
+				$scope.isVerified = "You have not verified your account";
+				btnVerifyEmail.classList.remove('hide');
+			}
+		}
+		else
+		{
+
+		}
+	} );
+
+	$scope.signOut = function ( )
+	{
+		firebase.auth( ).signOut( ).then( function ( )
+		{
+			$state.go( 'login' )
+			console.log( "signed out" )
+		}, function ( error )
+		{
+			console.log( error )
+		} );
+	}
+
+	$scope.settings = {
+		enableFriends: true
+	};
+
+	/**
+	 * Sends an email verification to the user.
+	 */
+	$scope.sendEmailVerification = function ( )
+	{
+		// [START sendemailverification]
+		firebase.auth( ).currentUser.sendEmailVerification( ).then( function ( )
+		{
+			// Email Verification sent!
+			// [START_EXCLUDE]
+			console.info( 'Email Verification Sent!' );
+			// [END_EXCLUDE]
+		} );
+		// [END sendemailverification]
+	}
+} );
+
+//////////////////////////////////
+//AccountCtrl end
+//////////////////////////////////
+
 
 //////////////////////////////////
 //AuthCtrl start
@@ -345,6 +345,8 @@ app.controller( 'AuthCtrl', function ( $scope, $state ) {
                 if ( !$scope.auth.email && !$scope.auth.password ) {
                     console.log( "there is currently a known user and there shouldnt be", user )
                     $scope.signout( )
+                    $scope.$apply( )
+                    return
                 }
                 if ( !user.emailVerified ) {
                     user.sendEmailVerification( )
@@ -354,8 +356,7 @@ app.controller( 'AuthCtrl', function ( $scope, $state ) {
                     $scope.$apply( )
                     return
                 }
-                $scope.auth.error = false;
-                $scope.$apply( )
+                $state.go( 'home' );
             }
         } )
     }
@@ -550,8 +551,7 @@ app.controller( 'FlipCtrl', function ( $scope, FirebaseServ ) {
         // getting the users groups
     FirebaseServ.check_user( ).then( function ( user_output ) {
         // are there any groups?
-        console.log( "user_output --- ", user_output )
-            // return
+        // return
         if ( user_output.groups ) {
             // get the group objects
             console.log( "user_output.groups --- ", user_output.groups )
@@ -825,12 +825,66 @@ app.controller( 'FlipCtrl', function ( $scope, FirebaseServ ) {
 //FlipCtrl end
 //////////////////////////////////
 
-app.controller( 'NavCtrl', function ( $scope, $location )
-{
-	$scope.go = function ( path ) {
-    $location.path( path );
-  };
-} );
+//////////////////////////////////
+//HomeCtrl start
+//////////////////////////////////
+
+app.controller( 'HomeCtrl', function ( $scope, FirebaseServ ) {
+    //////////////////////////////////
+    // Accordion Controller Underneath
+    //////////////////////////////////
+    $scope.page_data = {
+        groups: {},
+        group_search: null,
+    };
+    // get the users details
+    FirebaseServ.get_user( ).then( function ( data ) {
+        $scope.page_data.displayName = data.public.displayName;
+        // get the users groups
+        FirebaseServ.get_groups( data.groups )
+            .then( function ( groups ) {
+                $scope.page_data.groups = groups
+            } ).catch( function ( err ) {
+                console.error( "[get_groups] we have a error", err )
+            } )
+    } ).catch( function ( err ) {
+        console.error( "[get_user]we have a error", err )
+    } );
+
+    $scope.favourite_group = function ( group ) {
+        group.star = !group.star;
+    };
+
+    $scope.delete_group = function ( group ) {
+        var input = {
+            uid: $scope.page_data.groups[ group ].created_by,
+            group_id: $scope.page_data.groups[ group ].id,
+        }
+        FirebaseServ.remove_group( input )
+        delete $scope.page_data.groups[ group ]
+    };
+
+    $scope.order_group = function ( group, fromIndex, toIndex ) {
+        $scope.page_data.groups.splice( fromIndex, 1 );
+        $scope.page_data.groups.splice( toIndex, 0, group );
+    };
+    /*
+     * if given group is the selected group, deselect it
+     * else, select the given group
+     */
+    $scope.toggleGroup = function ( group ) {
+        $scope.shownGroup = ( $scope.isGroupShown( group ) ) ? null : $scope.shownGroup = group;
+    };
+
+    $scope.isGroupShown = function ( group ) {
+        return $scope.shownGroup === group;
+    };
+} )
+
+//////////////////////////////////
+//HomeCtrl end
+//////////////////////////////////
+
 //////////////////////////////////
 //LoginCtrl start
 //////////////////////////////////
@@ -1104,3 +1158,10 @@ app.controller( 'LoginCtrl', function ( $scope, $state ) {
 //////////////////////////////////
 //LoginCtrl end
 //////////////////////////////////
+
+app.controller( 'NavCtrl', function ( $scope, $location )
+{
+	$scope.go = function ( path ) {
+    $location.path( path );
+  };
+} );

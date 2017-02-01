@@ -30,7 +30,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 //
 //
 //////////////////////////////////
-//general start
+//login start
 //////////////////////////////////
 //
 .login-container {
@@ -38,9 +38,33 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     -webkit-flex-direction: column;
     height: 100%;
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #efad62), color-stop(100%, #f7d47c));
-    background: -webkit-linear-gradient(top, #efad62 0%, #f7d47c 100%);
+    background: -webkit-linear-gradient(top, #387ef5 0%, #f7d47c 100%);
 }
 
+.login-container>.button-row img {
+    max-width: 80%;
+}
+
+.login-container>.header {
+    -webkit-flex: 4;
+    padding-top: 20px;
+}
+
+.item-divider {
+    background-color: transparent;
+    border: none;
+}
+
+//
+//////////////////////////////////
+//login end
+//////////////////////////////////
+//
+//
+//////////////////////////////////
+//auth start
+//////////////////////////////////
+//
 .loading__container {
     opacity: 0;
     pointer-events: none;
@@ -330,5 +354,5 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 
 //
 //////////////////////////////////
-//general end
+//auth end
 //////////////////////////////////
