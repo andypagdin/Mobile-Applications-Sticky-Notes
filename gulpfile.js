@@ -139,3 +139,4 @@ gulp.task( 'git-check', function ( done )
 	done( );
 } );
 
+module.exports = gulp;

@@ -3,14 +3,14 @@
 
     <div class="headerDash">
       <h4 class="padding center headerText">Welcome {{ displayName }}</h4>
+      <a class="adddata" href="#/flip">+</a>
     </div>
 
      <ion-list show-reorder="groups.showReorder" show-delete="groups.showDelete" class="">
 
       <div ng-repeat="(group_id, group) in groups" on-swipe-right="onSwipeRight()">
 
-        <ion-item class="item-stable ion-star-right" ng-click="toggleGroup(group)" ng-class="{active: isGroupShown(group)}">
-
+        <ion-item id="{{group.color}}"  class="item-stable ion-star-right " ng-click="toggleGroup(group)" ng-class="{active: isGroupShown(group)}" >
           <i class="icon" ng-class="isGroupShown(group) ? 'ion-minus' : 'ion-plus'"></i> &nbsp; Group {{group.title}}
 
           <button class="button button-clear icon ion-star button-assertive" ng-click="toggleStar(group)" ng-show="group.star"></button>
@@ -31,7 +31,9 @@
           {{item.title}}
           <button class="pad-edit-btn" ui-sref="editPad({pad_id:'{{item.id}}', title:'{{item.title}}', body:'{{item.body}}', group_id:'{{group.id}}', created_by:'{{item.created_by}}', timestamp:'{{item.timestamp}}'})">Edit</button>
         </ion-item>
-
+        <ion-item class="item-accordion"  style="text-align: center;padding: 5px;" ng-show="isGroupShown(group)">
+          <button class="button button-positive" ng-click="add_new_pad(group.id)">Add New Pad</button>
+        </ion-item>
       </div>
 
     </ion-list>  
