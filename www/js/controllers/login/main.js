@@ -195,7 +195,7 @@ app.controller( 'LoginCtrl', function ( $scope, $state ) {
                     $state.go( 'tab.dash' );
                     console.log( "display name set " + displayName )
                 } else {
-                    $state.go( 'name' );
+                    // $state.go( 'name' );
                     console.log( "display name not set" )
                 }
 

@@ -1,7 +1,14 @@
-//////////////////////////////////
-//ionic colors start
-//////////////////////////////////
-//
+/*////////////////////////////////*/
+
+
+/*ionic colors start*/
+
+
+/*////////////////////////////////*/
+
+
+/**/
+
 $light: #fff !default;
 $stable: #f8f8f8 !default;
 $positive: #387ef5 !default;
@@ -11,28 +18,68 @@ $energized: #ffc900 !default;
 $assertive: #ef473a !default;
 $royal: #886aea !default;
 $dark: #444 !default;
-//
-//////////////////////////////////
-//ionic colors end
-//////////////////////////////////
-//
-//
-//////////////////////////////////
-//ionic start
-//////////////////////////////////
-//
+
+/**/
+
+
+/*////////////////////////////////*/
+
+
+/*ionic colors end*/
+
+
+/*////////////////////////////////*/
+
+
+/**/
+
+
+/**/
+
+
+/*////////////////////////////////*/
+
+
+/*ionic start*/
+
+
+/*////////////////////////////////*/
+
+
+/**/
+
 $ionicons-font-path: "../lib/ionic/fonts" !default;
 @import "www/lib/ionic/scss/ionic";
-//
-//////////////////////////////////
-//ionic end
-//////////////////////////////////
-//
-//
-//////////////////////////////////
-//login start
-//////////////////////////////////
-//
+
+/**/
+
+
+/*////////////////////////////////*/
+
+
+/*ionic end*/
+
+
+/*////////////////////////////////*/
+
+
+/**/
+
+
+/**/
+
+
+/*////////////////////////////////*/
+
+
+/*login start*/
+
+
+/*////////////////////////////////*/
+
+
+/**/
+
 .login-container {
     display: -webkit-flex;
     -webkit-flex-direction: column;
@@ -55,21 +102,47 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     border: none;
 }
 
-//
-//////////////////////////////////
-//login end
-//////////////////////////////////
-//
-//
-//////////////////////////////////
-//auth start
-//////////////////////////////////
-//
+
+/**/
+
+
+/*////////////////////////////////*/
+
+
+/*login end*/
+
+
+/*////////////////////////////////*/
+
+
+/**/
+
+
+/**/
+
+
+/*////////////////////////////////*/
+
+
+/*auth start*/
+
+
+/*////////////////////////////////*/
+
+
+/**/
+
 .loading__container {
     opacity: 0;
     pointer-events: none;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     height: 100%;
     width: 100%;
@@ -88,8 +161,6 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     border-width: 5vh;
     border-radius: 50%;
     -webkit-animation: spin 1s linear infinite;
-    -moz-animation: spin 1s linear infinite;
-    -o-animation: spin 1s linear infinite;
     animation: spin 1s linear infinite;
     border-style: solid;
     border-color: whitesmoke transparent;
@@ -101,20 +172,9 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     }
 }
 
-@-moz-keyframes spin {
-    100% {
-        -moz-transform: rotate(359deg);
-    }
-}
-
-@-o-keyframes spin {
-    100% {
-        -moz-transform: rotate(359deg);
-    }
-}
-
 @keyframes spin {
     100% {
+        -webkit-transform: rotate(359deg);
         transform: rotate(359deg);
     }
 }
@@ -132,6 +192,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     z-index: 50;
     background: white;
     box-shadow: 2px 2px 4px 0px black;
+    -webkit-transition: 1s;
     transition: 1s;
 }
 
@@ -167,36 +228,26 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 #auth__container-overlay {
     width: 100%;
     height: 100%;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
 }
 
 #auth__container-overlay {
+    background: -webkit-linear-gradient(left, rgba(40, 0, 200, 0.3) 0%, rgba(150, 0, 200, 0.3) 30%, rgba(150, 0, 200, 0.3) 70%, rgba(40, 0, 200, 0.3));
     background: linear-gradient(to right, rgba(40, 0, 200, 0.3) 0%, rgba(150, 0, 200, 0.3) 30%, rgba(150, 0, 200, 0.3) 70%, rgba(40, 0, 200, 0.3));
     background-size: 1000vw 100%;
+    -webkit-animation: gradient_shift 10s linear infinite;
     animation: gradient_shift 10s linear infinite;
 }
 
 @-webkit-keyframes gradient_shift {
-    0% {
-        background-position-x: 0;
-    }
-    100% {
-        background-position-x: 1000vw;
-    }
-}
-
-@-moz-keyframes gradient_shift {
-    0% {
-        background-position-x: 0;
-    }
-    100% {
-        background-position-x: 1000vw;
-    }
-}
-
-@-o-keyframes gradient_shift {
     0% {
         background-position-x: 0;
     }
@@ -223,8 +274,14 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 #auth__form-icon {
     width: 100%;
     margin-bottom: 10vh;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
+    -webkit-box-align: baseline;
+    -ms-flex-align: baseline;
     align-items: baseline;
 }
 
@@ -244,6 +301,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     width: 4vh;
     text-align: center;
     color: rgba(225, 225, 225, .5) !important;
+    -webkit-transition: .2s;
     transition: .2s;
     float: left;
 }
@@ -260,6 +318,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     width: 100%;
     height: .2vh;
     background-color: rgba(225, 225, 225, .5);
+    -webkit-transition: .2s;
     transition: .2s;
     float: left;
 }
@@ -275,6 +334,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     border: none !important;
     color: white !important;
     font-size: 3vh !important;
+    -webkit-transition: .2s;
     transition: .2s;
     text-shadow: 0px 0px 2vh black;
     float: left;
@@ -307,6 +367,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.5);
     border: .1vh solid white;
     border-radius: .5vh;
+    -webkit-transition: .1s;
     transition: .1s;
     width: 100%;
     height: 7vh;
@@ -340,6 +401,7 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
 
 .auth__link {
     color: white;
+    -webkit-transition: .1s;
     transition: .1s;
     cursor: pointer;
 }
@@ -352,7 +414,14 @@ $ionicons-font-path: "../lib/ionic/fonts" !default;
     color: grey;
 }
 
-//
-//////////////////////////////////
-//auth end
-//////////////////////////////////
+
+/**/
+
+
+/*////////////////////////////////*/
+
+
+/*auth end*/
+
+
+/*////////////////////////////////*/

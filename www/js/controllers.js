@@ -88,50 +88,6 @@ app.controller( 'AccordionCtrl', function ( $scope, FirebaseServ ) {
 //AccordionCtrl end
 //////////////////////////////////
 
-app.controller( 'addPadCtrl', function ( $scope, FirebaseServ ) {
-    $scope.page_data = {}
-    $scope.page_data.groups = {}
-    $scope.page_data.group_models = {}
-    $scope.page_data.pad_models = {}
-    $scope.page_data.pad_models[ "-KXNSUDZByXtgP6KaCQe" ] = {}
-    $scope.page_data.comment_models = {}
-    $scope.page_data.currentGroup = {
-        id: "-KXNSUDZByXtgP6KaCQe",
-        title: "",
-        body: "",
-    }
-    var group_ids = {}
-
-    $scope.create_pad = function ( ) {
-        var title = $scope.page_data.currentGroup.title
-        var body = $scope.page_data.currentGroup.body
-        var input = {
-            group_id: $scope.page_data.currentGroup.id,
-            title: title,
-            body: body,
-        }
-        $scope.page_data.currentGroup.title = "";
-        $scope.page_data.currentGroup.body = "";
-        FirebaseServ.post_pad( input )
-            .then( function ( new_object ) {
-                pads_object = $scope.page_data.groups[ group_id ].pads
-                if ( !pads_object ) {
-                    pads_object = {}
-                    pads_object.length = 0
-                }
-                pads_object[ new_object.id ] = {}
-                pads_object[ new_object.id ] = new_object
-                pads_object.length++
-                    console.log( "pads_object", pads_object )
-                if ( !$scope.$$phase ) {
-                    $scope.$apply( )
-                }
-            } )
-    }
-
-
-} );
-
 //////////////////////////////////
 //AccountCtrl start
 //////////////////////////////////
@@ -367,6 +323,50 @@ app.controller( 'AuthCtrl', function ( $scope, $state ) {
 //AuthCtrl end
 //////////////////////////////////
 
+app.controller( 'addPadCtrl', function ( $scope, FirebaseServ ) {
+    $scope.page_data = {}
+    $scope.page_data.groups = {}
+    $scope.page_data.group_models = {}
+    $scope.page_data.pad_models = {}
+    $scope.page_data.pad_models[ "-KXNSUDZByXtgP6KaCQe" ] = {}
+    $scope.page_data.comment_models = {}
+    $scope.page_data.currentGroup = {
+        id: "-KXNSUDZByXtgP6KaCQe",
+        title: "",
+        body: "",
+    }
+    var group_ids = {}
+
+    $scope.create_pad = function ( ) {
+        var title = $scope.page_data.currentGroup.title
+        var body = $scope.page_data.currentGroup.body
+        var input = {
+            group_id: $scope.page_data.currentGroup.id,
+            title: title,
+            body: body,
+        }
+        $scope.page_data.currentGroup.title = "";
+        $scope.page_data.currentGroup.body = "";
+        FirebaseServ.post_pad( input )
+            .then( function ( new_object ) {
+                pads_object = $scope.page_data.groups[ group_id ].pads
+                if ( !pads_object ) {
+                    pads_object = {}
+                    pads_object.length = 0
+                }
+                pads_object[ new_object.id ] = {}
+                pads_object[ new_object.id ] = new_object
+                pads_object.length++
+                    console.log( "pads_object", pads_object )
+                if ( !$scope.$$phase ) {
+                    $scope.$apply( )
+                }
+            } )
+    }
+
+
+} );
+
 //////////////////////////////////
 //DashCtrl start
 //////////////////////////////////
@@ -454,40 +454,6 @@ app.controller( 'DashCtrl', function ( $scope, $state, FirebaseServ ) {
 
 //////////////////////////////////
 //DashCtrl end
-//////////////////////////////////
-
-//////////////////////////////////
-//EditPadCtrl start
-//////////////////////////////////
-
-app.controller( 'EditPadCtrl', function ( $scope, $state, FirebaseServ, $stateParams ) {
-    // Put state parameters into the scope
-    $scope.pad_id = $stateParams.pad_id
-    $scope.title = $stateParams.title
-    $scope.body = $stateParams.body
-    $scope.group_id = $stateParams.group_id
-    $scope.created_by = $stateParams.created_by
-    $scope.timestamp = $stateParams.timestamp
-
-    $scope.goBack = function ( ) {
-        $state.go( "tab.dash" )
-    }
-
-
-    $scope.updateNote = function ( $body ) {
-        firebase.database( ).ref( 'groups/' + $scope.group_id + '/pads/' + $scope.pad_id ).set( {
-            body: $body,
-            created_by: $scope.created_by,
-            id: $scope.pad_id,
-            timestamp: $scope.timestamp,
-            title: $scope.title
-        } )
-    }
-
-} );
-
-//////////////////////////////////
-//EditPadCtrl end
 //////////////////////////////////
 
 //////////////////////////////////
@@ -886,6 +852,40 @@ app.controller( 'HomeCtrl', function ( $scope, FirebaseServ ) {
 //////////////////////////////////
 
 //////////////////////////////////
+//EditPadCtrl start
+//////////////////////////////////
+
+app.controller( 'EditPadCtrl', function ( $scope, $state, FirebaseServ, $stateParams ) {
+    // Put state parameters into the scope
+    $scope.pad_id = $stateParams.pad_id
+    $scope.title = $stateParams.title
+    $scope.body = $stateParams.body
+    $scope.group_id = $stateParams.group_id
+    $scope.created_by = $stateParams.created_by
+    $scope.timestamp = $stateParams.timestamp
+
+    $scope.goBack = function ( ) {
+        $state.go( "tab.dash" )
+    }
+
+
+    $scope.updateNote = function ( $body ) {
+        firebase.database( ).ref( 'groups/' + $scope.group_id + '/pads/' + $scope.pad_id ).set( {
+            body: $body,
+            created_by: $scope.created_by,
+            id: $scope.pad_id,
+            timestamp: $scope.timestamp,
+            title: $scope.title
+        } )
+    }
+
+} );
+
+//////////////////////////////////
+//EditPadCtrl end
+//////////////////////////////////
+
+//////////////////////////////////
 //LoginCtrl start
 //////////////////////////////////
 
@@ -1082,7 +1082,7 @@ app.controller( 'LoginCtrl', function ( $scope, $state ) {
                     $state.go( 'tab.dash' );
                     console.log( "display name set " + displayName )
                 } else {
-                    $state.go( 'name' );
+                    // $state.go( 'name' );
                     console.log( "display name not set" )
                 }
 

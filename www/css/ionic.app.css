@@ -1,4 +1,18 @@
 @charset "UTF-8";
+/*////////////////////////////////*/
+/*ionic colors start*/
+/*////////////////////////////////*/
+/**/
+/**/
+/*////////////////////////////////*/
+/*ionic colors end*/
+/*////////////////////////////////*/
+/**/
+/**/
+/*////////////////////////////////*/
+/*ionic start*/
+/*////////////////////////////////*/
+/**/
 /*!
   Ionicons, v2.0.1
   Created by Ben Sperry for the Ionic Framework, http://ionicons.com/
@@ -9799,6 +9813,16 @@ a.button {
   -webkit-transition-duration: 0s;
   transition-duration: 0s; }
 
+/**/
+/*////////////////////////////////*/
+/*ionic end*/
+/*////////////////////////////////*/
+/**/
+/**/
+/*////////////////////////////////*/
+/*login start*/
+/*////////////////////////////////*/
+/**/
 .login-container {
   display: -webkit-flex;
   -webkit-flex-direction: column;
@@ -9817,11 +9841,27 @@ a.button {
   background-color: transparent;
   border: none; }
 
+/**/
+/*////////////////////////////////*/
+/*login end*/
+/*////////////////////////////////*/
+/**/
+/**/
+/*////////////////////////////////*/
+/*auth start*/
+/*////////////////////////////////*/
+/**/
 .loading__container {
   opacity: 0;
   pointer-events: none;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center;
   height: 100%;
   width: 100%;
@@ -9838,8 +9878,6 @@ a.button {
   border-width: 5vh;
   border-radius: 50%;
   -webkit-animation: spin 1s linear infinite;
-  -moz-animation: spin 1s linear infinite;
-  -o-animation: spin 1s linear infinite;
   animation: spin 1s linear infinite;
   border-style: solid;
   border-color: whitesmoke transparent; }
@@ -9848,16 +9886,9 @@ a.button {
   100% {
     -webkit-transform: rotate(359deg); } }
 
-@-moz-keyframes spin {
-  100% {
-    -moz-transform: rotate(359deg); } }
-
-@-o-keyframes spin {
-  100% {
-    -moz-transform: rotate(359deg); } }
-
 @keyframes spin {
   100% {
+    -webkit-transform: rotate(359deg);
     transform: rotate(359deg); } }
 
 #error__container {
@@ -9873,6 +9904,7 @@ a.button {
   z-index: 50;
   background: white;
   box-shadow: 2px 2px 4px 0px black;
+  -webkit-transition: 1s;
   transition: 1s; }
 
 #error__container.error__active {
@@ -9903,28 +9935,24 @@ a.button {
 #auth__container-overlay {
   width: 100%;
   height: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
   align-items: center; }
 
 #auth__container-overlay {
+  background: -webkit-linear-gradient(left, rgba(40, 0, 200, 0.3) 0%, rgba(150, 0, 200, 0.3) 30%, rgba(150, 0, 200, 0.3) 70%, rgba(40, 0, 200, 0.3));
   background: linear-gradient(to right, rgba(40, 0, 200, 0.3) 0%, rgba(150, 0, 200, 0.3) 30%, rgba(150, 0, 200, 0.3) 70%, rgba(40, 0, 200, 0.3));
   background-size: 1000vw 100%;
+  -webkit-animation: gradient_shift 10s linear infinite;
   animation: gradient_shift 10s linear infinite; }
 
 @-webkit-keyframes gradient_shift {
-  0% {
-    background-position-x: 0; }
-  100% {
-    background-position-x: 1000vw; } }
-
-@-moz-keyframes gradient_shift {
-  0% {
-    background-position-x: 0; }
-  100% {
-    background-position-x: 1000vw; } }
-
-@-o-keyframes gradient_shift {
   0% {
     background-position-x: 0; }
   100% {
@@ -9944,8 +9972,14 @@ a.button {
 #auth__form-icon {
   width: 100%;
   margin-bottom: 10vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
   display: flex;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
   justify-content: center;
+  -webkit-box-align: baseline;
+  -ms-flex-align: baseline;
   align-items: baseline; }
 
 #auth__form-icon img {
@@ -9962,6 +9996,7 @@ a.button {
   width: 4vh;
   text-align: center;
   color: rgba(225, 225, 225, 0.5) !important;
+  -webkit-transition: .2s;
   transition: .2s;
   float: left; }
 
@@ -9975,6 +10010,7 @@ a.button {
   width: 100%;
   height: .2vh;
   background-color: rgba(225, 225, 225, 0.5);
+  -webkit-transition: .2s;
   transition: .2s;
   float: left; }
 
@@ -9988,6 +10024,7 @@ a.button {
   border: none !important;
   color: white !important;
   font-size: 3vh !important;
+  -webkit-transition: .2s;
   transition: .2s;
   text-shadow: 0px 0px 2vh black;
   float: left; }
@@ -10015,6 +10052,7 @@ a.button {
   box-shadow: 0 0 10px 0px rgba(0, 0, 0, 0.5);
   border: .1vh solid white;
   border-radius: .5vh;
+  -webkit-transition: .1s;
   transition: .1s;
   width: 100%;
   height: 7vh;
@@ -10042,6 +10080,7 @@ a.button {
 
 .auth__link {
   color: white;
+  -webkit-transition: .1s;
   transition: .1s;
   cursor: pointer; }
 
@@ -10050,3 +10089,8 @@ a.button {
 
 .auth__link:active {
   color: grey; }
+
+/**/
+/*////////////////////////////////*/
+/*auth end*/
+/*////////////////////////////////*/
