@@ -38,9 +38,8 @@ app.controller( 'AuthCtrl', function ( $scope, $state ) {
         $scope.auth.loading = true;
 
         if ( firebase.auth( ).currentUser ) {
+            // if someone logs in then goes back to login they are still logged in, this stops that
             $scope.signout( );
-            $scope.auth.loading = false;
-            return;
         }
 
         var email = $scope.auth.email;

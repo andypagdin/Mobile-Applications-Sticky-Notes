@@ -46,27 +46,39 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
 
         // I would normaly use post here but users has a different structure
         // create default group
+        var displayName = user_data.public.displayName || "";
         return post_group( {
             uid: user_data.private.uid,
-            title: "General"
+            title: `Welcome ${displayName}!`
         } ).then( function ( groups ) {
-            temp_obj = {}
-            user_data.groups[ groups.id ] = true
-            console.log( "groups", groups )
-            console.log( "user_data", user_data )
-            var ref = firebase.database( ).ref( '/users/' );
-            return ref.child( user_data.public.uid ).set( user_data ).then( function ( ) {
-                // pass back the new user_data
-                return user_data;
+            temp_obj = {};
+            user_data.groups[ groups.id ] = true;
+            // create default pad
+            return post_pad( {
+                group_id: groups.id,
+                created_by: user_data.private.uid,
+                title: "Your first note.",
+                body: "Text goes here."
+            } ).then( function ( ) {
+                var ref = firebase.database( ).ref( '/users/' );
+                return ref.child( user_data.public.uid ).set( user_data ).then( function ( ) {
+                    // pass back the new user_data
+                    return user_data;
+                } ).catch( function ( error ) {
+                    // if error say so!
+                    console.error( "error", error );
+                    return {};
+                } );
+
             } ).catch( function ( error ) {
                 // if error say so!
-                console.error( "error", error )
-                return {}
+                console.error( "error", error );
+                return {};
             } );
         } ).catch( function ( error ) {
             // if error say so!
-            console.error( "error", error )
-            return {}
+            console.error( "error", error );
+            return {};
         } );
     }
     get_groups = function ( group_ids ) {

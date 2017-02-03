@@ -3,108 +3,38 @@
         background: #eeeeee;
     }
     
-    header {
-        width: 100%;
-        height: 6vh;
-        position: fixed;
-        background: white;
-        box-shadow: 0px 2px 4px black;
-        top: 0;
-        left: 0;
-    }
-    
-    #welcome {
-        background: white;
-        float: left;
-        width: 50vw;
-        height: 100%;
-        display: flex;
-        align-items: center;
-        padding-left: 2vh;
-    }
-    
-    #search__container {
-        background: white;
-        float: left;
-        width: 50vw;
-        height: 6vh;
-    }
-    
-    #search__icon {
-        background: lightgrey;
-        height: 6vh;
-        width: 6vh;
-        position: absolute;
-        right: 0;
-        z-index: 50;
-        font-size: 4vh;
-        text-align: center;
-        opacity: 1;
-        transition: .3s;
-    }
-    
-    #search {
-        background: lightgrey;
-        height: 100%;
-        width: 6vh;
-        position: absolute;
-        right: 0;
-        z-index: 30;
-        transition: .3s;
-    }
-    
-    #search:active,
-    #search:focus {
-        width: 50vw;
-        padding-left: 1vh;
-        background: white;
-        border-left: .2vh solid black;
-    }
-    
-    #search::-webkit-input-placeholder {
-        color: black;
-    }
-    
-    #search:-moz-placeholder {
-        /* Firefox 18- */
-        color: black;
-    }
-    
-    #search::-moz-placeholder {
-        /* Firefox 19+ */
-        color: black;
-    }
-    
-    #search:-ms-input-placeholder {
-        color: black;
-    }
-    
-    #search:active+#search__icon,
-    #search:focus+#search__icon {
-        background: white;
-        opacity: 0;
-    }
-    
     ion-list {
         position: absolute;
-        top: calc(6vh + 4px);
         width: 100%;
     }
     
-    #ion__show,
-    #ion__title,
-    #ion__favourite {
+    .ion__title {
+        margin-left: 1vh !important;
+    }
+    
+    .ion__show,
+    .ion__title,
+    .ion__favourite,
+    .ion__edit {
         height: 4vh;
         display: flex;
         align-items: center;
+    }
+    
+    .ion__edit {
+        width: 4vh;
+        float: right;
+        text-align: center;
+        display: flex;
+        justify-content: center;
     }
     
     .item-content {
         padding: 2vh 2.5vh !important;
     }
     
-    #ion__show,
-    #ion__title {
+    .ion__show,
+    .ion__title {
         float: left;
         padding-right: 1vh;
     }
@@ -118,27 +48,117 @@
         justify-content: center;
         align-items: center;
     }
+    
+    .ion__escalation {
+        height: 100%;
+        width: 2vh;
+        position: absolute;
+        left: 0;
+        top: 0px;
+    }
+    
+    .ion__escalation.black {
+        background-color: black;
+    }
+    
+    .ion__escalation.red {
+        background-color: #f44336;
+    }
+    
+    .ion__escalation.orange {
+        background-color: #ff9800;
+    }
+    
+    .ion__escalation.green {
+        background-color: #8bc34a;
+    }
+    
+    .ion__escalation.grey {
+        background-color: #c7c7c7;
+    }
+    
+    #nav__bar {
+        width: 100%;
+        height: 8vh;
+        background-color: white;
+        position: fixed;
+        /*a hack around ionic being werid*/
+        top: 92vh;
+        overflow: hidden;
+        display: inline-flex;
+        justify-content: center;
+        align-items: center
+    }
+    
+    #nav__bar div {
+        min-width: 8vh;
+        height: 8vh;
+        float: left;
+        margin-left: 4vh;
+        padding: .5vh 1vh 0;
+    }
+    
+    #nav__bar div.active {
+        color: #f44336;
+    }
+    
+    #nav__bar div:first-of-type {
+        margin-left: 0vh !important;
+    }
+    
+    #nav__bar div i,
+    #nav__bar div p {
+        width: 100%;
+        height: 4vh;
+        font-size: 3vh;
+        text-align: center;
+        clear: both;
+        float: left;
+    }
+    
+    #nav__bar div i {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    .ripple {
+        position: relative;
+        overflow: visible;
+    }
+    
+    .ripple:before {
+        border-radius: 100%;
+        background-color: #f44336;
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+    }
+    
+    .ripple.focus:before {
+        transition: all 0.5s ease-out;
+        opacity: 0;
+        width: 15vh;
+        height: 15vh;
+        margin-top: -7.5vh;
+        margin-left: -7.5vh;
+    }
 </style>
 
 <ion-view view-title="Home">
     <ion-content>
-        <header>
-            <div id="welcome">Welcome {{page_data.displayName}}</div>
-            <div id="search__container">
-                <input type="text" name="search" id="search" placeholder="Search">
-                <label id="search__icon" class="icon ion-ios-search-strong" for="search"></label>
-            </div>
-        </header>
 
         <ion-list show-reorder="page_data.groups.showReorder" show-delete="page_data.groups.showDelete" class="">
 
             <div ng-repeat="(group_id, group) in page_data.groups">
 
                 <ion-item class="item-stable" ng-click="toggleGroup(group)" ng-class="{active: isGroupShown(group)}">
-
-                    <i id="ion__show" class="icon" ng-class="isGroupShown(group) ? 'ion-minus' : 'ion-plus'"></i>
-                    <h3 id="ion__title">{{group.title}}</h3>
-                    <i id="ion__favourite" class="icon ion-star" ng-show="group.star"></i>
+                    <i class="ion__show" class="icon" ng-class="isGroupShown(group) ? 'ion-minus' : 'ion-plus'"></i>
+                    <h3 class="ion__title">{{group.title}}</h3>
+                    <i class="ion__favourite" class="icon ion-star" ng-show="group.star"></i>
 
                     <!--favourite-->
                     <ion-option-button class="button-energized" ng-click="favourite_group(group)">
@@ -153,15 +173,25 @@
                     <!--order-->
                     <ion-reorder-button class="ion-navicon" on-reorder="order_group(group, $fromIndex, $toIndex)"></ion-reorder-button>
                 </ion-item>
-
-                <ion-item class="item-accordion" ng-repeat="(pad_id, item) in group.pads" ng-show="isGroupShown(group)">
-
-                    <h5 id="ion__title">{{item.title}}</h5>
-                    <button class="pad-edit-btn" ui-sref="editPad({pad_id:'{{item.id}}', title:'{{item.title}}', body:'{{item.body}}', group_id:'{{group.id}}', created_by:'{{item.created_by}}', timestamp:'{{item.timestamp}}'})">Edit</button>
+                <ion-item class="item-accordion" ng-repeat="pad in group.pads" ng-show="isGroupShown(group)">
+                    <div class="ion__escalation" ng-class="{'black': pad.escalation == 0,'red': pad.escalation == 1, 'orange': pad.escalation == 2, 'green': pad.escalation == 3, 'grey': !pad.escalation}"></div>
+                    <h5 class="ion__title">{{pad.title}}</h5>
+                    <i class="ion__edit icon ion-edit" ui-sref="editPad({pad_id:'{{pad.id}}', title:'{{pad.title}}', body:'{{pad.body}}', group_id:'{{group.id}}', created_by:'{{pad.created_by}}', timestamp:'{{pad.timestamp}}'})"></i>
                 </ion-item>
 
             </div>
 
         </ion-list>
+        <div id="nav__bar">
+            <!--its 12pm i decided to hack around this is js -->
+            <div class="active focus ripple" onclick="elem=this;elem.classList.add('focus');setTimeout(function(){elem.classList.remove('focus')},500)">
+                <i class="icon ion-edit"></i>
+                <p>Home</p>
+            </div>
+            <div class="focus ripple" onclick="elem=this;elem.classList.add('focus');setTimeout(function(){elem.classList.remove('focus')},500)">
+                <i class="icon ion-edit"></i>
+                <p>Settings</p>
+            </div>
+        </div>
     </ion-content>
 </ion-view>
