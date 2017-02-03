@@ -11,9 +11,14 @@ app.controller( 'HomeCtrl', function ( $scope, FirebaseServ ) {
         group_search: null,
     };
     // get the users details
-    FirebaseServ.get_user( ).then( function ( data ) {
-        $scope.page_data.displayName = data.public.displayName;
+    FirebaseServ.get_user( ).then( function ( data = {
+        groups: {}
+    } ) {
+        console.log( "data", data );
         // get the users groups
+        if ( !data.groups ) {
+            return
+        }
         FirebaseServ.get_groups( data.groups )
             .then( function ( groups ) {
                 $scope.page_data.groups = groups

@@ -11,19 +11,25 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
             // if no -
             if ( Object.keys( current_user ).length < 1 ) {
                 // get user data from Auth
-                user = firebase.auth( ).currentUser
-                    // user is the users data, if no data they didnt login!
-                if ( user ) {
-                    // set global ref
-                    current_user = user
-                        // only return the uid
-                    if ( only_uid ) {
-                        resolve( user.uid )
-                    }
-                    // return full user obj
-                    resolve( user )
-                } else {
-                    // kick user to log in screen
+                try {
+                    firebase.auth( ).onAuthStateChanged( function ( user ) {
+                        if ( user ) {
+                            // set global ref
+                            current_user = user
+                                // only return the uid
+                            if ( only_uid ) {
+                                resolve( user.uid )
+                            }
+                            // return full user obj
+                            resolve( user )
+                        } else {
+                            // kick user to log in screen
+                            $state.go( 'auth' )
+                            reject( )
+                        }
+                    } )
+                } catch ( error ) {
+                    // couldnt determin if they logged in
                     $state.go( 'auth' )
                     reject( )
                 }
@@ -31,8 +37,7 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
             // if yes -
             else {
                 if ( only_uid ) {
-                    console.log( current_user )
-                        // only return the uid
+                    // only return the uid
                     resolve( current_user.uid )
                 }
                 // return full user obj
@@ -486,9 +491,13 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
                 return read_groups( user_data.uid ).then( function ( groups_ouput ) {
                     current_user.groups = groups_ouput
                     return current_user
-                } )
+                } ).catch( function ( err ) {
+                    console.error( "[get_user]we have a error", err )
+                } );
             } )
-        } )
+        } ).catch( function ( err ) {
+            console.error( "[get_user]we have a error", err )
+        } );
     }
 
     // reference to all the Firebase.functions()

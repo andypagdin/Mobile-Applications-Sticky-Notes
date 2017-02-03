@@ -85,46 +85,64 @@
         /*a hack around ionic being werid*/
         top: 92vh;
         overflow: hidden;
-        display: inline-flex;
-        justify-content: center;
-        align-items: center
-    }
-    
-    #nav__bar div {
-        min-width: 8vh;
-        height: 8vh;
-        float: left;
-        margin-left: 4vh;
-        padding: .5vh 1vh 0;
-    }
-    
-    #nav__bar div.active {
-        color: #f44336;
-    }
-    
-    #nav__bar div:first-of-type {
-        margin-left: 0vh !important;
-    }
-    
-    #nav__bar div i,
-    #nav__bar div p {
-        width: 100%;
-        height: 4vh;
-        font-size: 3vh;
-        text-align: center;
-        clear: both;
-        float: left;
-    }
-    
-    #nav__bar div i {
         display: flex;
         justify-content: center;
         align-items: center;
     }
     
+    #nav__bar ul {
+        display: inline;
+    }
+    
+    #nav__bar ul li {
+        min-width: 8vh;
+        height: 8vh;
+        padding: .5vh 1vh 0;
+        margin-left: 4vh;
+        float: left;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    
+    #nav__bar ul li:first-of-type {
+        margin-left: 0vh !important;
+    }
+    
+    #nav__bar ul li.active {
+        color: #f44336;
+    }
+    
+    #nav__bar ul li label:before {
+        padding-top: 1.5vh;
+        font-size: 2.5vh;
+    }
+    
+    #nav__bar ul li label p,
+    #nav__bar ul li label:before {
+        float: left;
+        clear: both;
+        text-align: center;
+        width: 8vh;
+    }
+    
+    #nav__bar ul li label {
+        height: 8vh;
+        width: 8vh;
+        position: absolute;
+        top: 0;
+        z-index: 3;
+    }
+    
     .ripple {
         position: relative;
         overflow: visible;
+        height: 8vh;
+        width: 8vh;
+        background: transparent;
+        pointer-events: none;
+        position: absolute;
+        top: 0;
     }
     
     .ripple:before {
@@ -138,13 +156,21 @@
         height: 0;
     }
     
-    .ripple.focus:before {
+    #nav__bar ul li input[type=radio] {
+        opacity: 0;
+    }
+    
+    #nav__bar ul li input[type=radio]:checked~div.ripple:before {
         transition: all 0.5s ease-out;
         opacity: 0;
         width: 15vh;
         height: 15vh;
         margin-top: -7.5vh;
         margin-left: -7.5vh;
+    }
+    
+    #nav__bar ul li input[type=radio]:checked~label {
+        color: #f44336;
     }
 </style>
 
@@ -183,15 +209,26 @@
 
         </ion-list>
         <div id="nav__bar">
-            <!--its 12pm i decided to hack around this is js -->
-            <div class="active focus ripple" onclick="elem=this;elem.classList.add('focus');setTimeout(function(){elem.classList.remove('focus')},500)">
-                <i class="icon ion-edit"></i>
-                <p>Home</p>
-            </div>
-            <div class="focus ripple" onclick="elem=this;elem.classList.add('focus');setTimeout(function(){elem.classList.remove('focus')},500)">
-                <i class="icon ion-edit"></i>
-                <p>Settings</p>
-            </div>
+            <ul>
+                <li>
+                    <input type="radio" name="nav" id="home">
+                    <div class="ripple"></div>
+                    <label for="home" class="icon ion-home">
+                        <p>
+                            Home
+                        </p>
+                    </label>
+                </li>
+                <li>
+                    <input type="radio" name="nav" id="settings">
+                    <div class="ripple"></div>
+                    <label for="settings" class="icon ion-gear-b">
+                        <p>
+                            Settings
+                        </p>
+                    </label>
+                </li>
+            </ul>
         </div>
     </ion-content>
 </ion-view>
