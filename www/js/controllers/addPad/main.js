@@ -17,12 +17,14 @@ app.controller( 'addPadCtrl', function ( $scope, FirebaseServ ) {
         var body = $scope.page_data.currentGroup.body
         var input = {
             group_id: $scope.page_data.currentGroup.id,
+            priority_time: $scope.page_data.priority_time,
             title: title,
             body: body,
         }
         $scope.page_data.currentGroup.title = "";
         $scope.page_data.currentGroup.body = "";
-        FirebaseServ.post_pad( input )
+        FirebaseServe
+            .post_pad( input )
             .then( function ( new_object ) {
                 pads_object = $scope.page_data.groups[ group_id ].pads
                 if ( !pads_object ) {

@@ -1,191 +1,100 @@
 <style>
-    ion-content {
-        background: #eeeeee;
-    }
-    
-    ion-list {
-        position: absolute;
-        width: 100%;
-    }
-    
-    .ion__title {
-        margin-left: 1vh !important;
-    }
-    
-    .ion__show,
-    .ion__title,
-    .ion__favourite,
-    .ion__edit {
-        height: 4vh;
-        display: flex;
-        align-items: center;
-    }
-    
-    .ion__edit {
-        width: 4vh;
-        float: right;
-        text-align: center;
-        display: flex;
-        justify-content: center;
-    }
-    
-    .item-content {
-        padding: 2vh 2.5vh !important;
-    }
-    
-    .ion__show,
-    .ion__title {
-        float: left;
-        padding-right: 1vh;
-    }
-    
-    #ion__favourite {
-        float: right;
-    }
-    
-    ion-option-button {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    .ion__escalation {
-        height: 100%;
-        width: 2vh;
-        position: absolute;
+    #add_group__button {
+        top: 0;
         left: 0;
-        top: 0px;
-    }
-    
-    .ion__escalation.black {
-        background-color: black;
-    }
-    
-    .ion__escalation.red {
-        background-color: #f44336;
-    }
-    
-    .ion__escalation.orange {
-        background-color: #ff9800;
-    }
-    
-    .ion__escalation.green {
-        background-color: #8bc34a;
-    }
-    
-    .ion__escalation.grey {
-        background-color: #c7c7c7;
-    }
-    
-    #nav__bar {
         width: 100%;
-        height: 8vh;
-        background-color: white;
-        position: fixed;
-        /*a hack around ionic being werid*/
-        top: 92vh;
-        overflow: hidden;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    #nav__bar ul {
-        display: inline;
-    }
-    
-    #nav__bar ul li {
-        min-width: 8vh;
-        height: 8vh;
-        padding: .5vh 1vh 0;
-        margin-left: 4vh;
-        float: left;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    
-    #nav__bar ul li:first-of-type {
-        margin-left: 0vh !important;
-    }
-    
-    #nav__bar ul li.active {
-        color: #f44336;
-    }
-    
-    #nav__bar ul li label:before {
-        padding-top: 1.5vh;
-        font-size: 2.5vh;
-    }
-    
-    #nav__bar ul li label p,
-    #nav__bar ul li label:before {
-        float: left;
-        clear: both;
-        text-align: center;
-        width: 8vh;
-    }
-    
-    #nav__bar ul li label {
-        height: 8vh;
-        width: 8vh;
+        height: 7vh;
         position: absolute;
-        top: 0;
-        z-index: 3;
+        z-index: 20;
+        transition: .3s;
+        opacity: 1;
+        pointer-events: all;
+        float: left;
+        padding: 1vh;
+        margin: 0 !important;
+        border-bottom: .2vh solid #b2b2b2;
+        line-height: 0;
     }
     
-    .ripple {
-        position: relative;
-        overflow: visible;
-        height: 8vh;
-        width: 8vh;
-        background: transparent;
+    #add_group__button.adding {
+        opacity: 0;
         pointer-events: none;
-        position: absolute;
-        top: 0;
     }
     
-    .ripple:before {
-        border-radius: 100%;
-        background-color: #f44336;
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
+    #add_group__form {
         height: 0;
-    }
-    
-    #nav__bar ul li input[type=radio] {
+        top: 0;
+        left: 0;
+        float: left;
+        width: 100%;
+        position: absolute;
+        z-index: 10;
+        background: white;
+        transition: .3s;
         opacity: 0;
+        pointer-events: none;
     }
     
-    #nav__bar ul li input[type=radio]:checked~div.ripple:before {
-        transition: all 0.5s ease-out;
-        opacity: 0;
-        width: 15vh;
-        height: 15vh;
-        margin-top: -7.5vh;
-        margin-left: -7.5vh;
+    #add_group__form input {
+        float: left;
+        position: relative;
+        width: 100%;
+        padding: 0 2vh;
     }
     
-    #nav__bar ul li input[type=radio]:checked~label {
-        color: #f44336;
+    #add_group__form .button-bar,
+    #add_group__form .button-bar button {
+        height: 7vh;
+    }
+    
+    #add_group__form.adding {
+        opacity: 1;
+        pointer-events: all;
+        height: auto;
+    }
+    
+    .group_list ion-item:first-of-type {
+        border-top: white !important;
+    }
+    
+    #adding_buffer {
+        width: 100%;
+        height: 7.2vh;
+        position: relative;
+        z-index: 0;
+        transition: .4s;
+    }
+    
+    #adding_buffer.adding {
+        height: 12vh;
     }
 </style>
-
 <ion-view view-title="Home">
     <ion-content>
 
         <ion-list show-reorder="page_data.groups.showReorder" show-delete="page_data.groups.showDelete" class="">
-
-            <div ng-repeat="(group_id, group) in page_data.groups">
+            <button id="add_group__button" class="button button-full" ng-click="show_add_group(true)" ng-class="{adding : page_data.adding}">
+                add group
+            </button>
+            <div id="add_group__form" ng-class="{adding : page_data.adding}">
+                <input ng-model="page_data.group_title" id="group_title" type="text" placeholder="Group Title" />
+                <div class="button-bar bar-light">
+                    <a class="button icon ion-ios-close-empty" ng-click="show_add_group(false,false)"></a>
+                    <a class="button icon ion-ios-checkmark-empty" ng-click="create_group();show_add_group(false)"></a>
+                </div>
+            </div>
+            <div id="adding_buffer" ng-class="{adding : page_data.adding}">></div>
+            <div class="group_list" ng-repeat="(group_id, group) in page_data.groups" ng-class="{adding : page_data.adding}">
 
                 <ion-item class="item-stable" ng-click="toggleGroup(group)" ng-class="{active: isGroupShown(group)}">
                     <i class="ion__show" class="icon" ng-class="isGroupShown(group) ? 'ion-minus' : 'ion-plus'"></i>
                     <h3 class="ion__title">{{group.title}}</h3>
                     <i class="ion__favourite" class="icon ion-star" ng-show="group.star"></i>
 
+                    <!--edit-->
+                    <ion-option-button class="button-royal" ng-click="show_add_group(true,true,group_id)">
+                        <i class="ion__edit icon ion-edit"></i>
+                    </ion-option-button>
                     <!--favourite-->
                     <ion-option-button class="button-energized" ng-click="favourite_group(group)">
                         <i class="icon ion-star"></i>
@@ -211,7 +120,7 @@
         <div id="nav__bar">
             <ul>
                 <li>
-                    <input type="radio" name="nav" id="home">
+                    <input type="radio" name="nav" id="home" checked>
                     <div class="ripple"></div>
                     <label for="home" class="icon ion-home">
                         <p>

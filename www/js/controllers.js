@@ -178,12 +178,14 @@ app.controller( 'addPadCtrl', function ( $scope, FirebaseServ ) {
         var body = $scope.page_data.currentGroup.body
         var input = {
             group_id: $scope.page_data.currentGroup.id,
+            priority_time: $scope.page_data.priority_time,
             title: title,
             body: body,
         }
         $scope.page_data.currentGroup.title = "";
         $scope.page_data.currentGroup.body = "";
-        FirebaseServ.post_pad( input )
+        FirebaseServe
+            .post_pad( input )
             .then( function ( new_object ) {
                 pads_object = $scope.page_data.groups[ group_id ].pads
                 if ( !pads_object ) {
@@ -367,92 +369,73 @@ app.controller( 'AuthCtrl', function ( $scope, $state ) {
 //////////////////////////////////
 
 //////////////////////////////////
-//DashCtrl start
+//HomeCtrl start
 //////////////////////////////////
 
-app.controller( 'DashCtrl', function ( $scope, $state, FirebaseServ ) {
-
-    firebase.auth( ).onAuthStateChanged( function ( user ) {
-        if ( user ) {
-            $scope.signed_out = false
-            $scope.displayName = user.displayName
-        } else {
-            $state.go( 'login' );
-            $scope.signed_out = true
-        }
-    } );
-
-    $scope.sign_out = function ( ) {
-        firebase.auth( ).signOut( ).then( function ( ) {
-            console.log( 'Signed Out' );
-        }, function ( error ) {
-            console.error( 'Sign Out Error', error );
-        } );
-    }
-
+app.controller( 'DashCtrl', function ( $scope, FirebaseServ, AddPadServ ) {
     //////////////////////////////////
     // Accordion Controller Underneath
     //////////////////////////////////
-
-    $scope.page_data = {}
-    $scope.page_data.groups = {}
-    $scope.page_data.comment_models = {}
-    var group_ids = {}
-
-    FirebaseServ.check_user( ).then( function ( data ) {
-        user_details = data
-        $scope.get_groups( data )
-        console.log( "user_details", user_details )
-    } )
-
-    $scope.get_groups = function ( input ) {
-        // trigger FirebaseServ function.
-        FirebaseServ.get_groups( input.groups )
+    $scope.page_data = {
+        groups: {},
+        group_search: null,
+    };
+    // get the users details
+    FirebaseServ.get_user( ).then( function ( data = {
+        groups: {}
+    } ) {
+        console.log( "data", data );
+        // get the users groups
+        if ( !data.groups ) {
+            return
+        }
+        FirebaseServ.get_groups( data.groups )
             .then( function ( groups ) {
-                console.info( "input", input )
-                console.info( "groups", groups )
-                $scope.groups = groups
+                $scope.page_data.groups = groups
+            } ).catch( function ( err ) {
+                console.error( "[get_groups] we have a error", err )
             } )
-    }
+    } ).catch( function ( err ) {
+        console.error( "[get_user]we have a error", err )
+    } );
 
-    //togglestar
-    $scope.toggleStar = function ( group ) {
-            group.star = !group.star;
-        }
-        //delete function
-    $scope.onItemDelete = function ( group ) {
-            var input = {
-                uid: $scope.groups[ group ].created_by,
-                group_id: $scope.groups[ group ].id,
-            }
-            FirebaseServ.remove_group( input )
-            delete $scope.groups[ group ]
-        }
-        //ReOrder function
-    $scope.moveItem = function ( group, fromIndex, toIndex ) {
-        $scope.groups.splice( fromIndex, 1 );
-        $scope.groups.splice( toIndex, 0, group );
+    $scope.add_new_pad = function ( id ) {
+        AddPadServ.setGroupId( id );
+        $state.go( 'addPad' );
+    };
 
+    $scope.favourite_group = function ( group ) {
+        group.star = !group.star;
+    };
+
+    $scope.delete_group = function ( group ) {
+        var input = {
+            uid: $scope.page_data.groups[ group ].created_by,
+            group_id: $scope.page_data.groups[ group ].id,
+        }
+        FirebaseServ.remove_group( input )
+        delete $scope.page_data.groups[ group ]
+    };
+
+    $scope.order_group = function ( group, fromIndex, toIndex ) {
+        $scope.page_data.groups.splice( fromIndex, 1 );
+        $scope.page_data.groups.splice( toIndex, 0, group );
     };
     /*
      * if given group is the selected group, deselect it
      * else, select the given group
      */
     $scope.toggleGroup = function ( group ) {
-        if ( $scope.isGroupShown( group ) ) {
-            $scope.shownGroup = null;
-        } else {
-            $scope.shownGroup = group;
-        }
+        $scope.shownGroup = ( $scope.isGroupShown( group ) ) ? null : $scope.shownGroup = group;
     };
+
     $scope.isGroupShown = function ( group ) {
         return $scope.shownGroup === group;
     };
-} );
-
+} )
 
 //////////////////////////////////
-//DashCtrl end
+//HomeCtrl end
 //////////////////////////////////
 
 //////////////////////////////////
@@ -627,8 +610,8 @@ app.controller( 'FlipCtrl', function ( $scope, FirebaseServ ) {
         }
         // build input.
         var input = $scope.page.data.groups[ group_id ]
-        input.title = group.title
-            // clear page inputs values and UX.
+        input.title = group.title;
+        // clear page inputs values and UX.
         $scope.page.models.group.edit[ group_id ].title = "";
         // trigger FirebaseServ function.
         FirebaseServ.update_group( input )
@@ -822,71 +805,6 @@ app.controller( 'FlipCtrl', function ( $scope, FirebaseServ ) {
 } );
 //////////////////////////////////
 //FlipCtrl end
-//////////////////////////////////
-
-//////////////////////////////////
-//HomeCtrl start
-//////////////////////////////////
-
-app.controller( 'HomeCtrl', function ( $scope, FirebaseServ ) {
-    //////////////////////////////////
-    // Accordion Controller Underneath
-    //////////////////////////////////
-    $scope.page_data = {
-        groups: {},
-        group_search: null,
-    };
-    // get the users details
-    FirebaseServ.get_user( ).then( function ( data = {
-        groups: {}
-    } ) {
-        console.log( "data", data );
-        // get the users groups
-        if ( !data.groups ) {
-            return
-        }
-        FirebaseServ.get_groups( data.groups )
-            .then( function ( groups ) {
-                $scope.page_data.groups = groups
-            } ).catch( function ( err ) {
-                console.error( "[get_groups] we have a error", err )
-            } )
-    } ).catch( function ( err ) {
-        console.error( "[get_user]we have a error", err )
-    } );
-
-    $scope.favourite_group = function ( group ) {
-        group.star = !group.star;
-    };
-
-    $scope.delete_group = function ( group ) {
-        var input = {
-            uid: $scope.page_data.groups[ group ].created_by,
-            group_id: $scope.page_data.groups[ group ].id,
-        }
-        FirebaseServ.remove_group( input )
-        delete $scope.page_data.groups[ group ]
-    };
-
-    $scope.order_group = function ( group, fromIndex, toIndex ) {
-        $scope.page_data.groups.splice( fromIndex, 1 );
-        $scope.page_data.groups.splice( toIndex, 0, group );
-    };
-    /*
-     * if given group is the selected group, deselect it
-     * else, select the given group
-     */
-    $scope.toggleGroup = function ( group ) {
-        $scope.shownGroup = ( $scope.isGroupShown( group ) ) ? null : $scope.shownGroup = group;
-    };
-
-    $scope.isGroupShown = function ( group ) {
-        return $scope.shownGroup === group;
-    };
-} )
-
-//////////////////////////////////
-//HomeCtrl end
 //////////////////////////////////
 
 //////////////////////////////////
@@ -1161,6 +1079,113 @@ app.controller( 'LoginCtrl', function ( $scope, $state ) {
 
 //////////////////////////////////
 //LoginCtrl end
+//////////////////////////////////
+
+//////////////////////////////////
+//HomeCtrl start
+//////////////////////////////////
+
+app.controller( 'HomeCtrl', function ( $scope, FirebaseServ ) {
+    //////////////////////////////////
+    // Accordion Controller Underneath
+    //////////////////////////////////
+    $scope.page_data = {
+        groups: {},
+        group_search: null,
+        group_title: "",
+        adding: false,
+    };
+    // get the users details
+    FirebaseServ.get_user( ).then( function ( data = {
+        groups: {}
+    } ) {
+        console.log( "data", data );
+        // get the users groups
+        if ( !data.groups ) {
+            return
+        }
+        FirebaseServ.get_groups( data.groups )
+            .then( function ( groups ) {
+                $scope.page_data.groups = groups
+            } ).catch( function ( err ) {
+                console.error( "[get_groups] we have a error", err )
+            } )
+    } ).catch( function ( err ) {
+        console.error( "[get_user]we have a error", err )
+    } );
+
+    $scope.favourite_group = function ( group ) {
+        group.star = !group.star;
+    };
+
+    $scope.delete_group = function ( group ) {
+        var input = {
+            uid: $scope.page_data.groups[ group ].created_by,
+            group_id: $scope.page_data.groups[ group ].id,
+        }
+        FirebaseServ.remove_group( input )
+        delete $scope.page_data.groups[ group ]
+    };
+
+    $scope.order_group = function ( group, fromIndex, toIndex ) {
+        $scope.page_data.groups.splice( fromIndex, 1 );
+        $scope.page_data.groups.splice( toIndex, 0, group );
+    };
+    /*
+     * if given group is the selected group, deselect it
+     * else, select the given group
+     */
+    $scope.toggleGroup = function ( group ) {
+        $scope.shownGroup = ( $scope.isGroupShown( group ) ) ? null : $scope.shownGroup = group;
+    };
+
+    $scope.isGroupShown = function ( group ) {
+        return $scope.shownGroup === group;
+    };
+    $scope.active_group_id = 0
+    $scope.create_group = function ( group_id ) {
+        if ( $scope.update ) {
+            var input = $scope.page_data.groups[ $scope.active_group_id ];
+            input.title = $scope.page_data.group_title;
+            $scope.page_data.group_title = "";
+            FirebaseServ.update_group( input )
+                .then( function ( output ) {
+                    console.log( output );
+                    if ( !$scope.$$phase ) {
+                        $scope.$apply( );
+                    }
+                } )
+            return
+        }
+        var input = {
+            title: $scope.page_data.group_title,
+        }
+        $scope.page_data.group_title = "";
+        FirebaseServ.post_group( input )
+            .then( function ( new_object ) {
+                $scope.page_data.groups[ new_object.id ] = new_object
+                if ( !$scope.$$phase ) {
+                    $scope.$apply( );
+                }
+            } )
+        console.info( "post", $scope.page_data.group_title );
+    };
+
+    $scope.show_add_group = ( state, mode, group_id ) => {
+        $scope.active_group_id = group_id;
+        if ( state ) {
+            $scope.update = mode;
+        }
+        if ( mode ) {
+            $scope.page_data.group_title = $scope.page_data.groups[ group_id ].title
+        }
+        console.log( "show_add_group", state )
+        $scope.page_data.adding = state
+    };
+} )
+
+//////////////////////////////////
+//HomeCtrl end
 //////////////////////////////////
 
 app.controller( 'NavCtrl', function ( $scope, $location )

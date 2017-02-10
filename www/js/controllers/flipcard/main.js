@@ -136,8 +136,8 @@ app.controller( 'FlipCtrl', function ( $scope, FirebaseServ ) {
         }
         // build input.
         var input = $scope.page.data.groups[ group_id ]
-        input.title = group.title
-            // clear page inputs values and UX.
+        input.title = group.title;
+        // clear page inputs values and UX.
         $scope.page.models.group.edit[ group_id ].title = "";
         // trigger FirebaseServ function.
         FirebaseServ.update_group( input )

@@ -157,9 +157,9 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
     post = function ( arg ) {
         // post acts as post and update
         var ref = firebase.database( ).ref( arg.url );
-        var output = arg.output
-            // if we are updating we use the target instead of generating a new key
-            // I might add an extra flag to this so I can use post() for different objects
+        var output = arg.output;
+        // if we are updating we use the target instead of generating a new key
+        // I might add an extra flag to this so I can use post() for different objects
         var id = ( arg.update ) ? arg.target : ref.push( ).key;
         output.id = id
         output.timestamp = Date.now( )
@@ -309,6 +309,7 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
                 var data = {
                     url: `/groups/${arg.group_id}/pads/`,
                     output: {
+                        priority_time: arg.priority_time,
                         created_by: uid,
                         title: arg.title,
                         body: arg.body,
