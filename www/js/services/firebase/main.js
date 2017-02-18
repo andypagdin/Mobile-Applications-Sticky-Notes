@@ -87,10 +87,10 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
         } );
     }
     get_groups = function ( group_ids ) {
-        promise = [ ]
-            // if there are no groud ids we need to return
-            // but get_groups still needs to return a promise
-            // with its associated object
+        promise = [ ];
+        // if there are no groud ids we need to return
+        // but get_groups still needs to return a promise
+        // with its associated object
         if ( !group_ids ) {
             promise.push( $q( function ( ) {
                 return {};
@@ -117,21 +117,56 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
         }
         // once all promise have finished
         return $q.all( promise ).then( function ( output ) {
-            var output_obj = {}
+                var output_obj = {};
                 // clears out all undefined outputs and turns it into an object
                 // i think this is now redundant but need ###TESTING###
-            for ( var i = 0; i < output.length; i++ ) {
-                if ( output[ i ] ) {
-                    group_id = output[ i ].id
-                    output_obj[ group_id ] = output[ i ]
-                }
-            };
-            // return output
-            return output_obj;
-        }, function ( error ) {
-            console.error( "[get_groups][$q.all] We hit an error!", error )
-            return {}
-        } );
+                for ( var i = 0; i < output.length; i++ ) {
+                    if ( output[ i ] ) {
+                        group_id = output[ i ].id
+                        if ( output[ i ].pads ) {
+                            var pads = output[ i ].pads
+                            var pad_keys = Object.keys( pads )
+                            for ( var x = 0; x < pad_keys.length; x++ ) {
+                                var pad = pads[ pad_keys[ x ] ]
+                                pad.priority_state = false
+                                if ( pad.priority_time ) {
+                                    pad.priority_time = new Date( pad.priority_time ).getTime( );
+                                    pad.today_time = new Date( ).getTime( );
+                                    pad.priority_time_diff = pad.priority_time - pad.today_time;
+                                    pad.priority_days_diff = Math.round( pad.priority_time_diff / ( 1000 * 60 * 60 * 24 ) );
+                                    // black = 0
+                                    // red = 1
+                                    // orange = 2
+                                    // green = 3
+                                    // grey = false
+
+                                    if ( pad.priority_days_diff <= 0 ) {
+                                        //below 0
+                                        pad.priority_state = 1
+                                    } else if ( pad.priority_days_diff > 0 && pad.priority_days_diff <= 2 ) {
+                                        //between 1 - 2
+                                        pad.priority_state = 2
+                                    } else if ( pad.priority_days_diff > 2 && pad.priority_days_diff <= 4 ) {
+                                        //between 3 - 4
+                                        pad.priority_state = 3
+                                    } else if ( pad.priority_days_diff > 4 ) {
+                                        //above 4
+                                        pad.priority_state = 4
+                                    }
+                                }
+                            }
+                        }
+                        output_obj[ group_id ] = output[ i ]
+                    }
+                };
+                console.log( "output_obj", output_obj )
+                    // return output
+                return output_obj;
+            },
+            function ( error ) {
+                console.error( "[get_groups][$q.all] We hit an error!", error )
+                return {}
+            } );
     }
     add_user_group = function ( arg ) {
         // this is used to update the groups object for each user
@@ -156,11 +191,12 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
     }
     post = function ( arg ) {
         // post acts as post and update
+        console.log( "arg", arg )
         var ref = firebase.database( ).ref( arg.url );
         var output = arg.output;
         // if we are updating we use the target instead of generating a new key
         // I might add an extra flag to this so I can use post() for different objects
-        var id = ( arg.update ) ? arg.target : ref.push( ).key;
+        var id = ( output.target ) ? output.target : ref.push( ).key;
         output.id = id
         output.timestamp = Date.now( )
         return ref.child( id ).set( output ).then( function ( ) {
@@ -221,7 +257,6 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
             var input = {
                 url: `/groups/`,
                 target: arg.id,
-                update: true,
                 output: arg,
             }
             return post( input )
@@ -243,7 +278,7 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
     }
     post_group = function ( arg ) {
             return uid( true ).then( function ( uid ) {
-                var data = {
+                var group_data = {
                     url: `/groups/`,
                     output: {
                         created_by: uid,
@@ -252,10 +287,11 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
                         users: {},
                     },
                 }
-                data.output.users[ uid ] = true
-                    // update group object
-                    // then update the users group reference
-                return post( data )
+                group_data.output.users[ uid ] = true;
+                group_data.output.target = ( arg.id ) ? arg.id : false;
+                // update group object
+                // then update the users group reference
+                return post( group_data )
                     .then( function ( arg ) {
                         var data = {
                             url: `users/${arg.created_by}/groups/`,
@@ -302,20 +338,20 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
             } )
         }
         // not yet done as couldnt fit it in the UX
-    update_pad = function ( arg ) {}
     post_pad = function ( arg ) {
             // get the uid then create input
             return uid( true ).then( function ( uid ) {
-                var data = {
+                var pad_data = {
                     url: `/groups/${arg.group_id}/pads/`,
                     output: {
-                        priority_time: arg.priority_time,
+                        priority_time: arg.priority_time.toString( ),
                         created_by: uid,
                         title: arg.title,
                         body: arg.body,
                     },
-                }
-                return post( data )
+                };
+                pad_data.output.target = ( arg.id ) ? arg.id : false;
+                return post( pad_data )
                     .then( function ( output ) {
                         // return new pad
                         var new_object = {
@@ -324,11 +360,12 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
                             id: output.id,
                             new_comment: '',
                             timestamp: output.timestamp,
+                            priority_time: output.priority_time,
                             title: output.title,
                             comments: {
                                 length: 0
                             },
-                        }
+                        };
                         return new_object;
                     } ).catch( function ( error ) {
                         console.error( "We hit an error!", error )
@@ -512,7 +549,6 @@ app.factory( 'FirebaseServ', function ( $q, $state ) {
         update_group: update_group,
         post_group: post_group,
         remove_pad: remove_pad,
-        update_pad: update_pad,
         post_pad: post_pad,
         remove_comment: remove_comment,
         update_comment: update_comment,
