@@ -1,0 +1,18 @@
+//////////////////////////////////
+//SettingsCtrl start
+//////////////////////////////////
+
+app.controller( 'SettingsCtrl', function ( $scope, FirebaseServ, $timeout ) {
+
+
+var app = angular.module('myApp', []);
+  $scope.today = new Date();
+
+  
+
+
+} )
+
+//////////////////////////////////
+//SettingsCtrl end
+//////////////////////////////////

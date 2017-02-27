@@ -19,6 +19,11 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             templateUrl: 'templates/accordion.html',
             controller: 'AccordionCtrl'
         } )
+        .state( 'settings', {
+            url: '/settings',
+            templateUrl: 'templates/settings.html',
+            controller: 'SettingsCtrl'
+        } )
         .state( 'editPad', {
             url: '/edit',
             templateUrl: 'templates/editPad.html',
