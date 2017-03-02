@@ -177,7 +177,7 @@ app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
                     $scope.$apply( )
                     return
                 }
-                $state.go( 'home' );
+                $state.go( 'tab.home' );
             }
         } )
     }

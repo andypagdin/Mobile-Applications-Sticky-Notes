@@ -192,7 +192,7 @@ app.controller( 'LoginCtrl', function ( $scope, $state ) {
                 // If the user does not have a display name set (first time visiting)
                 // Point them to set one, else go home 
                 if ( displayName ) {
-                    $state.go( 'tab.dash' );
+                    $state.go( 'tab.home' );
                     console.log( "display name set " + displayName )
                 } else {
                     // $state.go( 'name' );
@@ -253,7 +253,7 @@ app.controller( 'LoginCtrl', function ( $scope, $state ) {
         user.updateProfile( {
             displayName: displayName
         } ).then( function ( ) {
-            $state.go( 'tab.dash' )
+            $state.go( 'tab.home' )
             console.log( "update success " + displayName )
         }, function ( error ) {
             console.log( error )

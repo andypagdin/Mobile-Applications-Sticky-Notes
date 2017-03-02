@@ -5,8 +5,8 @@
         <div id="list__template" ng-class="{show:page_data.list}">
 
             <!--add group elements-->
-            <button id="add_group__button" class="button button-full" ng-click="show_saveGroup(true)" ng-class="{adding : page_data.adding}">
-                Add group.
+            <button id="add_group__button" class="button button-full button-royal" ng-click="show_saveGroup(true)" ng-class="{adding : page_data.adding}">
+                Add group
             </button>
 
             <!--add note form-->
@@ -59,8 +59,8 @@
                     </ion-item>
 
                     <!--add note elements-->
-                    <button id="add_note__button" ng-click="prepPad(group_id)" class="button button-full" ng-show="isGroupShown(group)">
-                        Add note.
+                    <button id="add_note__button" ng-click="prepPad(group_id)" class="button button-full button-royal" ng-show="isGroupShown(group)">
+                        Add note
                     </button>
 
                 </div>
@@ -94,33 +94,3 @@
 
     </ion-content>
 </ion-view>
-<!--had to put outside view to stop view breaking position fixed bottom 0... stupid ionic-->
-<div id="nav__bar" class="tabs" style="height:auto;">
-    <ul>
-        <li>
-            <a href="#/home">
-                <input type="radio" name="nav" id="home" checked>
-                <div class="ripple"></div>
-                <label for="home" class="icon ion-home">
-                <p>
-                    Home
-                </p>
-            </label>
-            </a>
-        </li>
-
-        <li>
-            <a class="" href="#/settings">
-                <input type="radio" name="nav" id="settings">
-                <div class="ripple"></div>
-                <label for="settings" class="icon ion-gear-b">
-                <p>
-                    Settings
-                </p>
-            </label>
-            </a>
-        </li>
-
-    </ul>
-
-</div>

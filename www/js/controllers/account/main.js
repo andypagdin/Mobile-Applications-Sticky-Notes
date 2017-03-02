@@ -35,7 +35,7 @@ app.controller( 'AccountCtrl', function ( $scope, $state )
 	{
 		firebase.auth( ).signOut( ).then( function ( )
 		{
-			$state.go( 'login' )
+			$state.go( 'auth' )
 			console.log( "signed out" )
 		}, function ( error )
 		{

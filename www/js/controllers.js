@@ -136,7 +136,7 @@ app.controller( 'AccountCtrl', function ( $scope, $state )
 	{
 		firebase.auth( ).signOut( ).then( function ( )
 		{
-			$state.go( 'login' )
+			$state.go( 'auth' )
 			console.log( "signed out" )
 		}, function ( error )
 		{
@@ -395,7 +395,7 @@ app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
                     $scope.$apply( )
                     return
                 }
-                $state.go( 'home' );
+                $state.go( 'tab.home' );
             }
         } )
     }
@@ -1303,7 +1303,7 @@ app.controller( 'LoginCtrl', function ( $scope, $state ) {
                 // If the user does not have a display name set (first time visiting)
                 // Point them to set one, else go home 
                 if ( displayName ) {
-                    $state.go( 'tab.dash' );
+                    $state.go( 'tab.home' );
                     console.log( "display name set " + displayName )
                 } else {
                     // $state.go( 'name' );
@@ -1364,7 +1364,7 @@ app.controller( 'LoginCtrl', function ( $scope, $state ) {
         user.updateProfile( {
             displayName: displayName
         } ).then( function ( ) {
-            $state.go( 'tab.dash' )
+            $state.go( 'tab.home' )
             console.log( "update success " + displayName )
         }, function ( error ) {
             console.log( error )
@@ -1383,27 +1383,37 @@ app.controller( 'LoginCtrl', function ( $scope, $state ) {
 //LoginCtrl end
 //////////////////////////////////
 
-app.controller( 'NavCtrl', function ( $scope, $location )
-{
-	$scope.go = function ( path ) {
-    $location.path( path );
-  };
-} );
 //////////////////////////////////
 //SettingsCtrl start
 //////////////////////////////////
 
-app.controller( 'SettingsCtrl', function ( $scope, FirebaseServ, $timeout ) {
+app.controller( 'SettingsCtrl', function ( $scope, FirebaseServ, $timeout, $state ) {
 
 
 var app = angular.module('myApp', []);
-  $scope.today = new Date();
+$scope.today = new Date();
 
-  
-
+$scope.signOut = function ( )
+{
+	firebase.auth( ).signOut( ).then( function ( )
+	{
+		$state.go( 'auth' )
+		console.log( "signed out" )
+	}, function ( error )
+	{
+		console.log( error )
+	} );
+}
 
 } )
 
 //////////////////////////////////
 //SettingsCtrl end
 //////////////////////////////////
+
+app.controller( 'NavCtrl', function ( $scope, $location )
+{
+	$scope.go = function ( path ) {
+    $location.path( path );
+  };
+} );

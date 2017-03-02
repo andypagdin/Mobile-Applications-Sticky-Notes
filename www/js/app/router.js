@@ -4,6 +4,11 @@
 
 app.config( function ( $stateProvider, $urlRouterProvider ) {
     $stateProvider
+        .state( 'tab', {
+            url: '/tab',
+            abstract: true,
+            templateUrl: 'templates/tabs.html'
+        } )
         .state( 'auth', {
             url: '/auth',
             templateUrl: 'templates/auth.html',
@@ -18,11 +23,6 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             url: '/accordion',
             templateUrl: 'templates/accordion.html',
             controller: 'AccordionCtrl'
-        } )
-        .state( 'settings', {
-            url: '/settings',
-            templateUrl: 'templates/settings.html',
-            controller: 'SettingsCtrl'
         } )
         .state( 'editPad', {
             url: '/edit',
@@ -42,25 +42,33 @@ app.config( function ( $stateProvider, $urlRouterProvider ) {
             templateUrl: 'templates/flip.html',
             controller: 'FlipCtrl'
         } )
-        .state( 'home', {
+        .state( 'tab.home', {
             url: '/home',
-            templateUrl: 'templates/home.html',
-            controller: 'HomeCtrl'
-        } )
-        .state( 'tab', {
-            url: '/tab',
-            abstract: true,
-            templateUrl: 'templates/tabs.html'
-        } )
-        .state( 'tab.dash', {
-            url: '/dash',
             views: {
-                'tab-dash': {
-                    templateUrl: 'templates/tab-dash.html',
-                    controller: 'DashCtrl'
+                'tab-home': {
+                    templateUrl: 'templates/tab-home.html',
+                    controller: 'HomeCtrl'
                 }
             }
         } )
+        .state( 'tab.settings', {
+            url: '/settings',
+            views: {
+                'tab-settings': {
+                    templateUrl: 'templates/tab-settings.html',
+                    controller: 'SettingsCtrl'
+                }
+            }
+        } )
+        // .state( 'tab.dash', {
+        //     url: '/dash',
+        //     views: {
+        //         'tab-dash': {
+        //             templateUrl: 'templates/tab-dash.html',
+        //             controller: 'DashCtrl'
+        //         }
+        //     }
+        // } )
         .state( 'addPad', {
             url: '/addPad',
             templateUrl: 'templates/addPad.html',
