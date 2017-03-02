@@ -2,7 +2,8 @@
 //AuthCtrl start
 //////////////////////////////////
 
-app.controller( 'AuthCtrl', function ( $scope, $state ) {
+app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
+{
     $scope.auth = {
         email: "",
         password: "",
@@ -10,18 +11,22 @@ app.controller( 'AuthCtrl', function ( $scope, $state ) {
         verifed: false,
         signin: false,
         loading: false,
-    }
-    $scope.google = function ( ) {
+    };
+
+    $scope.google = function ( )
+    {
         $scope.auth.loading = true;
 
         var provider = new firebase.auth.GoogleAuthProvider( );
 
         firebase.auth( ).signInWithRedirect( provider )
-            .then( function ( ) {
+            .then( function ( )
+            {
                 $scope.auth.loading = false;
                 $scope.$apply( )
             } )
-            .catch( function ( error ) {
+            .catch( function ( error )
+            {
                 $scope.auth.error = JSON.stringify( error )
                 $scope.auth.loading = false;
                 $scope.$apply( )
@@ -29,28 +34,33 @@ app.controller( 'AuthCtrl', function ( $scope, $state ) {
 
     }
 
-    $scope.signout = function ( ) {
+    $scope.signout = function ( )
+    {
         firebase.auth( ).signOut( );
         console.log( "signed out" )
     }
 
-    $scope.signin = function ( ) {
+    $scope.signin = function ( )
+    {
         $scope.auth.loading = true;
 
-        if ( firebase.auth( ).currentUser ) {
+        if ( firebase.auth( ).currentUser )
+        {
             // if someone logs in then goes back to login they are still logged in, this stops that
             $scope.signout( );
         }
 
         var email = $scope.auth.email;
-        if ( !email || email.length < 4 ) {
+        if ( !email || email.length < 4 )
+        {
             $scope.auth.error = 'Please enter an email address.';
             $scope.auth.loading = false;
             return;
         }
 
         var password = $scope.auth.password;
-        if ( !password || password.length < 4 ) {
+        if ( !password || password.length < 4 )
+        {
             $scope.auth.error = 'Please enter a password.';
             $scope.auth.loading = false;
             return;
@@ -58,65 +68,77 @@ app.controller( 'AuthCtrl', function ( $scope, $state ) {
 
         $scope.auth.error = false;
         firebase.auth( ).signInWithEmailAndPassword( email, password )
-            .then( function ( ) {
+            .then( function ( )
+            {
                 $scope.auth.loading = false;
                 $scope.$apply( )
             } )
-            .catch( function ( error ) {
+            .catch( function ( error )
+            {
                 $scope.auth.error = ( error.message ) ? error.message : "Request failed, please try again.";
                 $scope.auth.loading = false;
                 $scope.$apply( )
             } );
     }
 
-    $scope.signup = function ( ) {
+    $scope.signup = function ( )
+    {
         $scope.auth.loading = true;
 
         var email = $scope.auth.email;
-        if ( !email || email.length < 4 ) {
+        if ( !email || email.length < 4 )
+        {
             $scope.auth.error = "Please enter an email address.";
             $scope.auth.loading = false;
             return;
         }
 
         var password = $scope.auth.password;
-        if ( !password || password.length < 4 ) {
+        if ( !password || password.length < 4 )
+        {
             $scope.auth.error = "Please enter a password.";
             $scope.auth.loading = false;
             return;
         }
 
         firebase.auth( ).createUserWithEmailAndPassword( email, password )
-            .then( function ( ) {
+            .then( function ( )
+            {
                 $scope.auth.loading = false;
                 $scope.$apply( )
             } )
-            .catch( function ( error ) {
+            .catch( function ( error )
+            {
                 $scope.auth.error = error.message;
                 $scope.auth.loading = false;
                 $scope.$apply( )
             } );
     }
 
-    $scope.reset = function ( ) {
+    $scope.reset = function ( )
+    {
         $scope.auth.loading = true;
 
         var email = $scope.auth.email;
-        if ( !email || email.length < 4 ) {
+        if ( !email || email.length < 4 )
+        {
             $scope.auth.error = "Please enter an email address.";
             $scope.auth.loading = false;
             return;
         }
 
-        firebase.auth( ).sendPasswordResetEmail( email ).then( function ( ) {
+        firebase.auth( ).sendPasswordResetEmail( email ).then( function ( )
+            {
                 $scope.auth.error = "Password Reset Email Sent!";
                 $scope.auth.loading = false;
                 console.log( "we have a res, auth ---", $scope.auth )
                 $scope.$apply( )
             } )
-            .catch( function ( local_error ) {
+            .catch( function ( local_error )
+            {
                 console.log( "we have a err, auth ---", $scope.auth )
-                switch ( local_error.code ) {
+                switch ( local_error.code )
+                {
                     case 'auth/invalid-email':
                         $scope.auth.error = "That email address isn't recognised.";
                         break;
@@ -132,17 +154,22 @@ app.controller( 'AuthCtrl', function ( $scope, $state ) {
             } );
     }
 
-    $scope.init = function ( ) {
-        firebase.auth( ).onAuthStateChanged( function ( user ) {
+    $scope.init = function ( )
+    {
+        firebase.auth( ).onAuthStateChanged( function ( user )
+        {
             $scope.auth.loading = false;
-            if ( user ) {
-                if ( !$scope.auth.email && !$scope.auth.password ) {
+            if ( user )
+            {
+                if ( !$scope.auth.email && !$scope.auth.password )
+                {
                     console.log( "there is currently a known user and there shouldnt be", user )
                     $scope.signout( )
                     $scope.$apply( )
                     return
                 }
-                if ( !user.emailVerified ) {
+                if ( !user.emailVerified )
+                {
                     user.sendEmailVerification( )
                     $scope.auth.error = "Please verify your account.";
                     console.error( $scope.auth.error )

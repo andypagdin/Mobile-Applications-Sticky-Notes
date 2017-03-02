@@ -17,92 +17,51 @@
             </label>
             -->
 
-            <input
-                type="input"
-                placeholder="group name"
-                name="group_name"
-                id="group_name"
-                ng-model="page.models.group.create.title">
+            <input type="input" placeholder="group name" name="group_name" id="group_name" ng-model="page.models.group.create.title">
 
-            <button
-                ng-click="create_group()">
+            <button ng-click="create_group()">
                 add new group
             </button>
 
-            <input
-                type="input"
-                placeholder="contant name"
-                name="group_name"
-                id="group_name"
-                ng-model="page.models.search.displayName">
+            <input type="input" placeholder="contant name" name="group_name" id="group_name" ng-model="page.models.search.displayName">
 
-            <button
-                ng-click="search_contact()">
+            <button ng-click="search_contact()">
                 Search by display name.
             </button>
 
         </div>
         <div class="card-container">
-            <div
-                class="group"
-                ng-repeat="(group_id, group) in page.data.groups"
-                ng-if="group_id!='length'">
+            <div class="group" ng-repeat="(group_id, group) in page.data.groups" ng-if="group_id!='length'">
 
                 <span>{{group.title}}</span>
-                <span
-                    ng-click="remove_group(group_id)"
-                    class="icon ion-trash-b">
+                <span ng-click="remove_group(group_id)" class="icon ion-trash-b">
                     Remove group.
                 </span>
 
-                <input
-                type="input"
-                placeholder="edit group name"
-                name="edit_group_name"
-                id="edit_group_name"
-                ng-model="page.models.group.edit[group_id].title">
+                <input type="input" placeholder="edit group name" name="edit_group_name" id="edit_group_name" ng-model="page.models.group.edit[group_id].title">
 
-                <button
-                    ng-click="update_group(group_id)">
+                <button ng-click="update_group(group_id)">
                     edit group
                 </button>
 
-                <input type="input"
-                    placeholder="pad title"
-                    name="pad_title" id="pad_title"
-                    ng-model="page.models.pad.create[group_id].title"
-                    ng-disabled="!page.data.groups[group_id].users[page.data.uid]">
+                <input type="input" placeholder="pad title" name="pad_title" id="pad_title" ng-model="page.models.pad.create[group_id].title" ng-disabled="!page.data.groups[group_id].users[page.data.uid]">
 
-                <textarea
-                    placeholder="pad body"
-                    name="pad_body" id="pad_body"
-                    ng-model="page.models.pad.create[group_id].body"
-                    ng-disabled="!page.data.groups[group_id].users[page.data.uid]">
+                <textarea placeholder="pad body" name="pad_body" id="pad_body" ng-model="page.models.pad.create[group_id].body" ng-disabled="!page.data.groups[group_id].users[page.data.uid]">
                 </textarea>
 
-                <button
-                    ng-click="create_pad(group_id)"
-                    ng-disabled="!page.data.groups[group_id].users[page.data.uid]">
+                <button ng-click="create_pad(group_id)" ng-disabled="!page.data.groups[group_id].users[page.data.uid]">
                     add new pad
                 </button>
 
-                <div
-                    class="flip-card"
-                    ng-repeat="(pad_id, pad) in group.pads"
-                    ng-class="{'flipped':pad.flipped}"
-                    ng-if="pad_id!='length'">
+                <div class="flip-card" ng-repeat="(pad_id, pad) in group.pads" ng-class="{'flipped':pad.flipped}" ng-if="pad_id!='length'">
 
-                    <div
-                        class="front"
-                        tabindex="-1 ">
+                    <div class="front" tabindex="-1 ">
                         <div class="flip-header">
                             <h2 class="white">
                                 {{pad.title}}
                             </h2>
                         </div>
-                        <div
-                            class="flip-header"
-                            ng-click="remove_pad(group_id, pad_id)">
+                        <div class="flip-header" ng-click="remove_pad(group_id, pad_id)">
                             <span class="icon ion-trash-b">
                                 Remove pad.
                             </span>
@@ -113,18 +72,14 @@
                         </div>
 
                         <div class="flip-footer">
-                            <button
-                                class="flip_btn"
-                                ng-click="flip(group_id, pad_id)">
+                            <button class="flip_btn" ng-click="flip(group_id, pad_id)">
                                 Comments [{{pad.comments.length}}]
                             </button>
                         </div>
 
                     </div>
 
-                    <div
-                        class="back"
-                        tabindex="-1">
+                    <div class="back" tabindex="-1">
                         <div class="flip-header">
                             <h2 class="black">
                                 {{pad.title}}
@@ -133,10 +88,7 @@
 
                         <div class="flip-body">
                             <ul>
-                                <li
-                                    ng-repeat="(comment_id, comment) in pad.comments"
-                                    ng-click="remove_comment(group_id, pad_id,comment_id)"
-                                    ng-if="comment_id!='length'">
+                                <li ng-repeat="(comment_id, comment) in pad.comments" ng-click="remove_comment(group_id, pad_id,comment_id)" ng-if="comment_id!='length'">
                                     {{comment.body}}
                                 </li>
                             </ul>
@@ -149,17 +101,13 @@
                                     ng-disabled="!page.data.groups[group_id].users[page.data.uid]">
                                 </textarea>
                             </label>
-                            <button
-                                    ng-click="create_comment(group_id,pad_id)"
-                                    ng-disabled="!page.data.groups[group_id].users[page.data.uid]">
+                            <button ng-click="create_comment(group_id,pad_id)" ng-disabled="!page.data.groups[group_id].users[page.data.uid]">
                                 Post comment!
                             </button>
                         </div>
 
                         <div class="flip-footer">
-                            <button
-                                class="flip_btn ion-arrow-left-b"
-                                ng-click="flip(group_id, pad_id)">
+                            <button class="flip_btn ion-arrow-left-b" ng-click="flip(group_id, pad_id)">
                                 Back
                             </button>
                         </div>

@@ -130,7 +130,7 @@
                     </a>
 
                     <!--save note-->
-                    <a class="button icon ion-ios-checkmark-empty" ng-click="savePad()">
+                    <a class="button icon ion-ios-checkmark-empty" ng-click="savePad();toggle_page( 'list' );">
                     </a>
 
                 </div>
@@ -143,29 +143,29 @@
 <div id="nav__bar" class="tabs" style="height:auto;">
     <ul>
         <li>
-        <a href="#/home">
-            <input type="radio" name="nav" id="home" checked>
-            <div class="ripple"></div>
-            <label for="home" class="icon ion-home">
+            <a href="#/home">
+                <input type="radio" name="nav" id="home" checked>
+                <div class="ripple"></div>
+                <label for="home" class="icon ion-home">
                 <p>
                     Home
                 </p>
             </label>
-        </a>
+            </a>
         </li>
-        
+
         <li>
-        <a class="" href="#/settings">
-            <input type="radio"   name="nav" id="settings">
-            <div class="ripple"></div>
-            <label for="settings"  class="icon ion-gear-b">
+            <a class="" href="#/settings">
+                <input type="radio" name="nav" id="settings">
+                <div class="ripple"></div>
+                <label for="settings" class="icon ion-gear-b">
                 <p>
                     Settings
                 </p>
-            </label> 
-        </a>
+            </label>
+            </a>
         </li>
-       
+
     </ul>
 
 </div>
