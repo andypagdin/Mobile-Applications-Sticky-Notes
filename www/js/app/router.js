@@ -2,7 +2,8 @@
 //router start
 //////////////////////////////////
 
-app.config( function ( $stateProvider, $urlRouterProvider ) {
+app.config( function ( $stateProvider, $urlRouterProvider, $ionicConfigProvider ) {
+    $ionicConfigProvider.platform.android.tabs.position('bottom');
     $stateProvider
         .state( 'tab', {
             url: '/tab',
