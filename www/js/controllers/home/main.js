@@ -3,7 +3,7 @@
 //////////////////////////////////
 
 app.controller( 'HomeCtrl', function ( $scope, FirebaseServ, $timeout, $rootScope )
-{
+{   
     //////////////////////////////////
     // Accordion Controller Underneath
     //////////////////////////////////

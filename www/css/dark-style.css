@@ -1,0 +1,421 @@
+/* Empty. Add your own CSS if you like */
+
+/* Start Homepage Styles */
+
+#note__template {
+    position: absolute;
+    z-index: 100;
+    background-color: white;
+}
+
+#list__template,
+#note__template {
+    transition: .2s;
+    opacity: 0;
+    pointer-events: none;
+}
+
+#list__template.show,
+#note__template.show {
+    opacity: 1;
+    pointer-events: all;
+}
+
+#note__template,
+#note__template header,
+#note__template #note__form,
+#note__template #note__form input,
+#note__template #note__form textarea {
+    width: 100%;
+}
+
+#note__template header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 8vh;
+}
+
+#note__template #note__form input,
+#note__template #note__form textarea {
+    padding: 0 2vh;
+}
+
+#note__template #note__form textarea {
+    resize: none;
+    height: 20vh;
+}
+
+/* End Homepage Styles */
+
+.edit-pad-container {
+    height: 200px;
+    margin: 25px;
+}
+
+.edit-pad-textarea {
+    resize: none;
+    border: none;
+    width: 100%;
+    height: 100%;
+    padding: 27px 20px 20px 56px;
+    background-image: url('http://images.naldzgraphics.net/2012/08/16-Yellow.jpg');
+    background-size: cover;
+}
+
+.pad-edit-btn {
+    float: right;
+    height: 27px;
+    width: 40px;
+}
+
+.headerDash {
+    top: 0;
+    background: #3498db;
+    padding: 10px;
+}
+
+.headerText {
+    font-size: 20px;
+    color: #fff;
+    margin-bottom: 0px;
+    margin-top: 0px;
+}
+
+.margin-center {
+    margin: 0 auto;
+}
+
+.center {
+    text-align: center;
+}
+
+.log-in-btn {
+    float: right;
+}
+
+.name-container {
+    padding-top: 50%;
+    background: rgba(41, 128, 185, 1);
+    background: -moz-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
+    background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(41, 128, 185, 1)), color-stop(32%, rgba(41, 128, 185, 1)), color-stop(100%, rgba(236, 240, 241, 1)));
+    background: -webkit-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
+    background: -o-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
+    background: -ms-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
+    background: linear-gradient(to bottom, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#2980b9', endColorstr='#ecf0f1', GradientType=0);
+}
+
+.login-container {
+    padding-top: 75%;
+}
+
+.login-img {
+    margin-right: 10px;
+    width: 25px;
+    height: 25px;
+}
+
+.login-btn {
+    padding: 0 25px;
+}
+
+.row-login {
+    padding: 10px 0 20px 0;
+}
+
+.login-input-container {
+    width: 70%;
+    margin: 0 auto;
+}
+
+.login-container {
+    height: 100%;
+    background: rgba(41, 128, 185, 1);
+    background: -moz-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
+    background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(41, 128, 185, 1)), color-stop(32%, rgba(41, 128, 185, 1)), color-stop(100%, rgba(236, 240, 241, 1)));
+    background: -webkit-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
+    background: -o-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
+    background: -ms-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
+    background: linear-gradient(to bottom, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#2980b9', endColorstr='#ecf0f1', GradientType=0);
+}
+
+.login-container>.button-row img {
+    max-width: 80%;
+}
+
+.login-container>.header {
+    -webkit-flex: 4;
+    padding-top: 20px;
+}
+
+.item-divider {
+    background-color: transparent;
+    border: none;
+}
+
+
+/*/////////////////////////////////
+//flip start
+/////////////////////////////////*/
+
+.card-container {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.card-container .group {
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    margin-bottom: 5vh;
+    float: left;
+    clear: both;
+    background: rgba(41, 128, 185, 0.5);
+}
+
+.card-container .flip-card {
+    display: flex;
+    align-self: center;
+    color: white;
+    float: left;
+    margin: 1vh;
+    position: relative;
+    width: 40vh;
+    height: 60vh;
+    transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(0.6, 0, 0.3, 1);
+}
+
+.card-container .flip-card.flipped {
+    transform: rotateY(180deg);
+}
+
+.card-container .flip-card .flip-header,
+.card-container .flip-card .flip-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.card-container .flip-card .flip-header {
+    height: 10%;
+    width: 100%;
+}
+
+.white {
+    color: white;
+}
+
+.white:hover {
+    color: black;
+}
+
+h2.white:hover {
+    color: white;
+}
+
+.black {
+    color: black;
+}
+
+.black:hover {
+    color: white;
+}
+
+h2.black:hover {
+    color: black;
+}
+
+.card-container .flip-card .flip-header h2 {
+    display: flex;
+    margin: 0;
+    cursor: default;
+}
+
+.card-container .flip-card .flip-body {
+    padding: 2vh;
+    height: 80%;
+    width: 100%;
+}
+
+.card-container .flip-card .flip-body label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.card-container .flip-card .flip-body textarea {
+    display: flex;
+    flex-grow: 1;
+    width: 80%;
+}
+
+.card-container .flip-card .flip-body button {
+    display: flex;
+    width: 70%;
+    margin: 0 auto;
+    text-align: center;
+    justify-content: center;
+}
+
+.card-container .flip-card .flip-body button text {
+    display: flex;
+    align-content: center;
+    text-align: center;
+}
+
+.card-container .flip-card .flip-body ul {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2vh;
+    height: 80%;
+    width: 100%;
+}
+
+.card-container .flip-card .flip-body ul li {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.card-container .flip-card .flip-footer {
+    height: 10%;
+    width: 100%;
+}
+
+.card-container .flip-card .front,
+.card-container .flip-card .back {
+    border-radius: 1vh;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    /*display: flex;*/
+    /*align-items: center;*/
+    /*justify-content: center;*/
+    overflow: hidden;
+    backface-visibility: hidden;
+}
+
+.card-container .flip-card .front {
+    background: rebeccapurple;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+}
+
+.card-container .flip-card .flip_btn {
+    width: 100%;
+    height: 100%;
+    outline: none;
+    font-size: 3vh;
+    background: none;
+    border: none;
+    color: inherit;
+}
+
+.card-container .flip-card .flip_btn:hover,
+.card-container .flip-card .flip_btn:focus {
+    background-color: white;
+    color: black;
+    /*box-shadow: inset 0 0 0 10px rgba(0, 0, 0, 0.4);*/
+}
+
+.card-container .flip-card .back {
+    background: pink;
+    color: black;
+    transform: rotateY(180deg);
+}
+
+.testContainer {
+    height: 30%;
+    background: rgba(41, 128, 185, 1);
+    background: -moz-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
+    background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(41, 128, 185, 1)), color-stop(32%, rgba(41, 128, 185, 1)), color-stop(100%, rgba(236, 240, 241, 1)));
+    background: -webkit-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
+    background: -o-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
+    background: -ms-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
+    background: linear-gradient(to bottom, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
+    filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#2980b9', endColorstr='#ecf0f1', GradientType=0);
+}
+
+.testContainer input {
+    width: 60%;
+    margin-bottom: 30px;
+    margin-left: 76px;
+}
+
+
+/*/////////////////////////////////
+//flip end
+/////////////////////////////////*/
+
+
+/* fav's button on accordion*/
+
+button.button.button-clear.icon.ion-star.button-assertive {
+    float: right;
+}
+
+.item.mydatetime {
+    padding: 12px 5px;
+    min-height: 45px;
+}
+
+
+/* fav's button on accordion*/
+
+#note_not_today .item-content {
+    background-color: green;
+}
+
+#note_today .item-content {
+    background-color: orange;
+}
+
+#note_today_hours .item-content {
+    background-color: #ff4e4e;
+}
+
+a.adddata {
+    top: 14px;
+    color: white;
+    font-size: 4em;
+    text-decoration: none;
+    float: right;
+    margin-top: -36px;
+}
+
+.border-none {
+    border: none !important;
+}
+
+.kbutton {
+    min-height: 0 !important;
+    line-height: 0 !important;
+    padding: 20px !important;
+}
+
+.kbutton .icon:before,
+.kbutton.icon:before,
+.kbutton.icon-left:before,
+.kbutton.icon-right:before {
+    min-height: 0 !important;
+    line-height: 0 !important;
+}
+
+.item-input {
+    padding: 11px 7px;
+}
+
+div:empty:before {
+    content: attr(data-placeholder);
+    color: gray
+}

@@ -889,12 +889,38 @@ app.controller( 'FlipCtrl', function ( $scope, FirebaseServ )
 //FlipCtrl end
 //////////////////////////////////
 
+app.controller( 'headCtrl', function ( $scope, Css) {
+
+	$scope.cssOptions = [
+	    { name: 'Default', value: 'style' },
+	    { name: 'Dark', value: 'dark-style' },
+	    { name: 'Assisted', value: 'assisted-style' }
+	];
+
+	$scope.Css = Css;
+
+   	$scope.changePath = function() {
+   		if($scope.css == "style"){
+   			Css.setUrl('css/style');
+   		}
+   		else if($scope.css == "dark-style")
+   		{
+   			Css.setUrl('css/dark-style');
+   		}
+   		else if($scope.css == "assisted-style")
+   		{
+   			Css.setUrl('css/assisted-style');
+   		}
+   		//console.log($scope.css)
+  	};
+
+} )
 //////////////////////////////////
 //HomeCtrl start
 //////////////////////////////////
 
 app.controller( 'HomeCtrl', function ( $scope, FirebaseServ, $timeout, $rootScope )
-{
+{   
     //////////////////////////////////
     // Accordion Controller Underneath
     //////////////////////////////////
@@ -1383,12 +1409,17 @@ app.controller( 'LoginCtrl', function ( $scope, $state ) {
 //LoginCtrl end
 //////////////////////////////////
 
+app.controller( 'NavCtrl', function ( $scope, $location )
+{
+	$scope.go = function ( path ) {
+    $location.path( path );
+  };
+} );
 //////////////////////////////////
 //SettingsCtrl start
 //////////////////////////////////
 
 app.controller( 'SettingsCtrl', function ( $scope, FirebaseServ, $timeout, $state ) {
-
 
 var app = angular.module('myApp', []);
 $scope.today = new Date();
@@ -1410,10 +1441,3 @@ $scope.signOut = function ( )
 //////////////////////////////////
 //SettingsCtrl end
 //////////////////////////////////
-
-app.controller( 'NavCtrl', function ( $scope, $location )
-{
-	$scope.go = function ( path ) {
-    $location.path( path );
-  };
-} );

@@ -7,10 +7,8 @@
                     <div class="input-label">
                       Select Theme
                     </div>
-                    <select>
-                      <option selected>Dark</option>
-                      <option >Light</option>
-                      <option>Assistive Technology</option>
+                    <select ng-change="changePath(css)" ng-model="css" ng-controller="headCtrl" ng-options="option.value as option.name for option in cssOptions">
+                      <option style="display:none" value="">Change Your Theme</option>
                     </select>
                 </label>
 

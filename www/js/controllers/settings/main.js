@@ -4,7 +4,6 @@
 
 app.controller( 'SettingsCtrl', function ( $scope, FirebaseServ, $timeout, $state ) {
 
-
 var app = angular.module('myApp', []);
 $scope.today = new Date();
 
