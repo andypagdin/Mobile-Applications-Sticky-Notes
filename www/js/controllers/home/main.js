@@ -55,7 +55,7 @@ app.controller( 'HomeCtrl', function ( $scope, FirebaseServ, $timeout, $rootScop
 
     $scope.favourite_group = function ( group )
     {
-        group.star = !group.star;
+        group.favourite = !group.favourite;
     };
 
     $scope.delete_group = function ( group )
