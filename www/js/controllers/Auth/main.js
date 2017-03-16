@@ -12,7 +12,6 @@ app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
         signin: false,
         loading: false,
     };
-
     $scope.google = function ( )
     {
         $scope.auth.loading = true;
@@ -31,7 +30,6 @@ app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
                 $scope.auth.loading = false;
                 $scope.$apply( )
             } );
-
     }
 
     $scope.signout = function ( )
@@ -43,10 +41,8 @@ app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
     $scope.signin = function ( )
     {
         $scope.auth.loading = true;
-
         if ( firebase.auth( ).currentUser )
         {
-            // if someone logs in then goes back to login they are still logged in, this stops that
             $scope.signout( );
         }
 
