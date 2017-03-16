@@ -1,5 +1,28 @@
 /* Empty. Add your own CSS if you like */
 
+/* Dark Theme */
+
+ion-content {
+    background-color: #cbcbcd;
+}
+
+.tabs {
+    background-color: #363637;
+}
+
+ion-tabs.tabs-color-active-royal .tab-item.tab-item-active {
+    color: #fff;
+}
+
+ion-tabs.tabs-color-active-royal .tab-item {
+    color: #fff;
+}
+
+.button.button-royal {
+    background-color: #363637; 
+}
+
+/* End Dark Theme */
 /* Start Homepage Styles */
 
 #note__template {

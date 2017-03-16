@@ -894,7 +894,7 @@ app.controller( 'headCtrl', function ( $scope, Css) {
 	$scope.cssOptions = [
 	    { name: 'Default', value: 'style' },
 	    { name: 'Dark', value: 'dark-style' },
-	    { name: 'Assisted', value: 'assisted-style' }
+	    { name: 'Colour Blind', value: 'assisted-style' }
 	];
 
 	$scope.Css = Css;

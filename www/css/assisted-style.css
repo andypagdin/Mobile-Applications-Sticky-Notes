@@ -1,5 +1,49 @@
 /* Empty. Add your own CSS if you like */
 
+/* Assisted Theme Start */
+
+ion-content {
+    background-color: #cbcbcd;
+}
+
+.tabs {
+    background-color: #363637;
+}
+
+ion-tabs.tabs-color-active-royal .tab-item.tab-item-active {
+    color: #ffff00;
+}
+
+ion-tabs.tabs-color-active-royal .tab-item {
+    color: #ffff00;
+}
+
+.button.button-royal {
+    color: #ffff00;
+}
+
+.button.button-royal:hover {
+    color: #ffff00;
+}
+
+.button.button-royal {
+    background-color: #363637; 
+}
+
+.item-select.item-dark .input-label, .item-select.item-dark:after {
+    color: #ffff00;
+}
+
+.item-select.item-dark select {
+    color: #ffff00;
+}
+
+.button.button-assertive {
+    color: #ffff00;
+    background-color: #363637;
+}
+
+/* Assisted Theme End */
 /* Start Homepage Styles */
 
 #note__template {

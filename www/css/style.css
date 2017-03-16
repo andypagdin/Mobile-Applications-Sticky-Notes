@@ -1,5 +1,18 @@
 /* Empty. Add your own CSS if you like */
 
+.item-select.item-dark .input-label, .item-select.item-dark:after {
+    background-color: #886aea;
+}
+
+.item-select.item-dark select {
+    background-color: #886aea;
+}
+
+.item.item-dark {
+    background-color: #886aea;
+    border-color: #886aea;
+}
+
 /* Start Homepage Styles */
 
 #note__template {
