@@ -1,53 +1,22 @@
 <ion-view view-title="Settings">
     <ion-content scroll="true">
-
-            <!--Find friends and edit Profile -->
-            <ul class="list">
-                <label class="item item-input item-select item-dark">
-                    <div class="input-label">
-                      Select Theme
-                    </div>
-                    <select ng-change="changePath(css)" ng-model="css" ng-controller="headCtrl" ng-options="option.value as option.name for option in cssOptions">
-                      <option style="display:none" value="">Change Your Theme</option>
-                    </select>
-                </label>
-
-                <a class="item item-icon-left" href="#">
-                <i class="icon ion-person-stalker"></i>
-                    Find Friends
-                <span class="badge badge-assertive">0</span>
-                </a>
-
-                <a class="item item-icon-left" href="#">
-                <i class="icon ion-edit"></i>
-                    Edit Profile
-                </a>
-            </ul>
-
-        <div class="item item-divider">
-            Date and Time:
-        </div>
-
+        <label class="item item-input item-select item-dark">
+            <label for="theme" class="input-label">
+                Select Theme
+            </label>
+            <select name="theme" id="theme" ng-change="changePath(css)" ng-model="css" ng-controller="headCtrl" ng-options="option.value as option.name for option in cssOptions">
+                <option style="display:none" value="">Change Your Theme</option>
+            </select>
+        </label>
         <div class="item" ng-app="myApp" ng-controller="SettingsCtrl">
+          <p><u>Current date and time:</u></p>
           <p>{{ today | date : "'Today is ' MMMM d, y - h:mm a" }}</p>
         </div>
-
-        <div class="item item-divider">
-            Test Internet connections:
-        </div>
-
-        <div class="item">
-          <!-- <a  href="#" onclick="window.open('http://www.bbc.co.uk/news', '_system', 'location=yes')"> -->
+        <div class="item" ng-app="myApp" ng-controller="SettingsCtrl">
           <a href="http://www.bbc.co.uk/news" target="_blank">
-              Test Internet
+              Test internet connection.
           </a>
-        </div>
-
-        <div class="item item-divider"> 
-            Account
-        </div>
-
+        </div> 
         <button class="button button-full button-assertive" ng-click="signOut()">Sign Out</button>
-
     </ion-content>
 </ion-view>
