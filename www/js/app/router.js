@@ -4,6 +4,7 @@
 
 app.config( function ( $stateProvider, $urlRouterProvider, $ionicConfigProvider )
 {
+    //testing
     $ionicConfigProvider.platform.android.tabs.position( 'bottom' );
     var cache_buster = Math.floor( Date.now( ) / 1000 )
     $stateProvider
