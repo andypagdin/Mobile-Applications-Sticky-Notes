@@ -21,17 +21,17 @@
 //////////////////////////////////
 app = angular.module( 'starter.controllers', [ ] )
 
-app.run( function ( $rootScope )
-{
-    $rootScope.$on( "$locationChangeStart", function ( event, next, current )
-    {
-        var current_page = document.location.hash.replace( "#/", "" )
-        console.log( "event", event )
-        console.log( "next", next )
-        console.log( "current", current )
-        console.log( "current_page", current_page )
-    } );
-} );
+// app.run( function ( $rootScope )
+// {
+//     $rootScope.$on( "$locationChangeStart", function ( event, next, current )
+//     {
+//         var current_page = document.location.hash.replace( "#/", "" )
+//         console.log( "event", event )
+//         console.log( "next", next )
+//         console.log( "current", current )
+//         console.log( "current_page", current_page )
+//     } );
+// } ); 
 //inject indavidual controllers here!
 
 ////////////////////////////////// 
