@@ -1,12 +1,12 @@
-app.factory( 'Css', function ( )
+app.factory( 'Css', ( ) =>
 {
-    var url = 'css/style';
+    let url = 'css/style';
     return {
-        url: function ( )
+        url( )
         {
             return url;
         },
-        setUrl: function ( newUrl )
+        setUrl( newUrl )
         {
             url = newUrl;
         }

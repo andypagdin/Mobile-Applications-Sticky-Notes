@@ -22,9 +22,9 @@
 app = angular.module( 'starter', [ 'ionic', 'starter.controllers', 'starter.services', 'ion-datetime-picker' ] )
 
 // everything in run is triggered when the app runs (who knew!)
-app.run( function ( $ionicPlatform )
+app.run( $ionicPlatform =>
 {
-    $ionicPlatform.ready( function ( )
+    $ionicPlatform.ready( ( ) =>
     {
         // Hide the accessory bar by default
         // (remove this to show the accessory bar above the keyboard for form inputs)

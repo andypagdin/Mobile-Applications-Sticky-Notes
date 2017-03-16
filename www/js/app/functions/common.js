@@ -4,7 +4,7 @@
 
 
 // Initialize Firebase
-var config = {
+const config = {
     apiKey: "AIzaSyDXuQU3J2jRIYFf2ZrUfAU3yId5O9EfMzQ",
     authDomain: "mobile-app-uni.firebaseapp.com",
     databaseURL: "https://mobile-app-uni.firebaseio.com",
@@ -13,7 +13,7 @@ var config = {
 };
 firebase.initializeApp( config );
 
-syntaxHighlight = function ( json )
+syntaxHighlight = json =>
 {
     // This is a fancy way of doing a stringify
     // It attaches <spans> with classes so you can add colors for each data type
@@ -23,9 +23,9 @@ syntaxHighlight = function ( json )
         json = JSON.stringify( json, null, 4 );
     }
     json = json.replace( /&/g, '&amp;' ).replace( /</g, '&lt;' ).replace( />/g, '&gt;' );
-    return json.replace( /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function ( match )
+    return json.replace( /("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, match =>
     {
-        var cls = 'number';
+        let cls = 'number';
         if ( /^"/.test( match ) )
         {
             if ( /:$/.test( match ) )
@@ -50,11 +50,11 @@ syntaxHighlight = function ( json )
         {
             cls = 'null';
         }
-        return '<span class="' + cls + '">' + match + '</span>';
+        return `<span class="${cls}">${match}</span>`;
     } );
 }
 
-pretty = function ( json, heavy )
+pretty = ( json, heavy ) =>
 {
     if ( heavy )
     {

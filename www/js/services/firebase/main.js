@@ -1,14 +1,12 @@
 //////////////////////////////////
 //firebaseServ start
 //////////////////////////////////
-app.factory( 'FirebaseServ', function ( $q, $state )
+app.factory( 'FirebaseServ', ( $q, $state ) =>
 {
     //global refference to the current user
     current_user = {}
-    uid = function ( only_uid = false )
-    {
-        // create a promise
-        return $q( function ( resolve, reject )
+    uid = ( only_uid = false ) => // create a promise
+        $q( ( resolve, reject ) =>
         {
             // do we already have user data?
             // if no -
@@ -17,7 +15,7 @@ app.factory( 'FirebaseServ', function ( $q, $state )
                 // get user data from Auth
                 try
                 {
-                    firebase.auth( ).onAuthStateChanged( function ( user )
+                    firebase.auth( ).onAuthStateChanged( user =>
                     {
                         if ( user )
                         {
@@ -58,20 +56,19 @@ app.factory( 'FirebaseServ', function ( $q, $state )
                 resolve( current_user )
             }
         } )
-    }
-    create_user = function ( user_data )
+    create_user = user_data =>
     {
         // add timestamp
         user_data.private.timestamp = Date.now( )
 
         // I would normaly use post here but users has a different structure
         // create default group
-        var displayName = user_data.public.displayName || "";
+        const displayName = user_data.public.displayName || "";
         return post_group(
         {
             uid: user_data.private.uid,
             title: `Welcome ${displayName}!`
-        } ).then( function ( groups )
+        } ).then( groups =>
         {
             temp_obj = {};
             user_data.groups[ groups.id ] = true;
@@ -82,34 +79,31 @@ app.factory( 'FirebaseServ', function ( $q, $state )
                 created_by: user_data.private.uid,
                 title: "Your first note.",
                 body: "Text goes here."
-            } ).then( function ( )
+            } ).then( ( ) =>
             {
-                var ref = firebase.database( ).ref( '/users/' );
-                return ref.child( user_data.public.uid ).set( user_data ).then( function ( )
-                {
-                    // pass back the new user_data
-                    return user_data;
-                } ).catch( function ( error )
+                const ref = firebase.database( ).ref( '/users/' );
+                return ref.child( user_data.public.uid ).set( user_data ).then( ( ) => // pass back the new user_data
+                    user_data ).catch( error =>
                 {
                     // if error say so!
                     console.error( "error", error );
                     return {};
                 } );
 
-            } ).catch( function ( error )
+            } ).catch( error =>
             {
                 // if error say so!
                 console.error( "error", error );
                 return {};
             } );
-        } ).catch( function ( error )
+        } ).catch( error =>
         {
             // if error say so!
             console.error( "error", error );
             return {};
         } );
     }
-    get_groups = function ( group_ids )
+    get_groups = group_ids =>
     {
         promise = [ ];
         // if there are no groud ids we need to return
@@ -117,53 +111,45 @@ app.factory( 'FirebaseServ', function ( $q, $state )
         // with its associated object
         if ( !group_ids )
         {
-            promise.push( $q( function ( )
-            {
-                return {};
-            } ) )
-            return $q.all( promise ).then( function ( outcome )
-            {
-                return outcome;
-            } )
+            promise.push( $q( ( ) => (
+            {} ) ) )
+            return $q.all( promise ).then( outcome => outcome )
         }
 
         // for every group_id build a promise
         // and if successfull add the resolve value to an array
         keys = Object.keys( group_ids )
-        for ( var i = 0; i < keys.length; i++ )
+        for ( let i = 0; i < keys.length; i++ )
         {
             group_id = group_ids[ keys[ i ] ]
             current_group_id = keys[ i ]
-            promise.push( $q( function ( resolve, reject )
+            promise.push( $q( ( resolve, reject ) => firebase.database( ).ref( '/groups/' ).child( current_group_id ).once( "value", groups =>
             {
-                return firebase.database( ).ref( '/groups/' ).child( current_group_id ).once( "value", function ( groups )
-                {
-                    resolve( groups.val( ) );
-                } ).catch( function ( error )
-                {
-                    console.error( "[get_groups] We hit an error!", error )
-                    reject( )
-                } );
-            } ) )
+                resolve( groups.val( ) );
+            } ).catch( error =>
+            {
+                console.error( "[get_groups] We hit an error!", error )
+                reject( )
+            } ) ) )
         }
         // once all promise have finished
-        return $q.all( promise ).then( function ( output )
+        return $q.all( promise ).then( output =>
             {
-                var output_obj = {};
+                const output_obj = {};
                 // clears out all undefined outputs and turns it into an object
                 // i think this is now redundant but need ###TESTING###
-                for ( var i = 0; i < output.length; i++ )
+                for ( let i = 0; i < output.length; i++ )
                 {
                     if ( output[ i ] )
                     {
                         group_id = output[ i ].id
                         if ( output[ i ].pads )
                         {
-                            var pads = output[ i ].pads
-                            var pad_keys = Object.keys( pads )
-                            for ( var x = 0; x < pad_keys.length; x++ )
+                            const pads = output[ i ].pads;
+                            const pad_keys = Object.keys( pads );
+                            for ( let x = 0; x < pad_keys.length; x++ )
                             {
-                                var pad = pads[ pad_keys[ x ] ]
+                                const pad = pads[ pad_keys[ x ] ];
                                 pad.priority_state = false
                                 if ( pad.priority_time )
                                 {
@@ -207,53 +193,50 @@ app.factory( 'FirebaseServ', function ( $q, $state )
                     // return output
                 return output_obj;
             },
-            function ( error )
+            error =>
             {
                 console.error( "[get_groups][$q.all] We hit an error!", error )
                 return {}
             } );
     }
-    add_user_group = function ( arg )
+    add_user_group = arg =>
     {
         // this is used to update the groups object for each user
         // output/structure should always be a hashmap
-        var url = arg.url
-        var ref = firebase.database( ).ref( url );
-        var group_id = arg.group_id
-        return ref.child( group_id ).set( true ).then( function ( )
+        const url = arg.url;
+        const ref = firebase.database( ).ref( url );
+        const group_id = arg.group_id;
+        return ref.child( group_id ).set( true ).then( ( ) =>
         {
             return
-        } ).catch( function ( error )
+        } ).catch( error =>
         {
             console.error( "error", error )
         } );
     }
-    remove = function ( arg )
+    remove = arg =>
     {
         console.log( "removing -", arg )
-        var url = arg.url
-        var target = arg.target
-        var ref = firebase.database( ).ref( url );
-        return ref.child( target ).remove( ).catch( function ( error )
+        const url = arg.url;
+        const target = arg.target;
+        const ref = firebase.database( ).ref( url );
+        return ref.child( target ).remove( ).catch( error =>
         {
             console.error( "error", error )
         } );
     }
-    post = function ( arg )
+    post = arg =>
     {
         // post acts as post and update
         console.log( "arg", arg )
-        var ref = firebase.database( ).ref( arg.url );
-        var output = arg.output;
+        const ref = firebase.database( ).ref( arg.url );
+        const output = arg.output;
         // if we are updating we use the target instead of generating a new key
         // I might add an extra flag to this so I can use post() for different objects
-        var id = ( output.target ) ? output.target : ref.push( ).key;
+        const id = ( output.target ) ? output.target : ref.push( ).key;
         output.id = id
         output.timestamp = Date.now( )
-        return ref.child( id ).set( output ).then( function ( )
-        {
-            return output;
-        } ).catch( function ( error )
+        return ref.child( id ).set( output ).then( ( ) => output ).catch( error =>
         {
             console.error( "error", error )
         } );
@@ -262,7 +245,7 @@ app.factory( 'FirebaseServ', function ( $q, $state )
     //////////////////////////////////
     // groups start
     //////////////////////////////////
-    remove_group = function ( arg )
+    remove_group = arg =>
     {
         group_input = {
             url: `/groups/`,
@@ -274,19 +257,16 @@ app.factory( 'FirebaseServ', function ( $q, $state )
             }
             // remove the group
             // then remove the users reference to the group
-        return remove( group_input ).then( function ( )
-        {
-            return remove( user_input )
-        } ).catch( function ( error )
+        return remove( group_input ).then( ( ) => remove( user_input ) ).catch( error =>
         {
             console.error( "We hit an error!", error )
             return {}
         } )
     }
-    update_group = function ( arg )
+    update_group = arg =>
     {
         console.log( "[update_group][arg]", arg )
-        return uid( true ).then( function ( uid )
+        return uid( true ).then( uid =>
         {
             // ###TEMP###
             // removes lengths and flip states from arg
@@ -300,7 +280,7 @@ app.factory( 'FirebaseServ', function ( $q, $state )
                 pad_keys = Object.keys( arg.pads )
                 pads = arg.pads
             }
-            for ( var i = 0; i < pad_keys.length; i++ )
+            for ( let i = 0; i < pad_keys.length; i++ )
             {
                 current_pad = pads[ pad_keys[ i ] ]
                 if ( pads.length )
@@ -317,164 +297,158 @@ app.factory( 'FirebaseServ', function ( $q, $state )
                     delete comment.length
                 }
             }
-            var input = {
+            const input = {
                 url: `/groups/`,
                 target: arg.id,
                 output: arg,
-            }
+            };
             return post( input )
-                .then( function ( output )
+                .then( output =>
                 {
-                    var new_object = {
+                    const new_object = {
                         id: output.id,
                         title: output.title,
                         timestamp: output.timestamp
-                    }
+                    };
                     return new_object;
-                } ).catch( function ( error )
+                } ).catch( error =>
                 {
                     console.error( "We hit an error!", error )
                     return {}
                 } )
-        } ).catch( function ( error )
+        } ).catch( error =>
         {
             console.error( "We hit an error!", error )
             return {}
         } )
     }
-    post_group = function ( arg )
+    post_group = arg => uid( true ).then( uid =>
         {
-            return uid( true ).then( function ( uid )
-            {
-                var group_data = {
-                    url: `/groups/`,
-                    output:
-                    {
-                        created_by: uid,
-                        title: arg.title,
-                        pads:
-                        {},
+            const group_data = {
+                url: `/groups/`,
+                output:
+                {
+                    created_by: uid,
+                    title: arg.title,
+                    pads:
+                    {},
+                    users:
+                    {},
+                },
+            };
+            group_data.output.users[ uid ] = true;
+            group_data.output.target = ( arg.id ) ? arg.id : false;
+            // update group object
+            // then update the users group reference
+            return post( group_data )
+                .then( arg =>
+                {
+                    const data = {
+                        url: `users/${arg.created_by}/groups/`,
+                        group_id: arg.id,
+                    };
+                    add_user_group( data )
+                    return arg;
+                } )
+                .then( output =>
+                {
+                    // return the new group object for display
+                    const new_object = {
+                        created_by: output.created_by,
+                        id: output.id,
+                        title: output.title,
+                        timestamp: output.timestamp,
                         users:
                         {},
-                    },
-                }
-                group_data.output.users[ uid ] = true;
-                group_data.output.target = ( arg.id ) ? arg.id : false;
-                // update group object
-                // then update the users group reference
-                return post( group_data )
-                    .then( function ( arg )
-                    {
-                        var data = {
-                            url: `users/${arg.created_by}/groups/`,
-                            group_id: arg.id,
-                        }
-                        add_user_group( data )
-                        return arg;
-                    } )
-                    .then( function ( output )
-                    {
-                        // return the new group object for display
-                        var new_object = {
-                            created_by: output.created_by,
-                            id: output.id,
-                            title: output.title,
-                            timestamp: output.timestamp,
-                            users:
-                            {},
-                            pads:
-                            {},
-                        }
-                        new_object.users[ output.created_by ] = true;
-                        return new_object;
-                    } ).catch( function ( error )
-                    {
-                        console.error( "We hit an error!", error )
-                        return {}
-                    } )
-            } ).catch( function ( error )
-            {
-                console.error( "We hit an error!", error )
-                return {}
-            } )
-        }
+                        pads:
+                        {},
+                    };
+                    new_object.users[ output.created_by ] = true;
+                    return new_object;
+                } ).catch( error =>
+                {
+                    console.error( "We hit an error!", error )
+                    return {}
+                } )
+        } ).catch( error =>
+        {
+            console.error( "We hit an error!", error )
+            return {}
+        } )
         //////////////////////////////////
         // groups end
         //////////////////////////////////
         //////////////////////////////////
         // pads start
         //////////////////////////////////
-    remove_pad = function ( arg )
+    remove_pad = arg =>
         {
             input = {
                 url: `/groups/${arg.group_id}/pads/`,
                 target: arg.pad_id,
             }
-            return remove( input ).catch( function ( error )
+            return remove( input ).catch( error =>
             {
                 console.error( "We hit an error!", error )
                 return {}
             } )
         }
         // not yet done as couldnt fit it in the UX
-    post_pad = function ( arg )
+    post_pad = arg => // get the uid then create input
+        uid( true ).then( uid =>
         {
-            // get the uid then create input
-            return uid( true ).then( function ( uid )
-            {
-                var pad_data = {
-                    url: `/groups/${arg.group_id}/pads/`,
-                    output:
-                    {
-                        priority_time: arg.priority_time.toString( ),
-                        created_by: uid,
-                        title: arg.title,
-                        body: arg.body,
-                    },
-                };
-                pad_data.output.target = ( arg.id ) ? arg.id : false;
-                return post( pad_data )
-                    .then( function ( output )
-                    {
-                        // return new pad
-                        var new_object = {
-                            body: output.body,
-                            created_by: output.created_by,
-                            id: output.id,
-                            new_comment: '',
-                            timestamp: output.timestamp,
-                            priority_time: output.priority_time,
-                            title: output.title,
-                            comments:
-                            {
-                                length: 0
-                            },
-                        };
-                        return new_object;
-                    } ).catch( function ( error )
-                    {
-                        console.error( "We hit an error!", error )
-                        return {}
-                    } )
-            } ).catch( function ( error )
-            {
-                console.error( "We hit an error!", error )
-                return {}
-            } )
-        }
+            const pad_data = {
+                url: `/groups/${arg.group_id}/pads/`,
+                output:
+                {
+                    priority_time: arg.priority_time.toString( ),
+                    created_by: uid,
+                    title: arg.title,
+                    body: arg.body,
+                },
+            };
+            pad_data.output.target = ( arg.id ) ? arg.id : false;
+            return post( pad_data )
+                .then( output =>
+                {
+                    // return new pad
+                    const new_object = {
+                        body: output.body,
+                        created_by: output.created_by,
+                        id: output.id,
+                        new_comment: '',
+                        timestamp: output.timestamp,
+                        priority_time: output.priority_time,
+                        title: output.title,
+                        comments:
+                        {
+                            length: 0
+                        },
+                    };
+                    return new_object;
+                } ).catch( error =>
+                {
+                    console.error( "We hit an error!", error )
+                    return {}
+                } )
+        } ).catch( error =>
+        {
+            console.error( "We hit an error!", error )
+            return {}
+        } )
         //////////////////////////////////
         // pads end
         //////////////////////////////////
         //////////////////////////////////
         // comments start
         //////////////////////////////////
-    remove_comment = function ( arg )
+    remove_comment = arg =>
         {
             input = {
                 url: `/groups/${arg.group_id}/pads/${arg.pad_id}/comments`,
                 target: arg.comment_id,
             }
-            return remove( input ).catch( function ( error )
+            return remove( input ).catch( error =>
             {
                 console.error( "We hit an error!", error )
                 return {}
@@ -482,42 +456,40 @@ app.factory( 'FirebaseServ', function ( $q, $state )
 
         }
         // not yet done as couldnt fit it in the UX
-    update_comment = function ( arg ) {}
-    post_comment = function ( arg )
+    update_comment = arg =>
+    {}
+    post_comment = arg => // get the uid then create input
+        uid( true ).then( uid =>
         {
-            // get the uid then create input
-            return uid( true ).then( function ( uid )
-            {
-                var data = {
-                    url: `/groups/${arg.group_id}/pads/${arg.pad_id}/comments/`,
-                    output:
-                    {
-                        created_by: uid,
-                        body: arg.body,
-                    }
+            const data = {
+                url: `/groups/${arg.group_id}/pads/${arg.pad_id}/comments/`,
+                output:
+                {
+                    created_by: uid,
+                    body: arg.body,
                 }
-                return post( data )
-                    // return new comment
-                    .then( function ( output )
-                    {
-                        var new_object = {
-                            id: output.id,
-                            body: output.body,
-                            timestamp: output.timestamp,
-                            created_by: output.created_by,
-                        }
-                        return new_object;
-                    } ).catch( function ( error )
-                    {
-                        console.error( "We hit an error!", error )
-                        return {}
-                    } )
-            } ).catch( function ( error )
-            {
-                console.error( "We hit an error!", error )
-                return {}
-            } )
-        }
+            };
+            return post( data )
+                // return new comment
+                .then( output =>
+                {
+                    const new_object = {
+                        id: output.id,
+                        body: output.body,
+                        timestamp: output.timestamp,
+                        created_by: output.created_by,
+                    };
+                    return new_object;
+                } ).catch( error =>
+                {
+                    console.error( "We hit an error!", error )
+                    return {}
+                } )
+        } ).catch( error =>
+        {
+            console.error( "We hit an error!", error )
+            return {}
+        } )
         //////////////////////////////////
         // comments end
         //////////////////////////////////
@@ -525,20 +497,17 @@ app.factory( 'FirebaseServ', function ( $q, $state )
         // contact start
         //////////////////////////////////
         // general search function, but not yet full tested
-    search = function ( arg )
+    search = arg =>
         {
             ref = firebase.database( ).ref( arg.url )
             ref = ( arg.orderByChild ) ? ref.orderByChild( arg.orderByChild ) : ref;
             ref = ( arg.startAt ) ? ref.startAt( arg.startAt ) : ref;
             ref = ( arg.endAt ) ? ref.endAt( arg.endAt ) : ref;
-            return ref.once( 'value' ).then( function ( output )
-            {
-                return output.val( )
-            } )
+            return ref.once( 'value' ).then( output => output.val( ) )
         }
         // search users but their contactName
         // contactName is the displayName made lowerCase
-    search_contacts = function ( arg )
+    search_contacts = arg =>
         {
             input = {
                 // probably broken with new rules
@@ -547,78 +516,52 @@ app.factory( 'FirebaseServ', function ( $q, $state )
                 startAt: arg.search.toLowerCase( ),
             }
             console.log( input )
-            return search( input ).then( function ( output )
-            {
-                return output
-            } )
+            return search( input ).then( output => output )
         }
         //////////////////////////////////
         // contact end
         //////////////////////////////////
-    flat_stub = function ( )
-        {
-            return firebase.database( ).ref( "" ).once( 'value', function ( data )
-            {
-                return data;
-            } )
-        }
+    flat_stub = ( ) => firebase.database( ).ref( "" ).once( 'value', data => data )
         // read indavidual parts of user object
-    read_user = function ( arg )
+    read_user = arg =>
     {
         //get user by uid and select the correct child
-        var user_ref = firebase.database( ).ref( '/users/' ).child( arg.uid );
-        return user_ref.child( arg.child ).once( 'value' ).then( function ( data )
-        {
-            return data.val( )
-        } ).catch( function ( error )
+        const user_ref = firebase.database( ).ref( '/users/' ).child( arg.uid );
+        return user_ref.child( arg.child ).once( 'value' ).then( data => data.val( ) ).catch( error =>
         {
             console.error( "[read_user] We hit an error!", error )
             return {}
         } )
     }
-    read_public = function ( uid )
+    read_public = uid => read_user(
     {
-        return read_user(
+        uid,
+        child: 'public'
+    } )
+    read_private = uid => read_user(
+    {
+        uid,
+        child: 'private'
+    } )
+    read_groups = uid => read_user(
+    {
+        uid,
+        child: 'groups'
+    } )
+    get_user_groups = ( ) => get_user( )
+    get_user = ( ) => // get the uid then check that we can get the private data
+        uid( ).then( user_data =>
         {
-            uid: uid,
-            child: 'public'
-        } )
-    }
-    read_private = function ( uid )
-    {
-        return read_user(
-        {
-            uid: uid,
-            child: 'private'
-        } )
-    }
-    read_groups = function ( uid )
-    {
-        return read_user(
-        {
-            uid: uid,
-            child: 'groups'
-        } )
-    }
-    get_user_groups = function ( )
-    {
-        return get_user( )
-    }
-    get_user = function ( )
-    {
-        // get the uid then check that we can get the private data
-        return uid( ).then( function ( user_data )
-        {
-            var displayName = user_data.displayName || user_data.email.substring( 0, user_data.email.indexOf( '@' ) );
-            var contactName = displayName.toLowerCase( );
-            var photoURL = user_data.photoURL || "";
-            var current_user = {
+            const displayName = user_data.displayName || user_data.email.substring( 0, user_data.email.indexOf( '@' ) );
+            const contactName = displayName.toLowerCase( );
+            const photoURL = user_data.photoURL || "";
+            const current_user = {
                 public:
                 {
-                    displayName: displayName,
-                    contactName: contactName,
+                    displayName,
+                    contactName,
                     uid: user_data.uid,
-                    photoURL: photoURL,
+                    photoURL,
                 },
                 private:
                 {
@@ -628,55 +571,51 @@ app.factory( 'FirebaseServ', function ( $q, $state )
                 },
                 groups:
                 {},
-            }
-            return read_private( user_data.uid ).then( function ( private_data )
+            };
+            return read_private( user_data.uid ).then( private_data =>
             {
                 // if we can't get the private data then the user doesnt exsist
                 if ( !private_data )
                 {
                     // the new user object!
-                    return create_user( current_user ).then( function ( user_data )
-                    {
-                        return user_data
-                    } ).catch( function ( error )
+                    return create_user( current_user ).then( user_data => user_data ).catch( error =>
                     {
                         console.error( "[create_user] We hit an error!", error )
                         return {}
                     } )
                 }
                 // if there is data, get the users groups and return the full user object
-                return read_groups( user_data.uid ).then( function ( groups_ouput )
+                return read_groups( user_data.uid ).then( groups_ouput =>
                 {
                     current_user.groups = groups_ouput
                     return current_user
-                } ).catch( function ( err )
+                } ).catch( err =>
                 {
                     console.error( "[get_user]we have a error", err )
                 } );
             } )
-        } ).catch( function ( err )
+        } ).catch( err =>
         {
             console.error( "[get_user]we have a error", err )
-        } );
-    }
+        } )
 
     // reference to all the Firebase.functions()
     return {
-        get_user: get_user,
-        uid: uid,
-        create_user: create_user,
-        get_user_groups: get_user_groups,
-        get_groups: get_groups,
-        remove_group: remove_group,
-        update_group: update_group,
-        post_group: post_group,
-        remove_pad: remove_pad,
-        post_pad: post_pad,
-        remove_comment: remove_comment,
-        update_comment: update_comment,
-        post_comment: post_comment,
-        search_contacts: search_contacts,
-        search: search,
+        get_user,
+        uid,
+        create_user,
+        get_user_groups,
+        get_groups,
+        remove_group,
+        update_group,
+        post_group,
+        remove_pad,
+        post_pad,
+        remove_comment,
+        update_comment,
+        post_comment,
+        search_contacts,
+        search,
     };
 } );
 

@@ -2,24 +2,21 @@
 //SettingsCtrl start
 //////////////////////////////////
 
-app.controller( 'SettingsCtrl', function ( $scope, FirebaseServ, $timeout, $state )
+app.controller( 'SettingsCtrl', ( $scope, FirebaseServ, $timeout, $state ) =>
 {
-
-    var app = angular.module( 'myApp', [ ] );
+    const app = angular.module( 'myApp', [ ] );
     $scope.today = new Date( );
-
-    $scope.signOut = function ( )
+    $scope.signOut = ( ) =>
     {
-        firebase.auth( ).signOut( ).then( function ( )
+        firebase.auth( ).signOut( ).then( ( ) =>
         {
             $state.go( 'auth' )
             console.log( "signed out" )
-        }, function ( error )
+        }, error =>
         {
             console.log( error )
         } );
     }
-
 } )
 
 //////////////////////////////////

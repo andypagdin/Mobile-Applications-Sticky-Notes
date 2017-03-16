@@ -2,7 +2,7 @@
 //HomeCtrl start
 //////////////////////////////////
 
-app.controller( 'HomeCtrl', function ( $scope, FirebaseServ, $timeout, $rootScope )
+app.controller( 'HomeCtrl', ( $scope, FirebaseServ, $timeout, $rootScope ) =>
 {
     //////////////////////////////////
     // Accordion Controller Underneath
@@ -29,10 +29,12 @@ app.controller( 'HomeCtrl', function ( $scope, FirebaseServ, $timeout, $rootScop
     };
 
     // get the users details
-    FirebaseServ.get_user( ).then( function ( data = {
-        groups:
-        {}
-    } )
+    FirebaseServ.get_user( ).then( (
+        data = {
+            groups:
+            {}
+        }
+    ) =>
     {
         console.log( "data", data );
         // get the users groups
@@ -41,34 +43,34 @@ app.controller( 'HomeCtrl', function ( $scope, FirebaseServ, $timeout, $rootScop
             return
         }
         FirebaseServ.get_groups( data.groups )
-            .then( function ( groups )
+            .then( groups =>
             {
                 $scope.page_data.groups = groups
-            } ).catch( function ( err )
+            } ).catch( err =>
             {
                 console.error( "[get_groups] we have a error", err )
             } )
-    } ).catch( function ( err )
+    } ).catch( err =>
     {
         console.error( "[get_user]we have a error", err )
     } );
 
-    $scope.favourite_group = function ( group )
+    $scope.favourite_group = group =>
     {
         group.favourite = !group.favourite;
     };
 
-    $scope.delete_group = function ( group )
+    $scope.delete_group = group =>
     {
-        var input = {
+        const input = {
             uid: $scope.page_data.groups[ group ].created_by,
             group_id: $scope.page_data.groups[ group ].id,
-        }
+        };
         FirebaseServ.remove_group( input )
         delete $scope.page_data.groups[ group ]
     };
 
-    $scope.order_group = function ( group, fromIndex, toIndex )
+    $scope.order_group = ( group, fromIndex, toIndex ) =>
     {
         $scope.page_data.groups.splice( fromIndex, 1 );
         $scope.page_data.groups.splice( toIndex, 0, group );
@@ -77,16 +79,13 @@ app.controller( 'HomeCtrl', function ( $scope, FirebaseServ, $timeout, $rootScop
      * if given group is the selected group, deselect it
      * else, select the given group
      */
-    $scope.toggleGroup = function ( group )
+    $scope.toggleGroup = group =>
     {
         console.log( "group", group )
         $scope.shownGroup = ( $scope.isGroupShown( group ) ) ? null : group;
     };
 
-    $scope.isGroupShown = function ( group )
-    {
-        return $scope.shownGroup === group;
-    };
+    $scope.isGroupShown = group => $scope.shownGroup === group;
 
     $scope.show_saveGroup = ( show = false, group_id = false ) =>
     {
@@ -95,13 +94,13 @@ app.controller( 'HomeCtrl', function ( $scope, FirebaseServ, $timeout, $rootScop
         $scope.page_data.adding = show;
     };
     $scope.active_group_id = 0
-    $scope.saveGroup = function ( )
+    $scope.saveGroup = ( ) =>
     {
-        var input = ( $scope.active_group_id ) ? $scope.page_data.groups[ $scope.active_group_id ] :
+        const input = ( $scope.active_group_id ) ? $scope.page_data.groups[ $scope.active_group_id ] :
         {};
         input[ "title" ] = $scope.page_data.group_title;
         FirebaseServ.post_group( input )
-            .then( function ( output )
+            .then( output =>
             {
                 $scope.page_data.groups[ output.id ] = output
                 if ( !$scope.$$phase )
@@ -114,10 +113,10 @@ app.controller( 'HomeCtrl', function ( $scope, FirebaseServ, $timeout, $rootScop
     $scope.prepPad = ( group_id = false, pad_id = false ) =>
     {
         if ( !group_id ) return;
-        var cur_group = $scope.page_data.groups[ group_id ];
+        const cur_group = $scope.page_data.groups[ group_id ];
         if ( pad_id )
         {
-            var cur_note = cur_group.pads[ pad_id ];
+            const cur_note = cur_group.pads[ pad_id ];
             $scope.page_data.note.group_id = group_id || "";
             $scope.page_data.note.group_title = cur_group.title || "";
             $scope.page_data.note.pad_id = pad_id || "";
@@ -147,11 +146,11 @@ app.controller( 'HomeCtrl', function ( $scope, FirebaseServ, $timeout, $rootScop
         {
             case "note":
                 $scope.page_data.list = !$scope.page_data.list;
-                $timeout( function ( )
+                $timeout( ( ) =>
                 {
                     $scope.page_data.buffer = !$scope.page_data.buffer;
                 }, 100 );
-                $timeout( function ( )
+                $timeout( ( ) =>
                 {
                     $scope.page_data.note.active = !$scope.page_data.note.active;
                     if ( current_group )
@@ -162,11 +161,11 @@ app.controller( 'HomeCtrl', function ( $scope, FirebaseServ, $timeout, $rootScop
                 break;
             case "list":
                 $scope.page_data.note.active = !$scope.page_data.note.active;
-                $timeout( function ( )
+                $timeout( ( ) =>
                 {
                     $scope.page_data.buffer = !$scope.page_data.buffer;
                 }, 100 );
-                $timeout( function ( )
+                $timeout( ( ) =>
                 {
                     $scope.page_data.list = !$scope.page_data.list;
                 }, 200 );
@@ -182,12 +181,12 @@ app.controller( 'HomeCtrl', function ( $scope, FirebaseServ, $timeout, $rootScop
             $scope.$apply( );
         }
     };
-    $scope.savePad = function ( )
+    $scope.savePad = ( ) =>
     {
         // build input.
-        var group_id = $scope.page_data.note.group_id
-        var input = {
-            group_id: group_id,
+        const group_id = $scope.page_data.note.group_id;
+        const input = {
+            group_id,
             title: $scope.page_data.note.title,
             priority_time: $scope.page_data.note.priority_time,
             body: $scope.page_data.note.body,
@@ -196,7 +195,7 @@ app.controller( 'HomeCtrl', function ( $scope, FirebaseServ, $timeout, $rootScop
         input[ "id" ] = ( $scope.page_data.note.pad_id ) ? $scope.page_data.note.pad_id : false;
         // trigger FirebaseServ function.
         FirebaseServ.post_pad( input )
-            .then( function ( output )
+            .then( output =>
             {
                 // get current list of pads.
                 $scope.page_data.groups[ group_id ].pads = ( $scope.page_data.groups[ group_id ].pads ) ? $scope.page_data.groups[ group_id ].pads :

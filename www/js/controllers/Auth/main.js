@@ -2,7 +2,7 @@
 //AuthCtrl start
 //////////////////////////////////
 
-app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
+app.controller( 'AuthCtrl', ( $scope, $rootScope, $state ) =>
 {
     $scope.auth = {
         email: "",
@@ -12,19 +12,19 @@ app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
         signin: false,
         loading: false,
     };
-    $scope.google = function ( )
+    $scope.google = ( ) =>
     {
         $scope.auth.loading = true;
 
-        var provider = new firebase.auth.GoogleAuthProvider( );
+        const provider = new firebase.auth.GoogleAuthProvider( );
 
         firebase.auth( ).signInWithRedirect( provider )
-            .then( function ( )
+            .then( ( ) =>
             {
                 $scope.auth.loading = false;
                 $scope.$apply( )
             } )
-            .catch( function ( error )
+            .catch( error =>
             {
                 $scope.auth.error = JSON.stringify( error )
                 $scope.auth.loading = false;
@@ -32,13 +32,13 @@ app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
             } );
     }
 
-    $scope.signout = function ( )
+    $scope.signout = ( ) =>
     {
         firebase.auth( ).signOut( );
         console.log( "signed out" )
     }
 
-    $scope.signin = function ( )
+    $scope.signin = ( ) =>
     {
         $scope.auth.loading = true;
         if ( firebase.auth( ).currentUser )
@@ -46,7 +46,7 @@ app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
             $scope.signout( );
         }
 
-        var email = $scope.auth.email;
+        const email = $scope.auth.email;
         if ( !email || email.length < 4 )
         {
             $scope.auth.error = 'Please enter an email address.';
@@ -54,7 +54,7 @@ app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
             return;
         }
 
-        var password = $scope.auth.password;
+        const password = $scope.auth.password;
         if ( !password || password.length < 4 )
         {
             $scope.auth.error = 'Please enter a password.';
@@ -64,12 +64,12 @@ app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
 
         $scope.auth.error = false;
         firebase.auth( ).signInWithEmailAndPassword( email, password )
-            .then( function ( )
+            .then( ( ) =>
             {
                 $scope.auth.loading = false;
                 $scope.$apply( )
             } )
-            .catch( function ( error )
+            .catch( error =>
             {
                 $scope.auth.error = ( error.message ) ? error.message : "Request failed, please try again.";
                 $scope.auth.loading = false;
@@ -77,11 +77,11 @@ app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
             } );
     }
 
-    $scope.signup = function ( )
+    $scope.signup = ( ) =>
     {
         $scope.auth.loading = true;
 
-        var email = $scope.auth.email;
+        const email = $scope.auth.email;
         if ( !email || email.length < 4 )
         {
             $scope.auth.error = "Please enter an email address.";
@@ -89,7 +89,7 @@ app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
             return;
         }
 
-        var password = $scope.auth.password;
+        const password = $scope.auth.password;
         if ( !password || password.length < 4 )
         {
             $scope.auth.error = "Please enter a password.";
@@ -98,12 +98,12 @@ app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
         }
 
         firebase.auth( ).createUserWithEmailAndPassword( email, password )
-            .then( function ( )
+            .then( ( ) =>
             {
                 $scope.auth.loading = false;
                 $scope.$apply( )
             } )
-            .catch( function ( error )
+            .catch( error =>
             {
                 $scope.auth.error = error.message;
                 $scope.auth.loading = false;
@@ -111,11 +111,11 @@ app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
             } );
     }
 
-    $scope.reset = function ( )
+    $scope.reset = ( ) =>
     {
         $scope.auth.loading = true;
 
-        var email = $scope.auth.email;
+        const email = $scope.auth.email;
         if ( !email || email.length < 4 )
         {
             $scope.auth.error = "Please enter an email address.";
@@ -123,14 +123,14 @@ app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
             return;
         }
 
-        firebase.auth( ).sendPasswordResetEmail( email ).then( function ( )
+        firebase.auth( ).sendPasswordResetEmail( email ).then( ( ) =>
             {
                 $scope.auth.error = "Password Reset Email Sent!";
                 $scope.auth.loading = false;
                 console.log( "we have a res, auth ---", $scope.auth )
                 $scope.$apply( )
             } )
-            .catch( function ( local_error )
+            .catch( local_error =>
             {
                 console.log( "we have a err, auth ---", $scope.auth )
                 switch ( local_error.code )
@@ -150,9 +150,9 @@ app.controller( 'AuthCtrl', function ( $scope, $rootScope, $state )
             } );
     }
 
-    $scope.init = function ( )
+    $scope.init = ( ) =>
     {
-        firebase.auth( ).onAuthStateChanged( function ( user )
+        firebase.auth( ).onAuthStateChanged( user =>
         {
             $scope.auth.loading = false;
             if ( user )

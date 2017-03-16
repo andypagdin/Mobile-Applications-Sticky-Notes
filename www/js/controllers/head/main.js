@@ -1,4 +1,4 @@
-app.controller( 'headCtrl', function ( $scope, Css )
+app.controller( 'headCtrl', ( $scope, Css ) =>
 {
     $scope.cssOptions = [
     {
@@ -14,7 +14,7 @@ app.controller( 'headCtrl', function ( $scope, Css )
         value: 'assisted-style'
     } ];
     $scope.Css = Css;
-    $scope.changePath = function ( )
+    $scope.changePath = ( ) =>
     {
         switch ( $scope.css )
         {
