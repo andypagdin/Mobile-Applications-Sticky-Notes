@@ -8,3 +8,6 @@ www/js/app.js
 www/js/controllers.js
 www/js/services.js
 www/img/space.jpg
+debug.log
+.editorconfig
+.vscode/
