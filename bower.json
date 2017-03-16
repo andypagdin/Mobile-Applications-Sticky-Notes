@@ -1,11 +1,13 @@
 {
     "name": "AirNote",
-    "private": "true",
-    "devDependencies": {
+    "private": true,
+    "devDependencies":
+    {
         "ionic": "driftyco/ionic-bower#1.3.1",
         "platform.js": "platform#^1.3.3"
     },
-    "dependencies": {
+    "dependencies":
+    {
         "ion-datetime-picker": "^0.5.0"
     }
 }
