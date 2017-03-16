@@ -29,7 +29,7 @@
                     <ion-item class="item-stable" ng-click="toggleGroup(group)" ng-class="{active: isGroupShown(group)}">
                         <i class="ion__show" class="icon" ng-class="isGroupShown(group) ? 'ion-minus' : 'ion-plus'"></i>
                         <h3 class="ion__title">{{group.title}}</h3>
-                        <i class="ion__favourite" class="icon ion-star" ng-show="group.star"></i>
+                        <i class="ion__favourite icon ion-star" ng-show="group.favourite"></i>
 
                         <!--edit-->
                         <ion-option-button class="button-royal" ng-click="show_saveGroup(true,group_id)">
