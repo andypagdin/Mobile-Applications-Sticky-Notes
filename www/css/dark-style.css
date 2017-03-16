@@ -1,5 +1,6 @@
 /* Empty. Add your own CSS if you like */
 
+
 /* Dark Theme */
 
 ion-content {
@@ -19,10 +20,13 @@ ion-tabs.tabs-color-active-royal .tab-item {
 }
 
 .button.button-royal {
-    background-color: #363637; 
+    background-color: #363637;
 }
 
+
 /* End Dark Theme */
+
+
 /* Start Homepage Styles */
 
 #note__template {
@@ -33,6 +37,7 @@ ion-tabs.tabs-color-active-royal .tab-item {
 
 #list__template,
 #note__template {
+    -webkit-transition: .2s;
     transition: .2s;
     opacity: 0;
     pointer-events: none;
@@ -53,8 +58,14 @@ ion-tabs.tabs-color-active-royal .tab-item {
 }
 
 #note__template header {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     height: 8vh;
 }
@@ -68,6 +79,7 @@ ion-tabs.tabs-color-active-royal .tab-item {
     resize: none;
     height: 20vh;
 }
+
 
 /* End Homepage Styles */
 
@@ -120,11 +132,8 @@ ion-tabs.tabs-color-active-royal .tab-item {
 .name-container {
     padding-top: 50%;
     background: rgba(41, 128, 185, 1);
-    background: -moz-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
     background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(41, 128, 185, 1)), color-stop(32%, rgba(41, 128, 185, 1)), color-stop(100%, rgba(236, 240, 241, 1)));
     background: -webkit-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
-    background: -o-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
-    background: -ms-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
     background: linear-gradient(to bottom, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
     filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#2980b9', endColorstr='#ecf0f1', GradientType=0);
 }
@@ -155,11 +164,8 @@ ion-tabs.tabs-color-active-royal .tab-item {
 .login-container {
     height: 100%;
     background: rgba(41, 128, 185, 1);
-    background: -moz-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
     background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(41, 128, 185, 1)), color-stop(32%, rgba(41, 128, 185, 1)), color-stop(100%, rgba(236, 240, 241, 1)));
     background: -webkit-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
-    background: -o-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
-    background: -ms-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
     background: linear-gradient(to bottom, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
     filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#2980b9', endColorstr='#ecf0f1', GradientType=0);
 }
@@ -191,7 +197,12 @@ ion-tabs.tabs-color-active-royal .tab-item {
 
 .card-container .group {
     margin: 0 auto;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
     width: 100%;
     height: 100%;
@@ -202,7 +213,10 @@ ion-tabs.tabs-color-active-royal .tab-item {
 }
 
 .card-container .flip-card {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -ms-flex-item-align: center;
     align-self: center;
     color: white;
     float: left;
@@ -210,18 +224,29 @@ ion-tabs.tabs-color-active-royal .tab-item {
     position: relative;
     width: 40vh;
     height: 60vh;
+    -webkit-transform-style: preserve-3d;
     transform-style: preserve-3d;
+    -webkit-transition: -webkit-transform 0.7s cubic-bezier(0.6, 0, 0.3, 1);
+    transition: -webkit-transform 0.7s cubic-bezier(0.6, 0, 0.3, 1);
     transition: transform 0.7s cubic-bezier(0.6, 0, 0.3, 1);
+    transition: transform 0.7s cubic-bezier(0.6, 0, 0.3, 1), -webkit-transform 0.7s cubic-bezier(0.6, 0, 0.3, 1);
 }
 
 .card-container .flip-card.flipped {
+    -webkit-transform: rotateY(180deg);
     transform: rotateY(180deg);
 }
 
 .card-container .flip-card .flip-header,
 .card-container .flip-card .flip-footer {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
 }
 
@@ -255,6 +280,8 @@ h2.black:hover {
 }
 
 .card-container .flip-card .flip-header h2 {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     margin: 0;
     cursor: default;
@@ -267,34 +294,59 @@ h2.black:hover {
 }
 
 .card-container .flip-card .flip-body label {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
 }
 
 .card-container .flip-card .flip-body textarea {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
     flex-grow: 1;
     width: 80%;
 }
 
 .card-container .flip-card .flip-body button {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
     width: 70%;
     margin: 0 auto;
     text-align: center;
+    -webkit-box-pack: center;
+    -ms-flex-pack: center;
     justify-content: center;
 }
 
 .card-container .flip-card .flip-body button text {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -ms-flex-line-pack: center;
     align-content: center;
     text-align: center;
 }
 
 .card-container .flip-card .flip-body ul {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
     align-items: center;
     padding: 2vh;
     height: 80%;
@@ -302,8 +354,15 @@ h2.black:hover {
 }
 
 .card-container .flip-card .flip-body ul li {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
+    -webkit-box-flex: 1;
+    -ms-flex-positive: 1;
     flex-grow: 1;
 }
 
@@ -324,13 +383,20 @@ h2.black:hover {
     /*align-items: center;*/
     /*justify-content: center;*/
     overflow: hidden;
+    -webkit-backface-visibility: hidden;
     backface-visibility: hidden;
 }
 
 .card-container .flip-card .front {
     background: rebeccapurple;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
     flex-direction: column;
+    -ms-flex-item-align: center;
     align-self: center;
 }
 
@@ -354,17 +420,15 @@ h2.black:hover {
 .card-container .flip-card .back {
     background: pink;
     color: black;
+    -webkit-transform: rotateY(180deg);
     transform: rotateY(180deg);
 }
 
 .testContainer {
     height: 30%;
     background: rgba(41, 128, 185, 1);
-    background: -moz-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
     background: -webkit-gradient(left top, left bottom, color-stop(0%, rgba(41, 128, 185, 1)), color-stop(32%, rgba(41, 128, 185, 1)), color-stop(100%, rgba(236, 240, 241, 1)));
     background: -webkit-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
-    background: -o-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
-    background: -ms-linear-gradient(top, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
     background: linear-gradient(to bottom, rgba(41, 128, 185, 1) 0%, rgba(41, 128, 185, 1) 32%, rgba(236, 240, 241, 1) 100%);
     filter: progid: DXImageTransform.Microsoft.gradient( startColorstr='#2980b9', endColorstr='#ecf0f1', GradientType=0);
 }
