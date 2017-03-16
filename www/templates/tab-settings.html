@@ -4,19 +4,19 @@
             <label for="theme" class="input-label">
                 Select Theme
             </label>
-            <select name="theme" id="theme" ng-change="changePath(css)" ng-model="css" ng-controller="headCtrl" ng-options="option.value as option.name for option in cssOptions">
+        <select name="theme" id="theme" ng-change="changePath(css)" ng-model="css" ng-controller="headCtrl" ng-options="option.value as option.name for option in cssOptions">
                 <option style="display:none" value="">Change Your Theme</option>
             </select>
         </label>
         <div class="item" ng-app="myApp" ng-controller="SettingsCtrl">
-          <p><u>Current date and time:</u></p>
-          <p>{{ today | date : "'Today is ' MMMM d, y - h:mm a" }}</p>
+            <p><u>Current date and time:</u></p>
+            <p>{{ today | date : "'Today is ' MMMM d, y - h:mm a" }}</p>
         </div>
         <div class="item" ng-app="myApp" ng-controller="SettingsCtrl">
-          <a href="http://www.bbc.co.uk/news" target="_blank">
+            <a href="http://www.bbc.co.uk/news" target="_blank">
               Test internet connection.
           </a>
-        </div> 
+        </div>
         <button class="button button-full button-assertive" ng-click="signOut()">Sign Out</button>
     </ion-content>
 </ion-view>
