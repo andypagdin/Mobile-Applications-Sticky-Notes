@@ -40,7 +40,7 @@
                     <!--note elements-->
                     <ion-item class="item-accordion" ng-repeat=" (pad_id, pad) in group.pads" show-delete="page_data.groups[group_id].pads[pad_id].showDelete" ng-show="isGroupShown(group)" ng-click="prepPad(group_id, pad_id)">
                         <div class="ion__escalation" ng-class="{'black': pad.priority_state == 1,'red': pad.priority_state == 2, 'orange': pad.priority_state == 3, 'green': pad.priority_state == 4, 'grey': !pad.priority_state}"></div>
-                        <h5 class="ion__title">{{pad.title}} - {{pad.priority_time | date: 'EEEE, d MMMM y H:mm' }} - {{pad.priority_state}}</h5>
+                        <h5 class="ion__title">{{pad.title}} | Due - {{pad.priority_time | date: 'EEEE, d MMMM y H:mm' }}</h5>
                         <!--delete-->
                         <ion-option-button class="button-assertive" ng-click="delete_group(group_id)">
                             <i class="icon ion-minus-circled"></i>

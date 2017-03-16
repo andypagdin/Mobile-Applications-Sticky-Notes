@@ -9,7 +9,7 @@ app.factory( 'FirebaseServ', function ( $q, $state )
     {
         // create a promise
         return $q( function ( resolve, reject )
-        {
+        { 
             // do we already have user data?
             // if no -
             if ( Object.keys( current_user ).length < 1 )
@@ -27,7 +27,7 @@ app.factory( 'FirebaseServ', function ( $q, $state )
                             if ( only_uid )
                             {
                                 resolve( user.uid )
-                            }
+                            } 
                             // return full user obj
                             resolve( user )
                         }
@@ -105,7 +105,7 @@ app.factory( 'FirebaseServ', function ( $q, $state )
         } ).catch( function ( error )
         {
             // if error say so!
-            console.error( "error", error );
+            console.error( "error", error ); 
             return {};
         } );
     }
@@ -346,16 +346,16 @@ app.factory( 'FirebaseServ', function ( $q, $state )
         {
             return uid( true ).then( function ( uid )
             {
+                console.log("arg",arg)
                 var group_data = {
-                    url: `/groups/`,
-                    output:
+                    "url": `/groups/`,
+                    "output":
                     {
-                        created_by: uid,
-                        title: arg.title,
-                        pads:
-                        {},
-                        users:
-                        {},
+                        "created_by": uid,
+                        "title": arg.title || "Unknown Title.",
+                        "favourite": arg.favourite||false,
+                        "pads":arg.pads||{},
+                        "users":arg.users||{},
                     },
                 }
                 group_data.output.users[ uid ] = true;
@@ -374,16 +374,16 @@ app.factory( 'FirebaseServ', function ( $q, $state )
                     } )
                     .then( function ( output )
                     {
+                        console.log("main output",output)
                         // return the new group object for display
                         var new_object = {
                             created_by: output.created_by,
                             id: output.id,
-                            title: output.title,
-                            timestamp: output.timestamp,
-                            users:
-                            {},
-                            pads:
-                            {},
+                            title: output.title || "Unknown title.",
+                            timestamp: output.timestamp || Date.now(),
+                            favourite: output.favourite || false,
+                            users: output.users || {},
+                            pads: output.pads || {},
                         }
                         new_object.users[ output.created_by ] = true;
                         return new_object;

@@ -55,7 +55,17 @@ app.controller( 'HomeCtrl', function ( $scope, FirebaseServ, $timeout, $rootScop
 
     $scope.favourite_group = function ( group )
     {
-        group.favourite = !group.favourite;
+        group.favourite = !group.favourite; 
+        FirebaseServ.post_group( group )
+            .then( function ( output )
+            {
+                console.log("output",output)
+                $scope.page_data.groups[ output.id ] = output
+                if ( !$scope.$$phase )
+                {
+                    $scope.$apply( );
+                }
+            } )
     };
 
     $scope.delete_group = function ( group )
@@ -103,6 +113,7 @@ app.controller( 'HomeCtrl', function ( $scope, FirebaseServ, $timeout, $rootScop
         FirebaseServ.post_group( input )
             .then( function ( output )
             {
+                console.log("output",output)
                 $scope.page_data.groups[ output.id ] = output
                 if ( !$scope.$$phase )
                 {
