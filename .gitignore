@@ -11,3 +11,4 @@ www/img/space.jpg
 debug.log
 .editorconfig
 .vscode/
+.eslintrc.json
